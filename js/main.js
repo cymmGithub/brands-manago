@@ -323,19 +323,18 @@ class FormaSintApp {
      * Animate hero title on load
      */
     animateHeroTitle() {
-        const heroTitle = document.querySelector('.hero__title');
-        if (heroTitle) {
-            const text = heroTitle.textContent;
-            heroTitle.innerHTML = '';
+        const heroTitleImage = document.querySelector('.hero__title-image');
+        if (heroTitleImage) {
+            // Add fade-in animation class for the image
+            heroTitleImage.style.opacity = '0';
+            heroTitleImage.style.transform = 'translateY(20px)';
+            heroTitleImage.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
 
-            // Split text into spans for character animation
-            text.split('').forEach((char, index) => {
-                const span = document.createElement('span');
-                span.textContent = char;
-                span.style.animationDelay = `${index * 0.1}s`;
-                span.classList.add('hero-char');
-                heroTitle.appendChild(span);
-            });
+            // Trigger animation after a short delay
+            setTimeout(() => {
+                heroTitleImage.style.opacity = '1';
+                heroTitleImage.style.transform = 'translateY(0)';
+            }, 200);
         }
     }
 
