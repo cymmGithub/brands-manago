@@ -8,7 +8,6 @@ class FormaSintApp {
         this.apiUrl = 'https://brandstestowy.smallhost.pl/api/random';
         this.currentPageSize = 14;
         this.currentPage = 1;
-        this.promoInsertPosition = 5; // Insert promo banner after 5th product
         this.productModal = null;
         this.init();
     }
@@ -228,12 +227,10 @@ class FormaSintApp {
         }
 
         const card = event.currentTarget;
-        const productTitle = card.querySelector('.product-card__title')?.textContent;
         const productId = card.querySelector('.product-card__id')?.textContent;
         const productImage = card.querySelector('.product-card__image')?.src;
-        const productPrice = card.querySelector('.product-card__price')?.textContent;
 
-        console.log(`🛍️ Product clicked: ${productTitle || productId}`);
+        console.log(`🛍️ Product clicked: ${productId}`);
 
         // Add click animation
         card.classList.add('product-clicked');
@@ -243,10 +240,10 @@ class FormaSintApp {
 
         // Show product modal
         this.showProductModal({
-            title: productTitle,
+            title: productId, // Use ID as title since we removed the actual title
             id: productId,
             image: productImage,
-            price: productPrice,
+            price: 'Price on request', // Generic price text
             isFavorite: card.querySelector('.product-card__favorite')?.classList.contains('is-favorite')
         });
     }
@@ -554,9 +551,8 @@ class FormaSintApp {
 
         productCards.forEach(card => {
             const cardId = card.querySelector('.product-card__id')?.textContent;
-            const cardTitle = card.querySelector('.product-card__title')?.textContent;
 
-            if (cardId === productId || cardTitle === productTitle) {
+            if (cardId === productId) {
                 const favoriteButton = card.querySelector('.product-card__favorite');
                 if (favoriteButton) {
                     favoriteButton.classList.toggle('is-favorite', isFavorite);
@@ -570,7 +566,7 @@ class FormaSintApp {
      * Save modal favorite state
      */
     saveModalFavoriteState(productId, productTitle, isFavorite) {
-        const identifier = productTitle || productId || 'unknown';
+        const identifier = productId || 'unknown';
         const favorites = JSON.parse(localStorage.getItem('formasint-favorites') || '[]');
 
         if (isFavorite) {
@@ -628,19 +624,28 @@ class FormaSintApp {
         const promoBanner = productGrid.querySelector('.promo-banner');
         productGrid.innerHTML = '';
 
-        // Render products
-        products.forEach((product, index) => {
-            // Insert promo banner after specified position
-            if (index === this.promoInsertPosition && promoBanner) {
+        // For 4-column layout: [1][2][3][4] [5][P][P][6] [7][8][9][10] [11][12][13][14]
+        // We want promo banner to appear after position 5 (so it takes positions 6-7 in the DOM order)
+        // but visually appears in the center columns of row 2
+
+        let productIndex = 0;
+        let promoInserted = false;
+
+        // Add products in the desired order
+        for (let i = 0; i < products.length + 1; i++) {
+            // Insert promo banner after 5th product (at position where it should be visually)
+            if (i === 5 && promoBanner && !promoInserted) {
                 productGrid.appendChild(promoBanner);
+                promoInserted = true;
+            } else if (productIndex < products.length) {
+                const productElement = this.createProductCard(products[productIndex], productIndex + 1);
+                productGrid.appendChild(productElement);
+                productIndex++;
             }
+        }
 
-            const productElement = this.createProductCard(product, index + 1);
-            productGrid.appendChild(productElement);
-        });
-
-        // If we haven't inserted the promo banner yet (less products than insert position)
-        if (products.length <= this.promoInsertPosition && promoBanner) {
+        // If we have fewer than 5 products, still append the banner at the end
+        if (!promoInserted && promoBanner) {
             productGrid.appendChild(promoBanner);
         }
 
@@ -673,10 +678,6 @@ class FormaSintApp {
                         <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" stroke="currentColor" stroke-width="2" fill="none"/>
                     </svg>
                 </button>
-            </div>
-            <div class="product-card__content">
-                <h3 class="product-card__title">${product.text}</h3>
-                <p class="product-card__price">€${(Math.random() * 200 + 100).toFixed(2)} EUR</p>
             </div>
         `;
 
@@ -752,9 +753,8 @@ class FormaSintApp {
      */
     saveFavoriteState(button) {
         const productCard = button.closest('.product-card');
-        const productTitle = productCard?.querySelector('.product-card__title')?.textContent;
         const productId = productCard?.querySelector('.product-card__id')?.textContent;
-        const identifier = productTitle || productId || 'unknown';
+        const identifier = productId || 'unknown';
 
         const favorites = JSON.parse(localStorage.getItem('formasint-favorites') || '[]');
         const isFavorite = button.classList.contains('is-favorite');

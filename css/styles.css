@@ -282,7 +282,7 @@ ul {
 }
 
 .products-grid--main {
-	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	grid-template-columns: repeat(4, 1fr);
 	gap: 1.5rem;
 }
 
@@ -329,7 +329,7 @@ ul {
 
 .product-card__image-container {
 	position: relative;
-	aspect-ratio: 1;
+	height: 300px;
 	background: #f8f8f8;
 	overflow: hidden;
 }
@@ -467,14 +467,15 @@ ul {
    =========================== */
 
 .promo-banner {
-	grid-column: 1 / -1;
+	grid-column: 2 / 4;
+	grid-row: span 1;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	background: linear-gradient(135deg, #4facfe 0%, #00c4f7 100%);
 	border-radius: 12px;
 	overflow: hidden;
-	margin: 2rem 0;
-	min-height: 300px;
+	margin: 0;
+	height: 300px;
 }
 
 .promo-banner__content {
@@ -750,8 +751,13 @@ ul {
 	}
 
 	.products-grid--main {
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		grid-template-columns: repeat(3, 1fr);
 		gap: 1rem;
+	}
+
+	.promo-banner {
+		grid-column: 2 / 4;
+		grid-row: span 1;
 	}
 
 	.product-card__content {
@@ -797,7 +803,22 @@ ul {
 	}
 
 	.products-grid--main {
-		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.promo-banner {
+		grid-column: span 2;
+		grid-row: span 1;
+		grid-template-columns: 1fr;
+		height: 250px;
+	}
+
+	.promo-banner__content {
+		padding: 1.5rem;
+	}
+
+	.promo-banner__image-container {
+		display: none;
 	}
 
 	.product-card {
@@ -806,6 +827,7 @@ ul {
 
 	.product-card--grid .product-card__image-container {
 		border-radius: 8px;
+		height: 250px;
 	}
 
 	.promo-banner {
@@ -860,17 +882,6 @@ ul {
 	animation-delay: 0.4s;
 }
 
-/* ===========================
-   Focus States for Accessibility
-   =========================== */
-
-.nav__link:focus,
-.product-card__favorite:focus,
-.promo-banner__cta:focus,
-.products__pagination-select:focus {
-	outline: 2px solid #4facfe;
-	outline-offset: 2px;
-}
 
 /* ===========================
    Print Styles
@@ -1064,10 +1075,6 @@ ul {
 	height: 100%;
 	object-fit: cover;
 	transition: transform 0.3s ease;
-}
-
-.product-modal__image:hover {
-	transform: scale(1.05);
 }
 
 .product-modal__info {
