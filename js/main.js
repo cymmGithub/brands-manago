@@ -242,9 +242,7 @@ class FormaSintApp {
         this.showProductModal({
             title: productId, // Use ID as title since we removed the actual title
             id: productId,
-            image: productImage,
-            price: 'Price on request', // Generic price text
-            isFavorite: card.querySelector('.product-card__favorite')?.classList.contains('is-favorite')
+            image: productImage
         });
     }
 
@@ -411,18 +409,13 @@ class FormaSintApp {
      */
     setupModal() {
         this.productModal = document.getElementById('product-modal');
+        const closeButton = document.querySelector('.product-modal__close');
+
         if (!this.productModal) return;
 
         // Close button
-        const closeButton = this.productModal.querySelector('.product-modal__close');
         if (closeButton) {
             closeButton.addEventListener('click', () => this.closeModal());
-        }
-
-        // Backdrop click to close
-        const backdrop = this.productModal.querySelector('.product-modal__backdrop');
-        if (backdrop) {
-            backdrop.addEventListener('click', () => this.closeModal());
         }
 
         // ESC key to close
@@ -432,22 +425,12 @@ class FormaSintApp {
             }
         });
 
-        // Modal favorite button
-        const modalFavoriteButton = this.productModal.querySelector('.product-modal__favorite');
-        if (modalFavoriteButton) {
-            modalFavoriteButton.addEventListener('click', (event) => {
-                this.toggleModalFavorite(event);
-            });
-        }
-
-        // Modal CTA button
-        const modalCTA = this.productModal.querySelector('.product-modal__cta');
-        if (modalCTA) {
-            modalCTA.addEventListener('click', () => {
-                console.log('🎯 Product details page would open here');
+        // Click outside to close
+        this.productModal.addEventListener('click', (event) => {
+            if (event.target === this.productModal) {
                 this.closeModal();
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -457,44 +440,27 @@ class FormaSintApp {
         if (!this.productModal) return;
 
         // Update modal content
-        const modalImage = this.productModal.querySelector('.product-modal__image');
-        const modalTitle = this.productModal.querySelector('.product-modal__title');
-        const modalId = this.productModal.querySelector('.product-modal__id');
-        const modalPrice = this.productModal.querySelector('.product-modal__price');
-        const modalFavorite = this.productModal.querySelector('.product-modal__favorite');
-        const modalFavoriteText = this.productModal.querySelector('.product-modal__favorite-text');
+        const modalImage = document.querySelector('.product-modal__image');
+        const modalId = document.querySelector('.product-modal__id');
 
         if (modalImage) {
             modalImage.src = product.image;
             modalImage.alt = product.title;
         }
 
-        if (modalTitle) {
-            modalTitle.textContent = product.title;
-        }
-
         if (modalId) {
             modalId.textContent = product.id;
         }
 
-        if (modalPrice) {
-            modalPrice.textContent = product.price;
+        // Show modal using native showModal
+        if (typeof this.productModal.showModal === 'function') {
+            this.productModal.showModal();
+        } else {
+            // Fallback for older browsers
+            this.productModal.setAttribute('open', '');
         }
 
-        if (modalFavorite) {
-            modalFavorite.classList.toggle('is-favorite', product.isFavorite);
-            modalFavorite.setAttribute('data-product-id', product.id);
-            modalFavorite.setAttribute('data-product-title', product.title);
-        }
-
-        if (modalFavoriteText) {
-            modalFavoriteText.textContent = product.isFavorite ? 'Remove from favorites' : 'Add to favorites';
-        }
-
-        // Show modal
-        this.productModal.showModal();
         document.body.style.overflow = 'hidden';
-
         console.log('📱 Product modal opened');
     }
 
@@ -504,83 +470,15 @@ class FormaSintApp {
     closeModal() {
         if (!this.productModal) return;
 
-        this.productModal.close();
-        document.body.style.overflow = '';
-
-        console.log('❌ Product modal closed');
-    }
-
-    /**
-     * Toggle favorite in modal
-     */
-    toggleModalFavorite(event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const button = event.currentTarget;
-        const productId = button.getAttribute('data-product-id');
-        const productTitle = button.getAttribute('data-product-title');
-        const isFavorite = button.classList.contains('is-favorite');
-
-        button.classList.toggle('is-favorite');
-
-        // Update text
-        const favoriteText = button.querySelector('.product-modal__favorite-text');
-        if (favoriteText) {
-            favoriteText.textContent = isFavorite ? 'Add to favorites' : 'Remove from favorites';
-        }
-
-        // Add animation
-        button.classList.add('favorite-animate');
-        setTimeout(() => {
-            button.classList.remove('favorite-animate');
-        }, 300);
-
-        // Update the corresponding card in the grid
-        this.updateGridFavoriteState(productId, productTitle, !isFavorite);
-
-        // Save state
-        this.saveModalFavoriteState(productId, productTitle, !isFavorite);
-    }
-
-    /**
-     * Update favorite state in the product grid
-     */
-    updateGridFavoriteState(productId, productTitle, isFavorite) {
-        const productCards = document.querySelectorAll('.product-card--grid');
-
-        productCards.forEach(card => {
-            const cardId = card.querySelector('.product-card__id')?.textContent;
-
-            if (cardId === productId) {
-                const favoriteButton = card.querySelector('.product-card__favorite');
-                if (favoriteButton) {
-                    favoriteButton.classList.toggle('is-favorite', isFavorite);
-                    favoriteButton.setAttribute('aria-label', isFavorite ? 'Remove from favorites' : 'Add to favorites');
-                }
-            }
-        });
-    }
-
-    /**
-     * Save modal favorite state
-     */
-    saveModalFavoriteState(productId, productTitle, isFavorite) {
-        const identifier = productId || 'unknown';
-        const favorites = JSON.parse(localStorage.getItem('formasint-favorites') || '[]');
-
-        if (isFavorite) {
-            if (!favorites.includes(identifier)) {
-                favorites.push(identifier);
-            }
+        if (typeof this.productModal.close === 'function') {
+            this.productModal.close();
         } else {
-            const index = favorites.indexOf(identifier);
-            if (index > -1) {
-                favorites.splice(index, 1);
-            }
+            // Fallback for older browsers
+            this.productModal.removeAttribute('open');
         }
 
-        localStorage.setItem('formasint-favorites', JSON.stringify(favorites));
+        document.body.style.overflow = '';
+        console.log('❌ Product modal closed');
     }
 
     /**
