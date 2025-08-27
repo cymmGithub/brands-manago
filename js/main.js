@@ -114,9 +114,23 @@ class FormaSintApp {
 
 		// Parallax effect for hero image
 		const heroImage = document.querySelector('.hero__image');
-		if (heroImage && scrollY < window.innerHeight) {
-			const parallaxSpeed = 0.5;
-			heroImage.style.transform = `translateY(${scrollY * parallaxSpeed}px)`;
+		const heroImageContainer = document.querySelector('.hero__image-container');
+
+		if (heroImage && heroImageContainer && header) {
+			// Calculate when hero image container starts touching the navbar
+			const headerHeight = header.offsetHeight;
+			const heroImageContainerTop = heroImageContainer.offsetTop;
+			const startParallaxAt = heroImageContainerTop - headerHeight;
+
+			// Only apply parallax when container starts touching navbar and while still in viewport
+			if (scrollY >= startParallaxAt && scrollY < window.innerHeight) {
+				const parallaxSpeed = 0.5;
+				const adjustedScrollY = scrollY - startParallaxAt; // Start from 0 when touching navbar
+				heroImage.style.transform = `translateY(${adjustedScrollY * parallaxSpeed}px)`;
+			} else if (scrollY < startParallaxAt) {
+				// Reset transform when above the trigger point
+				heroImage.style.transform = 'translateY(0px)';
+			}
 		}
 	}
 
