@@ -125,7 +125,7 @@ class FormaSintApp {
 			// Only apply parallax when container starts touching navbar and while still in viewport
 			if (scrollY >= startParallaxAt && scrollY < window.innerHeight) {
 				const parallaxSpeed = 0.5;
-				const adjustedScrollY = scrollY - startParallaxAt; // Start from 0 when touching navbar
+				const adjustedScrollY = scrollY - startParallaxAt;
 				heroImage.style.transform = `translateY(${adjustedScrollY * parallaxSpeed}px)`;
 			} else if (scrollY < startParallaxAt) {
 				// Reset transform when above the trigger point
