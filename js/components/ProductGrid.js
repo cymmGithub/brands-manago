@@ -24,19 +24,11 @@ const ProductGrid = (() => {
 	}
 
 	function handleProductCardClick(event) {
-		// Don't trigger if favorite button was clicked (not applicable anymore, but kept for consistency)
-		if (event.target.closest('.product-card__favorite')) {
-			return;
-		}
-
 		const card = event.currentTarget;
 		const productId = card.querySelector('.product-card__id')?.textContent;
 		const productImage = card.querySelector('.product-card__image')?.src;
 
 		if (!productId) return;
-
-		// Add click animation
-		UtilsService.addClickAnimation(card, 'product-clicked');
 
 		// Show product modal
 		ModalService.showProduct({
@@ -59,27 +51,6 @@ const ProductGrid = (() => {
 				}
 			});
 		}, observerOptions);
-	}
-
-	function staggerProductCards() {
-		const productCards = document.querySelectorAll('.product-card');
-		productCards.forEach((card, index) => {
-			card.style.animationDelay = `${index * 0.1}s`;
-		});
-	}
-
-	function setupProductCardAnimations() {
-		const productCards = document.querySelectorAll('.product-card');
-
-		productCards.forEach((card) => {
-			card.addEventListener('mouseenter', () => {
-				card.style.transform = 'translateY(-8px) scale(1.02)';
-			});
-
-			card.addEventListener('mouseleave', () => {
-				card.style.transform = '';
-			});
-		});
 	}
 
 	// Public controller
@@ -125,10 +96,6 @@ const ProductGrid = (() => {
 				productGrid.appendChild(promoBanner);
 			}
 
-			// Setup animations and observers for new product cards
-			setupProductCardAnimations();
-			staggerProductCards();
-
 			// Setup intersection observer for new elements
 			const newProductCards = productGrid.querySelectorAll('.product-card--grid');
 			newProductCards.forEach((card) => {
@@ -165,13 +132,6 @@ const ProductGrid = (() => {
                         </button>
                     </div>
                 `;
-			}
-		},
-
-		// Observe elements for animations
-		observeElement(element) {
-			if (intersectionObserver) {
-				intersectionObserver.observe(element);
 			}
 		},
 	};

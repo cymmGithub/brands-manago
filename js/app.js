@@ -16,9 +16,6 @@ const FormaSintApp = (() => {
 
 		// Setup lazy loading for images
 		setupLazyLoading();
-
-		// Initialize product grid stagger animations for products section only
-		ProductGrid.observeElement(document.querySelector('.products'));
 	}
 
 	function animateHeroTitle() {

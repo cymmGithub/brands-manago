@@ -248,15 +248,6 @@ const FeaturedProducts = (() => {
 		featuredProductCards.forEach((card) => {
 			// Add click event listener
 			card.addEventListener('click', handleProductCardClick);
-
-			// Add hover animations
-			card.addEventListener('mouseenter', () => {
-				card.style.transform = 'translateY(-8px)';
-			});
-
-			card.addEventListener('mouseleave', () => {
-				card.style.transform = '';
-			});
 		});
 	}
 
@@ -270,13 +261,6 @@ const FeaturedProducts = (() => {
 				button.classList.add('is-favorite');
 				button.setAttribute('aria-label', 'Remove from favorites');
 			}
-		});
-	}
-
-	function staggerProductCards() {
-		const featuredProductCards = document.querySelectorAll('.products-grid--featured .swiper-slide .product-card');
-		featuredProductCards.forEach((card, index) => {
-			card.style.animationDelay = `${index * 0.1}s`;
 		});
 	}
 
@@ -294,7 +278,6 @@ const FeaturedProducts = (() => {
 			setupIntersectionObserver();
 			setupFavoriteButtons();
 			setupProductCardInteractions();
-			staggerProductCards();
 
 			// Load favorite states after a short delay to ensure DOM is ready
 			setTimeout(() => {
@@ -315,8 +298,6 @@ const FeaturedProducts = (() => {
 			initializeSwiper();
 			// Re-setup interactions for new products
 			setupFavoriteButtons();
-			setupProductCardInteractions();
-			staggerProductCards();
 			loadFavoriteStates();
 		},
 
@@ -384,13 +365,6 @@ const FeaturedProducts = (() => {
 			});
 
 			return favoritedProducts;
-		},
-
-		// Observe element for animations
-		observeElement(element) {
-			if (intersectionObserver) {
-				intersectionObserver.observe(element);
-			}
 		},
 	};
 
