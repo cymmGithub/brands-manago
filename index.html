@@ -338,7 +338,23 @@
 			<img class="product-modal__image" id="modal-image" src="" alt="" />
 		</dialog>
 
-		<!-- JavaScript -->
-		<script src="js/main.js"></script>
+		<!-- JavaScript - Load in dependency order -->
+		<!-- Utilities first -->
+		<script src="js/services/UtilsService.js"></script>
+
+		<!-- Stores -->
+		<script src="js/stores/ProductStore.js"></script>
+		<script src="js/stores/FavoriteStore.js"></script>
+
+		<!-- Services -->
+		<script src="js/services/ModalService.js"></script>
+		<script src="js/services/NavigationService.js"></script>
+		<script src="js/services/ScrollService.js"></script>
+
+		<!-- Components -->
+		<script src="js/components/ProductGrid.js"></script>
+
+		<!-- Main App -->
+		<script src="js/app.js"></script>
 	</body>
 </html>
