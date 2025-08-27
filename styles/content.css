@@ -120,7 +120,7 @@
 	bottom: -4px;
 	left: 0;
 	width: 0;
-	height: 2px;
+	height: 1px;
 	background: var(--color-black);
 	transition: var(--transition-normal);
 }
@@ -526,7 +526,7 @@
 /* Swiper Scrollbar */
 .featured-products-swiper .swiper-scrollbar,
 .featured-products-swiper .swiper-scrollbar-horizontal {
-	height: 2px !important;
+	height: 1px !important;
 	background: var(--color-gray-200);
 	border-radius: var(--radius-full);
 }
@@ -680,7 +680,6 @@
 
 .products {
 	padding: var(--space-3xl) 0;
-	background: var(--color-gray-50);
 }
 
 .products__controls {

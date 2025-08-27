@@ -41,13 +41,19 @@ const FeaturedProducts = (() => {
 	}
 
 	function createProductCard(productData) {
-		const badgesHtml = productData.badges.length > 0
-			? `<div class="product-card__badges">
-				${productData.badges.map(badge =>
-		`<span class="badge badge--${badge.toLowerCase().replace(' ', '-')}"">${badge}</span>`,
-	).join('')}
+		const badgesHtml =
+			productData.badges.length > 0
+				? `<div class="product-card__badges">
+				${productData.badges
+		.map(
+			(badge) =>
+				`<span class="badge badge--${badge
+					.toLowerCase()
+					.replace(' ', '-')}"">${badge}</span>`,
+		)
+		.join('')}
 			</div>`
-			: '';
+				: '';
 
 		return `
 			<div class="swiper-slide">
@@ -89,7 +95,7 @@ const FeaturedProducts = (() => {
 		`;
 	}
 
-	function generateFeaturedProducts(numberOfProducts = 6) {
+	function generateFeaturedProducts(numberOfProducts) {
 		const featuredGrid = document.querySelector('.products-grid--featured');
 		if (!featuredGrid) return;
 
@@ -105,7 +111,9 @@ const FeaturedProducts = (() => {
 	}
 
 	function initializeSwiper() {
-		const swiperContainer = document.querySelector('.featured-products-swiper .swiper');
+		const swiperContainer = document.querySelector(
+			'.featured-products-swiper .swiper',
+		);
 		if (!swiperContainer) return null;
 
 		// Destroy existing instance if it exists
@@ -119,7 +127,7 @@ const FeaturedProducts = (() => {
 			scrollbar: {
 				el: '.swiper-scrollbar',
 				draggable: true,
-				dragSize: 100, // Fixed drag size in pixels (instead of 'auto')
+				dragSize: 'auto', // Fixed drag size in pixels (instead of 'auto')
 				// Alternative options:
 				// dragSize: 'auto', // Default - proportional to content
 				// snapOnRelease: true, // Snap to nearest slide when released
@@ -189,8 +197,10 @@ const FeaturedProducts = (() => {
 	}
 
 	function setupFavoriteButtons() {
-		const featuredFavoriteButtons = document.querySelectorAll('.products-grid--featured .product-card__favorite');
-		featuredFavoriteButtons.forEach(button => {
+		const featuredFavoriteButtons = document.querySelectorAll(
+			'.products-grid--featured .product-card__favorite',
+		);
+		featuredFavoriteButtons.forEach((button) => {
 			button.addEventListener('click', handleFavoriteClick);
 		});
 	}
@@ -227,7 +237,9 @@ const FeaturedProducts = (() => {
 		const card = event.currentTarget;
 		const productId = card.dataset.productId;
 		const productImage = card.querySelector('.product-card__image')?.src;
-		const productTitle = card.querySelector('.product-card__title')?.textContent;
+		const productTitle = card.querySelector(
+			'.product-card__title',
+		)?.textContent;
 
 		if (!productId) return;
 
@@ -243,7 +255,9 @@ const FeaturedProducts = (() => {
 	}
 
 	function setupProductCardInteractions() {
-		const featuredProductCards = document.querySelectorAll('.products-grid--featured .swiper-slide .product-card');
+		const featuredProductCards = document.querySelectorAll(
+			'.products-grid--featured .swiper-slide .product-card',
+		);
 
 		featuredProductCards.forEach((card) => {
 			// Add click event listener
@@ -252,7 +266,9 @@ const FeaturedProducts = (() => {
 	}
 
 	function loadFavoriteStates() {
-		const featuredFavoriteButtons = document.querySelectorAll('.products-grid--featured .product-card__favorite');
+		const featuredFavoriteButtons = document.querySelectorAll(
+			'.products-grid--featured .product-card__favorite',
+		);
 		featuredFavoriteButtons.forEach((button) => {
 			const productCard = button.closest('.product-card');
 			const productId = productCard?.dataset.productId;
@@ -267,7 +283,7 @@ const FeaturedProducts = (() => {
 	// Public controller
 	const controller = {
 		// Initialize featured products component with Swiper
-		init(numberOfProducts = 6) {
+		init(numberOfProducts = 16) {
 			// Generate featured products dynamically
 			generateFeaturedProducts(numberOfProducts);
 
@@ -344,16 +360,26 @@ const FeaturedProducts = (() => {
 		// Get all favorited products from featured section
 		getFavoritedProducts() {
 			const favoritedProducts = [];
-			const featuredProductCards = document.querySelectorAll('.products-grid--featured .product-card');
+			const featuredProductCards = document.querySelectorAll(
+				'.products-grid--featured .product-card',
+			);
 
 			featuredProductCards.forEach((card) => {
 				const productId = card.dataset.productId;
 				const favoriteButton = card.querySelector('.product-card__favorite');
 
-				if (productId && favoriteButton && favoriteButton.classList.contains('is-favorite')) {
-					const productTitle = card.querySelector('.product-card__title')?.textContent;
+				if (
+					productId &&
+					favoriteButton &&
+					favoriteButton.classList.contains('is-favorite')
+				) {
+					const productTitle = card.querySelector(
+						'.product-card__title',
+					)?.textContent;
 					const productImage = card.querySelector('.product-card__image')?.src;
-					const productPrice = card.querySelector('.product-card__price')?.textContent;
+					const productPrice = card.querySelector(
+						'.product-card__price',
+					)?.textContent;
 
 					favoritedProducts.push({
 						id: productId,
