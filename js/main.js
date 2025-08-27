@@ -9,12 +9,16 @@ class FormaSintApp {
 		this.currentPageSize = 14;
 		this.currentPage = 1;
 		this.productModal = null;
+		this.ticking = false;
+		this.lastKnownScrollPosition = 0;
+		this.isHeroVisible = true; // Track if hero section is visible
 		this.init();
 	}
 
 	init() {
 		this.setupEventListeners();
 		this.setupIntersectionObserver();
+		this.setupHeroVisibilityObserver();
 		this.setupSmoothScrolling();
 		this.setupNavigation();
 		this.setupProductFilters();
@@ -32,10 +36,7 @@ class FormaSintApp {
 		});
 
 		// Window events
-		window.addEventListener(
-			'scroll',
-			this.throttle(this.handleScroll.bind(this), 16),
-		);
+		window.addEventListener('scroll', this.handleScrollEvent.bind(this), {passive: true});
 		window.addEventListener(
 			'resize',
 			this.throttle(this.handleResize.bind(this), 250),
@@ -99,10 +100,22 @@ class FormaSintApp {
 	}
 
 	/**
-	 * Handle scroll events
+	 * Handle scroll events with requestAnimationFrame optimization
 	 */
-	handleScroll() {
-		const {scrollY} = window;
+	handleScrollEvent() {
+		this.lastKnownScrollPosition = window.scrollY;
+
+		if (!this.ticking) {
+			requestAnimationFrame(this.updateParallax.bind(this));
+			this.ticking = true;
+		}
+	}
+
+	/**
+	 * Update parallax and scroll effects using requestAnimationFrame
+	 */
+	updateParallax() {
+		const scrollY = this.lastKnownScrollPosition;
 		const header = document.querySelector('.header');
 
 		// Add/remove header shadow based on scroll
@@ -112,32 +125,90 @@ class FormaSintApp {
 			header?.classList.remove('header--scrolled');
 		}
 
-		// Parallax effect for hero image
+		// Only run parallax if hero section is visible
+		if (this.isHeroVisible) {
+			this.updateHeroParallax(scrollY, header);
+		}
+
+		// Update navigation state
+		this.updateNavigationStateFromScroll();
+
+		this.ticking = false;
+	}
+
+	/**
+	 * Update hero parallax effect (separated for better organization)
+	 */
+	updateHeroParallax(scrollY, header) {
 		const heroImage = document.querySelector('.hero__image');
 		const heroImageContainer = document.querySelector('.hero__image-container');
 
 		if (heroImage && heroImageContainer && header) {
-			// Calculate when hero image container starts touching the navbar
-			const headerHeight = header.offsetHeight;
-			const heroImageContainerTop = heroImageContainer.offsetTop;
-			const startParallaxAt = heroImageContainerTop - headerHeight;
+			// Cache these values to avoid repeated DOM queries
+			if (!this.headerHeight) {
+				this.headerHeight = header.offsetHeight;
+			}
+			if (!this.heroImageContainerTop) {
+				this.heroImageContainerTop = heroImageContainer.offsetTop;
+			}
+			if (!this.windowHeight) {
+				this.windowHeight = window.innerHeight;
+			}
+
+			const startParallaxAt = this.heroImageContainerTop - this.headerHeight;
 
 			// Only apply parallax when container starts touching navbar and while still in viewport
-			if (scrollY >= startParallaxAt && scrollY < window.innerHeight) {
+			if (scrollY >= startParallaxAt && scrollY < this.windowHeight) {
 				const parallaxSpeed = 0.5;
 				const adjustedScrollY = scrollY - startParallaxAt;
-				heroImage.style.transform = `translateY(${adjustedScrollY * parallaxSpeed}px)`;
+				const translateY = adjustedScrollY * parallaxSpeed;
+
+				// Use transform3d for GPU acceleration and better performance
+				heroImage.style.transform = `translate3d(0, ${translateY}px, 0)`;
 			} else if (scrollY < startParallaxAt) {
 				// Reset transform when above the trigger point
-				heroImage.style.transform = 'translateY(0px)';
+				heroImage.style.transform = 'translate3d(0, 0, 0)';
 			}
 		}
+	}
+
+	/**
+	 * Setup intersection observer to track hero visibility
+	 */
+	setupHeroVisibilityObserver() {
+		const heroSection = document.querySelector('.hero');
+		if (!heroSection) return;
+
+		const heroObserver = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				this.isHeroVisible = entry.isIntersecting;
+			});
+		}, {
+			threshold: 0,
+			rootMargin: '50px 0px 50px 0px',
+		});
+
+		heroObserver.observe(heroSection);
+	}
+
+	/**
+	 * Handle scroll events (legacy method - kept for compatibility)
+	 * @deprecated Use handleScrollEvent and updateParallax instead
+	 */
+	handleScroll() {
+		// This method is now deprecated in favor of the optimized approach
+		console.warn('handleScroll is deprecated. Use handleScrollEvent instead.');
 	}
 
 	/**
 	 * Handle window resize events
 	 */
 	handleResize() {
+		// Reset cached values on resize
+		this.headerHeight = null;
+		this.heroImageContainerTop = null;
+		this.windowHeight = null;
+
 		// Close mobile menu on resize to desktop
 		if (window.innerWidth > 768) {
 			this.closeMobileMenu();
@@ -478,7 +549,54 @@ class FormaSintApp {
 	}
 
 	/**
-	 * Update navigation active state based on current scroll position
+	 * Update navigation active state based on current scroll position (optimized for parallax)
+	 */
+	updateNavigationStateFromScroll() {
+		// Don't update active states while hovering
+		if (this.isHovering) return;
+
+		const scrollPosition = this.lastKnownScrollPosition + 100;
+		let activeSection = null;
+
+		// Check which section is currently in view
+		if (this.sections) {
+			this.sections.forEach((section) => {
+				const sectionTop = section.offsetTop;
+				const sectionHeight = section.offsetHeight;
+				const sectionId = section.getAttribute('id');
+
+				if (
+					scrollPosition >= sectionTop &&
+					scrollPosition < sectionTop + sectionHeight
+				) {
+					activeSection = sectionId;
+				}
+			});
+		}
+
+		// Remove active class from all links
+		if (this.navLinks) {
+			this.navLinks.forEach((link) => {
+				link.classList.remove('active');
+			});
+		}
+
+		if (activeSection) {
+			// Set active class for the corresponding section link
+			const activeLink = document.querySelector(`.nav__link[href="#${activeSection}"]`);
+			if (activeLink) {
+				activeLink.classList.add('active');
+			}
+		} else {
+			// If no section is active (at top of page), activate HOME link
+			if (this.homeLink) {
+				this.homeLink.classList.add('active');
+			}
+		}
+	}
+
+	/**
+	 * Update navigation active state based on current scroll position (for smooth scrolling)
 	 */
 	updateNavigationState() {
 		// Don't update active states while hovering
