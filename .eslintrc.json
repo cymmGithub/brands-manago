@@ -1,0 +1,87 @@
+{
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": 2022
+	},
+	"rules": {
+		"quotes": [
+			"error", "single",
+			{
+				"avoidEscape": true
+			}
+		],
+		"quote-props": ["error", "as-needed"],
+		"indent": [
+			2,
+			"tab",
+			{
+				"SwitchCase": 1
+			}
+		],
+		"max-len": [
+			1,
+			{
+				"code": 100,
+				"comments": 120,
+				"ignoreUrls": true,
+				"ignoreRegExpLiterals": true,
+				"ignoreStrings": true,
+				"ignoreTemplateLiterals": true
+			}
+		],
+		"eol-last": 2,
+		"no-trailing-spaces": 1,
+		"no-multi-spaces": 2,
+		"key-spacing": [
+			2,
+			{
+				"afterColon": true
+			}
+		],
+		"comma-dangle": [
+			1,
+			"always-multiline"
+		],
+		"semi": [
+			2,
+			"always"
+		],
+		"no-cond-assign": ["error", "except-parens"],
+		"block-spacing": [2, "always"],
+		"space-in-parens": [2, "never"],
+		"dot-notation": 0,
+		"func-names": 0,
+		"one-var": 0,
+		"vars-on-top": 0,
+		"no-unused-vars": ["warn", {"varsIgnorePattern": "^_?[A-Z]"}],
+		"computed-property-spacing": [2, "never"],
+		"curly": 0,
+		"no-inline-comments": 0,
+		"one-var-declaration-per-line": 0,
+		"space-unary-ops": [
+			2, {
+				"words": false
+			}],
+		"brace-style": [1, "1tbs"],
+		"array-bracket-spacing": [2, "never"],
+		"object-curly-spacing": [2, "never"],
+		"dot-location": [2, "property"],
+		"spaced-comment": [1, "always", {"markers": ["////"], "exceptions": ["/"]}],
+		// The following rules are copied from `idiomatic`
+		"arrow-spacing": [2 , { "before": true, "after": true }],
+		"comma-spacing": [2, {"before": false, "after": true}],
+		"comma-style": [2, "last"],
+		"keyword-spacing": [2],
+		"linebreak-style": [2],
+		"no-eq-null": [0],
+		"no-func-assign": [2],
+		"no-mixed-spaces-and-tabs": [2],
+		"no-tabs": ["error", {"allowIndentationTabs": true }],
+		"no-spaced-func": [2],
+		"semi-spacing": [2, {"before": false, "after": true}],
+		"space-before-blocks": [2],
+		"space-before-function-paren": [2, "never"],
+		"space-infix-ops": [2],
+		"no-extra-semi": [1]
+	}
+}
