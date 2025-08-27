@@ -302,29 +302,69 @@ class FormaSintApp {
 	 */
 	setupSmoothScrolling() {
 		const navLinks = document.querySelectorAll('.nav__link[href^="#"]');
+		const navLogo = document.querySelector('.nav__logo[href="#"]');
 
+		// Handle navigation links
 		navLinks.forEach((link) => {
 			link.addEventListener('click', (event) => {
 				event.preventDefault();
 
 				const targetId = link.getAttribute('href');
-				const targetElement = document.querySelector(targetId);
 
-				if (targetElement) {
-					const headerHeight =
-						document.querySelector('.header')?.offsetHeight || 80;
-					const targetPosition = targetElement.offsetTop - headerHeight;
-
+				// Special case for HOME link (href="#")
+				if (targetId === '#') {
 					window.scrollTo({
-						top: targetPosition,
+						top: 0,
 						behavior: 'smooth',
 					});
+					// Update navigation state after scrolling to top
+					setTimeout(() => {
+						this.updateNavigationState();
+					}, 100);
+				} else {
+					const targetElement = document.querySelector(targetId);
 
-					// Close mobile menu if open
-					this.closeMobileMenu();
+					if (targetElement) {
+						const headerHeight =
+							document.querySelector('.header')?.offsetHeight || 80;
+						const targetPosition = targetElement.offsetTop - headerHeight;
+
+						window.scrollTo({
+							top: targetPosition,
+							behavior: 'smooth',
+						});
+
+						// Update navigation state after scrolling to section
+						setTimeout(() => {
+							this.updateNavigationState();
+						}, 500); // Longer delay for smooth scroll animation
+					}
 				}
+
+				// Close mobile menu if open
+				this.closeMobileMenu();
 			});
 		});
+
+		// Handle logo click (scroll to top)
+		if (navLogo) {
+			navLogo.addEventListener('click', (event) => {
+				event.preventDefault();
+
+				window.scrollTo({
+					top: 0,
+					behavior: 'smooth',
+				});
+
+				// Update navigation state after scrolling to top
+				setTimeout(() => {
+					this.updateNavigationState();
+				}, 100);
+
+				// Close mobile menu if open
+				this.closeMobileMenu();
+			});
+		}
 	}
 
 	/**
@@ -404,11 +444,52 @@ class FormaSintApp {
 	setupNavigation() {
 		const navLinks = document.querySelectorAll('.nav__link');
 		const sections = document.querySelectorAll('section[id]');
+		const homeLink = document.querySelector('.nav__link[href="#"]');
+		this.isHovering = false;
 
-		const updateActiveNav = () => {
-			const scrollPosition = window.scrollY + 100;
+		// Set HOME link as active initially
+		if (homeLink) {
+			homeLink.classList.add('active');
+		}
 
-			sections.forEach((section) => {
+		// Store references for use in other methods
+		this.navLinks = navLinks;
+		this.sections = sections;
+		this.homeLink = homeLink;
+
+		// Setup hover behavior for navigation links
+		navLinks.forEach((link) => {
+			link.addEventListener('mouseenter', () => {
+				this.isHovering = true;
+				// Remove active class from all links when hovering starts
+				navLinks.forEach((navLink) => {
+					navLink.classList.remove('active');
+				});
+			});
+
+			link.addEventListener('mouseleave', () => {
+				this.isHovering = false;
+				// Restore active state after hover ends
+				this.updateNavigationState();
+			});
+		});
+
+		window.addEventListener('scroll', this.throttle(this.updateNavigationState.bind(this), 100));
+	}
+
+	/**
+	 * Update navigation active state based on current scroll position
+	 */
+	updateNavigationState() {
+		// Don't update active states while hovering
+		if (this.isHovering) return;
+
+		const scrollPosition = window.scrollY + 100;
+		let activeSection = null;
+
+		// Check which section is currently in view
+		if (this.sections) {
+			this.sections.forEach((section) => {
 				const sectionTop = section.offsetTop;
 				const sectionHeight = section.offsetHeight;
 				const sectionId = section.getAttribute('id');
@@ -417,17 +498,30 @@ class FormaSintApp {
 					scrollPosition >= sectionTop &&
 					scrollPosition < sectionTop + sectionHeight
 				) {
-					navLinks.forEach((link) => {
-						link.classList.remove('active');
-						if (link.getAttribute('href') === `#${sectionId}`) {
-							link.classList.add('active');
-						}
-					});
+					activeSection = sectionId;
 				}
 			});
-		};
+		}
 
-		window.addEventListener('scroll', this.throttle(updateActiveNav, 100));
+		// Remove active class from all links
+		if (this.navLinks) {
+			this.navLinks.forEach((link) => {
+				link.classList.remove('active');
+			});
+		}
+
+		if (activeSection) {
+			// Set active class for the corresponding section link
+			const activeLink = document.querySelector(`.nav__link[href="#${activeSection}"]`);
+			if (activeLink) {
+				activeLink.classList.add('active');
+			}
+		} else {
+			// If no section is active (at top of page), activate HOME link
+			if (this.homeLink) {
+				this.homeLink.classList.add('active');
+			}
+		}
 	}
 
 	/**
