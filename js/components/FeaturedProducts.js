@@ -155,6 +155,8 @@ const FeaturedProducts = (() => {
 						sticky: false,
 					},
 					spaceBetween: -15,
+					slidesOffsetAfter: 460,
+
 				},
 				// Large mobile (480px+): Show 1.8 slides
 				480: {
@@ -163,6 +165,7 @@ const FeaturedProducts = (() => {
 						enabled: true,
 						sticky: false,
 					},
+
 				},
 				// Small tablet (640px+): Show 2.5 slides
 				640: {
@@ -171,6 +174,7 @@ const FeaturedProducts = (() => {
 						enabled: true,
 						sticky: false,
 					},
+
 				},
 				// Tablet (768px+): Show 3 full slides
 				768: {
@@ -178,6 +182,8 @@ const FeaturedProducts = (() => {
 					freeMode: {
 						enabled: false,
 					},
+					slidesOffsetAfter: 200,
+
 				},
 				// Desktop (1024px+): Show 4 full slides
 				1024: {
@@ -185,6 +191,7 @@ const FeaturedProducts = (() => {
 					freeMode: {
 						enabled: false,
 					},
+					slidesOffsetAfter: 84,
 				},
 			},
 
@@ -338,7 +345,7 @@ const FeaturedProducts = (() => {
 	// Public controller
 	const controller = {
 		// Initialize featured products component with Swiper
-		init(numberOfProducts = 16) {
+		init(numberOfProducts = 17) {
 			// Generate featured products dynamically
 			generateFeaturedProducts(numberOfProducts);
 
@@ -363,7 +370,7 @@ const FeaturedProducts = (() => {
 		},
 
 		// Regenerate featured products with specified count
-		regenerateProducts(numberOfProducts = 6) {
+		regenerateProducts(numberOfProducts = 17) {
 			generateFeaturedProducts(numberOfProducts);
 			// Re-initialize Swiper with new content
 			initializeSwiper();
