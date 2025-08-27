@@ -1,187 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forma'Sint - Premium Outdoor Gear</title>
-    <meta name="description" content="Discover premium outdoor gear and climbing equipment at Forma'Sint. Shop featured products and limited editions.">
-    <link rel="stylesheet" href="styles/index.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- Header Navigation -->
-    <header class="header" role="banner">
-        <nav class="nav" aria-label="Main navigation">
-            <div class="nav__brand">
-                <a href="#" class="nav__logo">
-                    <span class="nav__logo-icon">F</span>
-                    FORMASINT
-                </a>
-            </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Forma'Sint - Premium Outdoor Gear</title>
+		<meta
+			name="description"
+			content="Discover premium outdoor gear and climbing equipment at Forma'Sint. Shop featured products and limited editions."
+		/>
+		<link rel="stylesheet" href="styles/index.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body>
+		<!-- Header Navigation -->
+		<header class="header" role="banner">
+			<nav class="nav" aria-label="Main navigation">
+				<div class="nav__brand">
+					<a href="#" class="nav__logo">
+						<span class="nav__logo-icon">F</span>
+						FORMASINT
+					</a>
+				</div>
 
-            <ul class="nav__menu" role="menubar">
-                <li class="nav__item" role="none">
-                    <a href="#" class="nav__link" role="menuitem">HOME</a>
-                </li>
-                <li class="nav__item" role="none">
-                    <a href="#featured" class="nav__link" role="menuitem">FEATURED PRODUCTS</a>
-                </li>
-                <li class="nav__item" role="none">
-                    <a href="#products" class="nav__link" role="menuitem">PRODUCT LISTING</a>
-                </li>
-            </ul>
+				<ul class="nav__menu" role="menubar">
+					<li class="nav__item" role="none">
+						<a href="#" class="nav__link" role="menuitem">HOME</a>
+					</li>
+					<li class="nav__item" role="none">
+						<a href="#featured" class="nav__link" role="menuitem"
+							>FEATURED PRODUCTS</a
+						>
+					</li>
+					<li class="nav__item" role="none">
+						<a href="#products" class="nav__link" role="menuitem"
+							>PRODUCT LISTING</a
+						>
+					</li>
+				</ul>
 
-            <div class="nav__actions">
-                <a href="#" class="nav__developer-link">FRONTEND DEVELOPER</a>
-                <button class="nav__toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-                    <span class="nav__toggle-line"></span>
-                    <span class="nav__toggle-line"></span>
-                    <span class="nav__toggle-line"></span>
-                </button>
-            </div>
-        </nav>
-    </header>
+				<div class="nav__actions">
+					<a href="#" class="nav__developer-link">FRONTEND DEVELOPER</a>
+					<button
+						class="nav__toggle"
+						aria-label="Toggle navigation menu"
+						aria-expanded="false"
+					>
+						<span class="nav__toggle-line"></span>
+						<span class="nav__toggle-line"></span>
+						<span class="nav__toggle-line"></span>
+					</button>
+				</div>
+			</nav>
+		</header>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Hero Section -->
-        <section class="hero" aria-labelledby="hero-title">
-            <div class="hero__content">
-                <img id="hero-title" class="hero__title-image" src="assets/images/hero-text.webp" alt="Forma'Sint." loading="eager">
-                <div class="hero__image-container">
-                    <img src="assets/images/hero-climber.jpg" alt="Professional climber scaling an ice wall wearing orange Forma'Sint gear" class="hero__image">
-                </div>
-            </div>
-        </section>
+		<!-- Main Content -->
+		<main>
+			<!-- Hero Section -->
+			<section class="hero" aria-labelledby="hero-title             "               >
+				<div class="hero__content">
+					<img
+						id="hero-title"
+						class="hero__title-image"
+						src="assets/images/hero-text.webp"
+						alt="Forma'Sint."
+						loading="eager"
+					/>
+					<div class="hero__image-container">
+						<img
+							src="assets/images/hero-climber.jpg"
+							alt="Professional climber scaling an ice wall wearing orange Forma'Sint gear"
+							class="hero__image"
+						/>
+					</div>
+				</div>
+			</section>
 
-        <!-- Featured Products Section -->
-        <section class="featured" id="featured" aria-labelledby="featured-title">
-            <div class="container">
-                <header class="featured__header">
-                    <p class="featured__subtitle">FEATURED PRODUCTS</p>
-                    <h2 id="featured-title" class="featured__title">Browse featured</h2>
-                </header>
+			<!-- Featured Products Section -->
+			<section class="featured" id="featured" aria-labelledby="featured-title">
+				<div class="container">
+					<header class="featured__header">
+						<p class="featured__subtitle">FEATURED PRODUCTS</p>
+						<h2 id="featured-title" class="featured__title">Browse featured</h2>
+					</header>
 
-                <div class="products-grid products-grid--featured">
-                    <article class="product-card">
-                        <div class="product-card__badges">
-                            <span class="badge badge--bestseller">BESTSELLER</span>
-                        </div>
-                        <div class="product-card__image-container">
-                            <img src="images/dark-blue-jacket.jpg" alt="Dark blue alpine climbing jacket" class="product-card__image">
-                            <button class="product-card__favorite" aria-label="Add to favorites">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="product-card__content">
-                            <h3 class="product-card__title">Dark blue alpine climbing jacket</h3>
-                            <p class="product-card__price">€300.00 EUR</p>
-                        </div>
-                    </article>
+					<div class="products-grid products-grid--featured">
+						<article class="product-card">
+							<div class="product-card__badges">
+								<span class="badge badge--bestseller">BESTSELLER</span>
+							</div>
+							<div class="product-card__image-container">
+								<img
+									src="images/dark-blue-jacket.jpg"
+									alt="Dark blue alpine climbing jacket"
+									class="product-card__image"
+								/>
+								<button
+									class="product-card__favorite"
+									aria-label="Add to favorites"
+								>
+									<svg
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
+											stroke="currentColor"
+											stroke-width="2"
+											fill="none"
+										/>
+									</svg>
+								</button>
+							</div>
+							<div class="product-card__content">
+								<h3 class="product-card__title">
+									Dark blue alpine climbing jacket
+								</h3>
+								<p class="product-card__price">€300.00 EUR</p>
+							</div>
+						</article>
 
-                    <article class="product-card">
-                        <div class="product-card__badges">
-                            <span class="badge badge--limited">LIMITED EDITION</span>
-                        </div>
-                        <div class="product-card__image-container">
-                            <img src="images/orange-helmet.jpg" alt="Orange helmet for alpine climbing TOUNDRA" class="product-card__image">
-                            <button class="product-card__favorite" aria-label="Add to favorites">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="product-card__content">
-                            <h3 class="product-card__title">Orange helmet for alpine TOUNDRA</h3>
-                            <p class="product-card__price">€300.00 EUR</p>
-                        </div>
-                    </article>
+						<article class="product-card">
+							<div class="product-card__badges">
+								<span class="badge badge--limited">LIMITED EDITION</span>
+							</div>
+							<div class="product-card__image-container">
+								<img
+									src="images/orange-helmet.jpg"
+									alt="Orange helmet for alpine climbing TOUNDRA"
+									class="product-card__image"
+								/>
+								<button
+									class="product-card__favorite"
+									aria-label="Add to favorites"
+								>
+									<svg
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
+											stroke="currentColor"
+											stroke-width="2"
+											fill="none"
+										/>
+									</svg>
+								</button>
+							</div>
+							<div class="product-card__content">
+								<h3 class="product-card__title">
+									Orange helmet for alpine TOUNDRA
+								</h3>
+								<p class="product-card__price">€300.00 EUR</p>
+							</div>
+						</article>
 
-                    <article class="product-card">
-                        <div class="product-card__image-container">
-                            <img src="images/grey-jacket.jpg" alt="Grey alpine climbing jacket" class="product-card__image">
-                            <button class="product-card__favorite" aria-label="Add to favorites">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="product-card__content">
-                            <h3 class="product-card__title">Grey alpine climbing jacket</h3>
-                            <p class="product-card__price">€300.00 EUR</p>
-                        </div>
-                    </article>
+						<article class="product-card">
+							<div class="product-card__image-container">
+								<img
+									src="images/grey-jacket.jpg"
+									alt="Grey alpine climbing jacket"
+									class="product-card__image"
+								/>
+								<button
+									class="product-card__favorite"
+									aria-label="Add to favorites"
+								>
+									<svg
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
+											stroke="currentColor"
+											stroke-width="2"
+											fill="none"
+										/>
+									</svg>
+								</button>
+							</div>
+							<div class="product-card__content">
+								<h3 class="product-card__title">Grey alpine climbing jacket</h3>
+								<p class="product-card__price">€300.00 EUR</p>
+							</div>
+						</article>
 
-                    <article class="product-card">
-                        <div class="product-card__badges">
-                            <span class="badge badge--bestseller">BESTSELLER</span>
-                        </div>
-                        <div class="product-card__image-container">
-                            <img src="images/grey-alpine-jacket.jpg" alt="Grey alpine climbing jacket" class="product-card__image">
-                            <button class="product-card__favorite" aria-label="Add to favorites">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="product-card__content">
-                            <h3 class="product-card__title">Grey alpine climbing jacket</h3>
-                            <p class="product-card__price">€300.00 EUR</p>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
+						<article class="product-card">
+							<div class="product-card__badges">
+								<span class="badge badge--bestseller">BESTSELLER</span>
+							</div>
+							<div class="product-card__image-container">
+								<img
+									src="images/grey-alpine-jacket.jpg"
+									alt="Grey alpine climbing jacket"
+									class="product-card__image"
+								/>
+								<button
+									class="product-card__favorite"
+									aria-label="Add to favorites"
+								>
+									<svg
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<path
+											d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
+											stroke="currentColor"
+											stroke-width="2"
+											fill="none"
+										/>
+									</svg>
+								</button>
+							</div>
+							<div class="product-card__content">
+								<h3 class="product-card__title">Grey alpine climbing jacket</h3>
+								<p class="product-card__price">€300.00 EUR</p>
+							</div>
+						</article>
+					</div>
+				</div>
+			</section>
 
-        <!-- Products Section -->
-        <section class="products" id="products" aria-labelledby="products-title">
-            <div class="container">
-                <div class="products__controls">
-                    <div class="products__pagination">
-                        <span class="products__pagination-text">NUMBER OF PRODUCTS PER PAGE:</span>
-                        <select class="products__pagination-select" aria-label="Products per page">
-                            <option value="8">8</option>
-                            <option value="14" selected>14</option>
-                            <option value="16">16</option>
-                            <option value="24">24</option>
-                            <option value="32">32</option>
-                        </select>
-                    </div>
-                    <div class="products__loading" style="display: none;">
-                        <span>Loading products...</span>
-                    </div>
-                </div>
+			<!-- Products Section -->
+			<section class="products" id="products" aria-labelledby="products-title">
+				<div class="container">
+					<div class="products__controls">
+						<div class="products__pagination">
+							<span class="products__pagination-text"
+								>NUMBER OF PRODUCTS PER PAGE:</span
+							>
+							<select
+								class="products__pagination-select"
+								aria-label="Products per page"
+							>
+								<option value="8">8</option>
+								<option value="14" selected>14</option>
+								<option value="16">16</option>
+								<option value="24">24</option>
+								<option value="32">32</option>
+							</select>
+						</div>
+						<div class="products__loading" style="display: none">
+							<span>Loading products...</span>
+						</div>
+					</div>
 
-                <div class="products-grid products-grid--main" id="products-grid">
-                    <!-- Products will be loaded dynamically from API -->
-                    <!-- Promotional Banner -->
-                    <div class="promo-banner">
-                        <div class="promo-banner__content">
-                            <p class="promo-banner__brand">FORMA'SINT</p>
-                            <h3 class="promo-banner__title">You'll look and feel like the champion.</h3>
-                            <button class="promo-banner__cta">CLICK THIS OUT →</button>
-                        </div>
-                        <div class="promo-banner__image-container">
-                            <img src="assets/images/promo-climber.jpg" alt="Climber in action wearing Forma'Sint gear" class="promo-banner__image">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+					<div class="products-grid products-grid--main" id="products-grid">
+						<!-- Products will be loaded dynamically from API -->
+						<!-- Promotional Banner -->
+						<div class="promo-banner">
+							<div class="promo-banner__content">
+								<p class="promo-banner__brand">FORMA'SINT</p>
+								<h3 class="promo-banner__title">
+									You'll look and feel like the champion.
+								</h3>
+								<button class="promo-banner__cta">CLICK THIS OUT →</button>
+							</div>
+							<div class="promo-banner__image-container">
+								<img
+									src="assets/images/promo-climber.jpg"
+									alt="Climber in action wearing Forma'Sint gear"
+									class="promo-banner__image"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
 
-    <!-- Product Modal -->
-    <dialog class="product-modal" id="product-modal">
-        <button class="product-modal__close" id="close-modal" aria-label="Close modal">✖</button>
-        <div class="product-modal__id" id="modal-id"></div>
-        <img class="product-modal__image" id="modal-image" src="" alt="">
-    </dialog>
+		<!-- Product Modal -->
+		<dialog class="product-modal" id="product-modal">
+			<button
+				class="product-modal__close"
+				id="close-modal"
+				aria-label="Close modal"
+			>
+				✖
+			</button>
+			<div class="product-modal__id" id="modal-id"></div>
+			<img class="product-modal__image" id="modal-image" src="" alt="" />
+		</dialog>
 
-    <!-- JavaScript -->
-    <script src="js/main.js"></script>
-</body>
+		<!-- JavaScript -->
+		<script src="js/main.js"></script>
+	</body>
 </html>
