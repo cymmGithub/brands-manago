@@ -44,6 +44,8 @@
 	--color-accent-hover: #ff5252;
 	--color-favorite: #ff6b6b;
 	--color-error: #dc3545;
+	--color-badge-bestseller: #D9D6B0;
+	--color-badge-limited: #D4B0D9;
 
 	/* Gradients */
 	--gradient-primary: linear-gradient(135deg, #4facfe 0%, #00c4f7 100%);

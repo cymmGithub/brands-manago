@@ -17,8 +17,7 @@ const FormaSintApp = (() => {
 		// Setup lazy loading for images
 		setupLazyLoading();
 
-		// Initialize product card stagger animations
-		ProductGrid.observeElement(document.querySelector('.featured'));
+		// Initialize product grid stagger animations for products section only
 		ProductGrid.observeElement(document.querySelector('.products'));
 	}
 
@@ -111,6 +110,7 @@ const FormaSintApp = (() => {
 			// Initialize all services and components
 			NavigationService.init();
 			ScrollService.init();
+			FeaturedProducts.init();
 			ProductGrid.init();
 
 			setupEventListeners();
@@ -147,23 +147,6 @@ const FormaSintApp = (() => {
 
 // Initialize the application
 FormaSintApp.init();
-
-// Load favorite states when page is loaded
-document.addEventListener('DOMContentLoaded', () => {
-	setTimeout(() => {
-		// Load favorite states for any existing favorite buttons
-		const favoriteButtons = document.querySelectorAll('.product-card__favorite');
-		favoriteButtons.forEach((button) => {
-			const productCard = button.closest('.product-card');
-			const productId = productCard?.querySelector('.product-card__id')?.textContent;
-
-			if (productId && FavoriteStore.isFavorite(productId)) {
-				button.classList.add('is-favorite');
-				button.setAttribute('aria-label', 'Remove from favorites');
-			}
-		});
-	}, 100);
-});
 
 // Export for potential module usage
 if (typeof module !== 'undefined' && module.exports) {
