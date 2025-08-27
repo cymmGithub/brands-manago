@@ -123,36 +123,80 @@ const FeaturedProducts = (() => {
 
 		// Initialize Swiper
 		swiperInstance = new Swiper(swiperContainer, {
-			// Scrollbar
+			// Use 'auto' to let CSS handle width, prevents cutting off
+			slidesPerView: 'auto',
+
+			// Positive spacing for better mobile experience
+			spaceBetween: 16,
+
+			// Enable free mode for smooth mobile scrolling
+			freeMode: {
+				enabled: true,
+				sticky: false,
+				momentumRatio: 0.25,
+				momentumVelocityRatio: 0.25,
+			},
+
+			// Mobile-optimized touch settings
+			grabCursor: true,
+			touchRatio: 1,
+			touchAngle: 45,
+			threshold: 5,
+			longSwipesRatio: 0.5,
+			longSwipesMs: 300,
+			spaceBetween: -8,
+
+			breakpoints: {
+				// Small mobile (320px+): Show 1.2 slides to indicate more content
+				320: {
+					slidesPerView: 1.2,
+					freeMode: {
+						enabled: true,
+						sticky: false,
+					},
+					spaceBetween: -15,
+				},
+				// Large mobile (480px+): Show 1.8 slides
+				480: {
+					slidesPerView: 1.8,
+					freeMode: {
+						enabled: true,
+						sticky: false,
+					},
+				},
+				// Small tablet (640px+): Show 2.5 slides
+				640: {
+					slidesPerView: 2.5,
+					freeMode: {
+						enabled: true,
+						sticky: false,
+					},
+				},
+				// Tablet (768px+): Show 3 full slides
+				768: {
+					slidesPerView: 3,
+					freeMode: {
+						enabled: false,
+					},
+				},
+				// Desktop (1024px+): Show 4 full slides
+				1024: {
+					slidesPerView: 4,
+					freeMode: {
+						enabled: false,
+					},
+				},
+			},
+
+			// Scrollbar for mobile navigation feedback
 			scrollbar: {
 				el: '.swiper-scrollbar',
 				draggable: true,
-				dragSize: 'auto', // Fixed drag size in pixels (instead of 'auto')
-				// Alternative options:
-				// dragSize: 'auto', // Default - proportional to content
-				// snapOnRelease: true, // Snap to nearest slide when released
+				dragSize: 'auto',
+				hide: false,
 			},
 
-			// Basic parameters
-			slidesPerView: 1,
-			spaceBetween: 20,
-
-			// Responsive breakpoints
-			breakpoints: {
-				640: {
-					slidesPerView: 2,
-				},
-				968: {
-					slidesPerView: 3,
-					spaceBetween: 0,
-				},
-				1200: {
-					slidesPerView: 4,
-					spaceBetween: 0,
-				},
-			},
-
-			// Navigation arrows
+			// Navigation arrows (hidden on mobile via CSS)
 			navigation: {
 				nextEl: '.swiper-button-next',
 				prevEl: '.swiper-button-prev',
@@ -160,21 +204,32 @@ const FeaturedProducts = (() => {
 				disabledClass: 'swiper-button-disabled',
 			},
 
-			// Watch for overflow - hides navigation when not needed
+			// Additional settings
+			slidesPerGroup: 1,
+			centeredSlides: false,
+			loop: false,
 			watchOverflow: true,
+			preventInteractionOnTransition: false,
+			allowTouchMove: true,
 
-			// Effects
+			// Optimized performance
 			effect: 'slide',
-			speed: 600,
+			speed: 300,
+			resistanceRatio: 0.85,
 
 			// Events
 			on: {
 				init() {
-					// Custom initialization logic
 					console.log('Featured Products Swiper initialized');
+					// Ensure proper slide widths are set
+					this.update();
 				},
 				slideChange() {
 					// Update any states when slide changes
+				},
+				resize() {
+					// Update on window resize
+					this.update();
 				},
 			},
 		});

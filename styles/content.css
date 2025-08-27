@@ -145,12 +145,12 @@
 	transition: var(--transition-normal);
 }
 
-	.nav__developer-icon {
-		width: 24px;
-		height: 24px;
-		margin-left: 8px;
-		vertical-align: middle;
-	}
+.nav__developer-icon {
+	width: 24px;
+	height: 24px;
+	margin-left: 8px;
+	vertical-align: middle;
+}
 
 .nav__developer-link:hover {
 	color: var(--color-gray-600);
@@ -280,7 +280,8 @@
 	z-index: 1000;
 	opacity: 0;
 	visibility: hidden;
-	transition: opacity var(--transition-normal), visibility var(--transition-normal);
+	transition: opacity var(--transition-normal),
+		visibility var(--transition-normal);
 }
 
 .mobile-menu-backdrop.mobile-menu-backdrop--open {
@@ -413,16 +414,17 @@
 }
 
 .featured-products-swiper .swiper-slide {
-	width: auto;
+	/* Use consistent width calculation that matches grid */
 	height: auto;
 	display: flex;
 	justify-content: center;
+	flex-shrink: 0;
 }
 
 .featured-products-swiper .swiper-slide .product-card {
 	width: 100%;
-	max-width: 350px;
 	margin: 0;
+	/* Remove max-width to let it fill the slide */
 }
 
 /* Swiper Navigation */
@@ -551,6 +553,7 @@
 }
 
 .product-card {
+	cursor: pointer;
 	background: var(--color-white);
 	border-radius: var(--radius-lg);
 	overflow: hidden;
@@ -870,6 +873,13 @@
    Responsive Design
    =========================== */
 
+@media (min-width: 1024px) {
+	/* Keep featured products consistent with main grid */
+	.featured-products-swiper .swiper-slide {
+		width: calc((100% - (3 * var(--space-lg))) / 4) !important;
+	}
+}
+
 @media (max-width: 1024px) {
 	.nav {
 		padding: var(--space-md);
@@ -877,10 +887,6 @@
 
 	.hero__title {
 		font-size: clamp(2.5rem, 6vw, 6rem);
-	}
-
-	.products-grid--featured {
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 	}
 
 	.promo-banner {
@@ -955,11 +961,6 @@
 		flex-direction: column;
 		gap: var(--space-sm);
 		text-align: center;
-	}
-
-	.products-grid--featured {
-		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-		gap: var(--space-lg);
 	}
 
 	.products-grid--main {
@@ -1044,11 +1045,6 @@
 
 	.featured__header {
 		margin-bottom: var(--space-xl);
-	}
-
-	.products-grid--featured {
-		grid-template-columns: 1fr;
-		gap: var(--space-md);
 	}
 
 	.products-grid--main {
