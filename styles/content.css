@@ -724,21 +724,13 @@
 	right: var(--space-md);
 	width: 32px;
 	height: 32px;
+	background: none;
 	border: none;
-	background: rgba(0, 0, 0, 0.7);
-	color: var(--color-white);
-	border-radius: var(--radius-circle);
+	padding: 0;
 	cursor: pointer;
-	font-size: var(--font-size-base);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	z-index: 10;
-	transition: background-color var(--transition-fast);
-}
-
-.product-modal__close:hover {
-	background: rgba(0, 0, 0, 0.9);
 }
 
 .product-modal__id {
