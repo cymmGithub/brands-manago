@@ -107,31 +107,11 @@ const ProductGrid = (() => {
 
 		// Show loading state
 		showLoading(isLoading) {
-			const loadingElement = document.querySelector('.products__loading');
 			const productGrid = document.getElementById('products-grid');
-
-			if (loadingElement) {
-				loadingElement.style.display = isLoading ? 'block' : 'none';
-			}
 
 			if (productGrid) {
 				productGrid.style.opacity = isLoading ? '0.5' : '1';
 				productGrid.style.pointerEvents = isLoading ? 'none' : 'auto';
-			}
-		},
-
-		// Show error message
-		showError(message) {
-			const productGrid = document.getElementById('products-grid');
-			if (productGrid && productGrid.children.length === 0) {
-				productGrid.innerHTML = `
-                    <div class="error-message" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                        <p style="color: #dc3545; font-size: 1.1rem; margin-bottom: 1rem;">${message}</p>
-                        <button onclick="FormaSintApp.loadProducts()" style="background: #1a1a1a; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
-                            Try Again
-                        </button>
-                    </div>
-                `;
 			}
 		},
 	};

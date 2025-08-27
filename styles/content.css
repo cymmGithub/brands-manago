@@ -485,14 +485,6 @@
 	background-image: url('../assets/icons/icon-arrow-sm-left-white.svg');
 }
 
-.featured-products-swiper .swiper-button-prev {
-	left: 10px;
-}
-
-.featured-products-swiper .swiper-button-next {
-	right: 10px;
-}
-
 /* Navigation button states */
 .featured-products-swiper .swiper-button-disabled {
 	display: none;
@@ -508,23 +500,6 @@
 	margin-top: var(--space-sm);
 }
 
-.featured-products-swiper .swiper-pagination-bullet {
-	background: var(--color-gray-300);
-	opacity: 1;
-	margin: 0 var(--space-xs);
-	transition: var(--transition-all);
-}
-
-.featured-products-swiper .swiper-pagination-bullet-active {
-	background: var(--color-black);
-	transform: scale(1.2);
-}
-
-.featured-products-swiper .swiper-pagination-bullet:hover {
-	background: var(--color-gray-600);
-	transform: scale(1.1);
-}
-
 /* Swiper Scrollbar */
 .featured-products-swiper .swiper-scrollbar,
 .featured-products-swiper .swiper-scrollbar-horizontal {
@@ -535,14 +510,6 @@
 	right: 0 !important;
 	width: 100% !important;
 	margin: var(--space-md) 0 0 0;
-}
-
-.featured-products-swiper .swiper-scrollbar-drag {
-	background: var(--color-black);
-	border-radius: var(--radius-full);
-	height: 100% !important;
-	cursor: pointer;
-	transition: var(--transition-all);
 }
 
 .products-grid--main {

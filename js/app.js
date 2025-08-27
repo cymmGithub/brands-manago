@@ -233,22 +233,8 @@ const FormaSintApp = (() => {
 
 		// Load products from API
 		async loadProducts() {
-			try {
-				ProductGrid.showLoading(true);
-
 				const result = await ProductStore.fetchProducts();
 				ProductGrid.render(result.products);
-
-			} catch (error) {
-				ProductGrid.showError('Failed to load products. Please try again.');
-			} finally {
-				ProductGrid.showLoading(false);
-			}
-		},
-
-		// Utility method for error handling
-		showError(message) {
-			ProductGrid.showError(message);
 		},
 	};
 
@@ -257,11 +243,3 @@ const FormaSintApp = (() => {
 
 // Initialize the application
 FormaSintApp.init();
-
-// Export for potential module usage
-if (typeof module !== 'undefined' && module.exports) {
-	module.exports = FormaSintApp;
-}
-
-// Global exposure for debugging and external access
-window.FormaSintApp = FormaSintApp;
