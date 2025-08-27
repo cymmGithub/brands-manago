@@ -42,11 +42,40 @@ class FormaSintApp {
 			this.throttle(this.handleResize.bind(this), 250),
 		);
 
+		// ESC key to close mobile menu
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') {
+				const mobileMenu = document.getElementById('mobile-menu');
+				if (mobileMenu && mobileMenu.classList.contains('mobile-menu--open')) {
+					this.closeMobileMenu();
+				}
+			}
+		});
+
 		// Navigation toggle
 		const navToggle = document.querySelector('.nav__toggle');
+		const mobileMenuClose = document.querySelector('.mobile-menu__close');
+		const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+
 		if (navToggle) {
-			navToggle.addEventListener('click', this.toggleMobileMenu.bind(this));
+			navToggle.addEventListener('click', this.openMobileMenu.bind(this));
 		}
+
+		if (mobileMenuClose) {
+			mobileMenuClose.addEventListener('click', this.closeMobileMenu.bind(this));
+		}
+
+		if (mobileMenuBackdrop) {
+			mobileMenuBackdrop.addEventListener('click', this.closeMobileMenu.bind(this));
+		}
+
+		// Mobile menu links
+		const mobileMenuLinks = document.querySelectorAll('.mobile-menu__link');
+		mobileMenuLinks.forEach((link) => {
+			link.addEventListener('click', () => {
+				this.closeMobileMenu();
+			});
+		});
 
 		// Product card favorites
 		const favoriteButtons = document.querySelectorAll(
@@ -219,33 +248,49 @@ class FormaSintApp {
 	}
 
 	/**
-	 * Toggle mobile navigation menu
+	 * Open mobile navigation menu
 	 */
-	toggleMobileMenu() {
-		const nav = document.querySelector('.nav');
+	openMobileMenu() {
+		const mobileMenu = document.getElementById('mobile-menu');
+		const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
 		const navToggle = document.querySelector('.nav__toggle');
-		const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
 
-		nav?.classList.toggle('nav--mobile-open');
-		navToggle?.setAttribute('aria-expanded', (!isExpanded).toString());
+		if (mobileMenu) {
+			mobileMenu.classList.add('mobile-menu--open');
+		}
+
+		if (mobileMenuBackdrop) {
+			mobileMenuBackdrop.classList.add('mobile-menu-backdrop--open');
+		}
+
+		if (navToggle) {
+			navToggle.setAttribute('aria-expanded', 'true');
+		}
 
 		// Prevent body scroll when menu is open
-		if (!isExpanded) {
-			document.body.style.overflow = 'hidden';
-		} else {
-			document.body.style.overflow = '';
-		}
+		document.body.style.overflow = 'hidden';
 	}
 
 	/**
 	 * Close mobile menu
 	 */
 	closeMobileMenu() {
-		const nav = document.querySelector('.nav');
+		const mobileMenu = document.getElementById('mobile-menu');
+		const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
 		const navToggle = document.querySelector('.nav__toggle');
 
-		nav?.classList.remove('nav--mobile-open');
-		navToggle?.setAttribute('aria-expanded', 'false');
+		if (mobileMenu) {
+			mobileMenu.classList.remove('mobile-menu--open');
+		}
+
+		if (mobileMenuBackdrop) {
+			mobileMenuBackdrop.classList.remove('mobile-menu-backdrop--open');
+		}
+
+		if (navToggle) {
+			navToggle.setAttribute('aria-expanded', 'false');
+		}
+
 		document.body.style.overflow = '';
 	}
 
@@ -574,23 +619,38 @@ class FormaSintApp {
 			});
 		}
 
-		// Remove active class from all links
+		// Remove active class from all nav links
 		if (this.navLinks) {
 			this.navLinks.forEach((link) => {
 				link.classList.remove('active');
 			});
 		}
 
+		// Remove active class from all mobile menu links
+		const mobileMenuLinks = document.querySelectorAll('.mobile-menu__link');
+		mobileMenuLinks.forEach((link) => {
+			link.classList.remove('active');
+		});
+
 		if (activeSection) {
 			// Set active class for the corresponding section link
 			const activeLink = document.querySelector(`.nav__link[href="#${activeSection}"]`);
+			const activeMobileLink = document.querySelector(`.mobile-menu__link[href="#${activeSection}"]`);
+
 			if (activeLink) {
 				activeLink.classList.add('active');
+			}
+			if (activeMobileLink) {
+				activeMobileLink.classList.add('active');
 			}
 		} else {
 			// If no section is active (at top of page), activate HOME link
 			if (this.homeLink) {
 				this.homeLink.classList.add('active');
+			}
+			const homeMobileLink = document.querySelector('.mobile-menu__link[href="#"]');
+			if (homeMobileLink) {
+				homeMobileLink.classList.add('active');
 			}
 		}
 	}
@@ -621,23 +681,38 @@ class FormaSintApp {
 			});
 		}
 
-		// Remove active class from all links
+		// Remove active class from all nav links
 		if (this.navLinks) {
 			this.navLinks.forEach((link) => {
 				link.classList.remove('active');
 			});
 		}
 
+		// Remove active class from all mobile menu links
+		const mobileMenuLinks = document.querySelectorAll('.mobile-menu__link');
+		mobileMenuLinks.forEach((link) => {
+			link.classList.remove('active');
+		});
+
 		if (activeSection) {
 			// Set active class for the corresponding section link
 			const activeLink = document.querySelector(`.nav__link[href="#${activeSection}"]`);
+			const activeMobileLink = document.querySelector(`.mobile-menu__link[href="#${activeSection}"]`);
+
 			if (activeLink) {
 				activeLink.classList.add('active');
+			}
+			if (activeMobileLink) {
+				activeMobileLink.classList.add('active');
 			}
 		} else {
 			// If no section is active (at top of page), activate HOME link
 			if (this.homeLink) {
 				this.homeLink.classList.add('active');
+			}
+			const homeMobileLink = document.querySelector('.mobile-menu__link[href="#"]');
+			if (homeMobileLink) {
+				homeMobileLink.classList.add('active');
 			}
 		}
 	}

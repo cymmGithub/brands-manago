@@ -8,6 +8,8 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+	/* Remove blue tap highlight on mobile */
+	-webkit-tap-highlight-color: transparent;
 }
 
 /* HTML & Body */

@@ -52,20 +52,51 @@
 				</ul>
 
 				<div class="nav__actions">
-					<img src="assets/images/icon-user.svg" alt="User Icon" class="nav__developer-icon" />
+					<img
+						src="assets/images/icon-user.svg"
+						alt="User Icon"
+						class="nav__developer-icon"
+					/>
 					<a href="#" class="nav__developer-link">FRONTEND DEVELOPER</a>
 					<button
 						class="nav__toggle"
 						aria-label="Toggle navigation menu"
 						aria-expanded="false"
 					>
-						<span class="nav__toggle-line"></span>
-						<span class="nav__toggle-line"></span>
-						<span class="nav__toggle-line"></span>
+						<span class="nav__toggle-lines">
+							<span class="nav__toggle-line"></span>
+							<span class="nav__toggle-line"></span>
+							<span class="nav__toggle-line"></span>
+						</span>
+						<span class="nav__menu-text">MENU</span>
 					</button>
 				</div>
 			</nav>
 		</header>
+
+		<!-- Mobile Menu Backdrop -->
+		<div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
+
+		<!-- Mobile Menu Overlay -->
+		<div class="mobile-menu" id="mobile-menu">
+			<div class="mobile-menu__header">
+				<button class="mobile-menu__close" aria-label="Close navigation menu">
+					<img src="assets/images/icon-close.svg" alt="Close" class="mobile-menu__close-icon" />
+					<span class="mobile-menu__close-text">CLOSE</span>
+				</button>
+			</div>
+			<ul class="mobile-menu__list" role="menubar">
+				<li class="mobile-menu__item" role="none">
+					<a href="#" class="mobile-menu__link" role="menuitem">HOME</a>
+				</li>
+				<li class="mobile-menu__item" role="none">
+					<a href="#featured" class="mobile-menu__link" role="menuitem">FEATURED PRODUCTS</a>
+				</li>
+				<li class="mobile-menu__item" role="none">
+					<a href="#products" class="mobile-menu__link" role="menuitem">PRODUCT LISTING</a>
+				</li>
+			</ul>
+		</div>
 
 		<!-- Main Content -->
 		<main>

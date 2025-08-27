@@ -158,43 +158,134 @@
 
 .nav__toggle {
 	display: none;
+	flex-direction: row;
+	align-items: center;
+	gap: var(--space-sm);
+	padding: var(--space-xs);
+	background: none;
+	border: none;
+	cursor: pointer;
+	transition: var(--transition-normal);
+}
+
+.nav__toggle:hover {
+	opacity: 0.7;
+}
+
+.nav__toggle-lines {
+	display: flex;
 	flex-direction: column;
-	gap: 4px;
-	padding: var(--space-sm);
+	gap: 2.5px;
 }
 
 .nav__toggle-line {
-	width: 20px;
-	height: 2px;
+	width: 15px;
+	height: 1.8px;
 	background: var(--color-black);
 	transition: var(--transition-all);
 }
 
+.nav__menu-text {
+	display: none;
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: var(--letter-spacing-wide);
+	text-transform: uppercase;
+	color: var(--color-black);
+}
+
 /* Mobile Navigation */
-.nav--mobile-open .nav__menu {
-	display: flex;
+.mobile-menu {
 	position: fixed;
-	top: var(--header-height-mobile);
-	left: 0;
-	right: 0;
-	background: rgba(255, 255, 255, var(--opacity-backdrop-strong));
-	backdrop-filter: var(--backdrop-blur-strong);
+	top: 0;
+	right: -100%;
+	width: 100%;
+	max-width: 350px;
+	height: 100vh;
+	background: var(--color-white);
+	z-index: 1001;
+	display: flex;
 	flex-direction: column;
-	padding: var(--space-xl);
-	box-shadow: var(--shadow-xl);
-	z-index: 999;
+	transition: right var(--transition-normal);
 }
 
-.nav--mobile-open .nav__toggle-line:nth-child(1) {
-	transform: rotate(45deg) translate(5px, 5px);
+.mobile-menu.mobile-menu--open {
+	right: 0;
 }
 
-.nav--mobile-open .nav__toggle-line:nth-child(2) {
+.mobile-menu__header {
+	padding: var(--space-lg) var(--space-xl);
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.mobile-menu__close {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	background: none;
+	border: none;
+	font-size: var(--font-size-xl);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: var(--letter-spacing-wide);
+	text-transform: uppercase;
+	color: var(--color-black);
+	cursor: pointer;
+	padding: var(--space-xs);
+	transition: var(--transition-normal);
+}
+
+.mobile-menu__close:hover {
+	color: var(--color-gray-600);
+}
+
+.mobile-menu__close-icon {
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+}
+
+.mobile-menu__list {
+	flex: 1;
+	padding: var(--space-4xl) var(--space-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+}
+
+.mobile-menu__item {
+	list-style: none;
+}
+
+.mobile-menu__link {
+	display: block;
+	font-size: var(--font-size-xl);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: var(--letter-spacing-wide);
+	text-transform: uppercase;
+	text-decoration: none;
+	padding: var(--space-sm) 0;
+	transition: var(--transition-normal);
+}
+
+/* Mobile Menu Backdrop */
+.mobile-menu-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	background: rgba(0, 0, 0, var(--opacity-overlay));
+	z-index: 1000;
 	opacity: 0;
+	visibility: hidden;
+	transition: opacity var(--transition-normal), visibility var(--transition-normal);
 }
 
-.nav--mobile-open .nav__toggle-line:nth-child(3) {
-	transform: rotate(-45deg) translate(7px, -6px);
+.mobile-menu-backdrop.mobile-menu-backdrop--open {
+	opacity: 1;
+	visibility: visible;
 }
 
 /* ===========================
@@ -708,7 +799,7 @@
 	}
 }
 
-@media (max-width: 768px) {
+@media (max-width: 860px) {
 	.nav__menu {
 		display: none;
 	}
@@ -717,10 +808,29 @@
 		display: flex;
 	}
 
+	.nav__menu-text {
+		display: inline-block;
+	}
+
 	.nav__developer-link {
 		display: none;
 	}
 
+	.nav__developer-icon {
+		display: none;
+	}
+
+	.nav__idomods {
+		display: none;
+	}
+
+	.nav__actions {
+		gap: 0;
+		align-items: center;
+	}
+}
+
+@media (max-width: 768px) {
 	.hero {
 		margin-top: var(--header-height-mobile);
 		padding: var(--space-md) 0;
@@ -796,7 +906,23 @@
 
 @media (max-width: 480px) {
 	.nav {
-		padding: var(--space-sm);
+		padding: var(--space-sm) var(--space-md);
+	}
+
+	.nav__menu-text {
+		display: inline-block;
+	}
+
+	.nav__idomods {
+		display: none;
+	}
+
+	.nav__developer-link {
+		display: none;
+	}
+
+	.nav__developer-icon {
+		display: none;
 	}
 
 	.container {
