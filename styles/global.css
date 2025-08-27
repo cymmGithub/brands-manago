@@ -1,0 +1,211 @@
+/* ===========================
+   Global Styles & CSS Reset
+   Base HTML element styling and resets
+   =========================== */
+
+/* CSS Reset */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+/* HTML & Body */
+html {
+	font-size: var(--font-size-base);
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: var(--font-family-primary);
+	line-height: var(--line-height-base);
+	color: var(--color-black);
+	background-color: var(--color-white);
+	overflow-x: hidden;
+}
+
+/* Media elements */
+img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+/* Interactive elements */
+button {
+	border: none;
+	background: none;
+	cursor: pointer;
+	font-family: inherit;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+/* Lists */
+ul {
+	list-style: none;
+}
+
+/* Form elements */
+input,
+select,
+textarea {
+	font-family: inherit;
+}
+
+/* ===========================
+   Utility Classes
+   =========================== */
+
+.container {
+	max-width: var(--max-width-container);
+	margin: 0 auto;
+	padding: 0 var(--space-lg);
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* ===========================
+   Animation Keyframes
+   =========================== */
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes charFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes favoriteHeartbeat {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.2); }
+	100% { transform: scale(1); }
+}
+
+@keyframes ctaPulse {
+	0% { transform: scale(1); }
+	50% { transform: scale(0.95); }
+	100% { transform: scale(1); }
+}
+
+@keyframes slideInUp {
+	from {
+		opacity: 0;
+		transform: translateY(40px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+/* ===========================
+   Loading States
+   =========================== */
+
+.products__loading {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: var(--space-xl);
+	font-size: var(--font-size-base);
+	color: var(--color-gray-500);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-sm);
+}
+
+.products__loading::before {
+	content: '';
+	width: 20px;
+	height: 20px;
+	border: 2px solid var(--color-gray-300);
+	border-top: 2px solid var(--color-black);
+	border-radius: var(--radius-circle);
+	animation: spin 1s linear infinite;
+}
+
+/* ===========================
+   Error States
+   =========================== */
+
+.error-message {
+	text-align: center;
+	padding: var(--space-xl);
+	color: var(--color-error);
+}
+
+.error-message button {
+	background: var(--color-black);
+	color: var(--color-white);
+	border: none;
+	padding: var(--space-sm) var(--space-md);
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	transition: var(--transition-normal);
+}
+
+.error-message button:hover {
+	background: var(--color-gray-600);
+}
+
+/* ===========================
+   Print Styles
+   =========================== */
+
+@media print {
+	.header,
+	.nav__toggle,
+	.product-card__favorite,
+	.promo-banner__cta {
+		display: none;
+	}
+
+	.hero {
+		margin-top: 0;
+	}
+
+	body {
+		font-size: 12pt;
+		line-height: 1.4;
+	}
+
+	.product-card {
+		break-inside: avoid;
+		box-shadow: none;
+		border: 1px solid var(--color-gray-400);
+	}
+}
