@@ -44,15 +44,14 @@ const FeaturedProducts = (() => {
 		const badgesHtml = productData.badges.length > 0
 			? `<div class="product-card__badges">
 				${productData.badges.map(badge =>
-		`<span class="badge badge--${badge.toLowerCase().replace(' ', '')}">${badge}</span>`,
+		`<span class="badge badge--${badge.toLowerCase().replace(' ', '-')}"">${badge}</span>`,
 	).join('')}
 			</div>`
 			: '';
 
 		return `
 			<div class="swiper-slide">
-				<article class="product-card">
-					<div class="product-card__id">ID: ${productData.id}</div>
+				<article class="product-card" data-product-id="${productData.id}">
 					${badgesHtml}
 					<div class="product-card__image-container">
 						<img
@@ -116,28 +115,32 @@ const FeaturedProducts = (() => {
 
 		// Initialize Swiper
 		swiperInstance = new Swiper(swiperContainer, {
+			// Scrollbar
+			scrollbar: {
+				el: '.swiper-scrollbar',
+				draggable: true,
+				dragSize: 100, // Fixed drag size in pixels (instead of 'auto')
+				// Alternative options:
+				// dragSize: 'auto', // Default - proportional to content
+				// snapOnRelease: true, // Snap to nearest slide when released
+			},
+
 			// Basic parameters
 			slidesPerView: 1,
 			spaceBetween: 20,
-			loop: true,
-			autoplay: {
-				delay: 5000,
-				disableOnInteraction: false,
-			},
 
 			// Responsive breakpoints
 			breakpoints: {
 				640: {
 					slidesPerView: 2,
-					spaceBetween: 20,
 				},
 				968: {
 					slidesPerView: 3,
-					spaceBetween: 30,
+					spaceBetween: 0,
 				},
 				1200: {
-					slidesPerView: 3,
-					spaceBetween: 40,
+					slidesPerView: 4,
+					spaceBetween: 0,
 				},
 			},
 
@@ -145,14 +148,12 @@ const FeaturedProducts = (() => {
 			navigation: {
 				nextEl: '.swiper-button-next',
 				prevEl: '.swiper-button-prev',
+				hideOnClick: false,
+				disabledClass: 'swiper-button-disabled',
 			},
 
-			// Pagination
-			pagination: {
-				el: '.swiper-pagination',
-				clickable: true,
-				dynamicBullets: true,
-			},
+			// Watch for overflow - hides navigation when not needed
+			watchOverflow: true,
 
 			// Effects
 			effect: 'slide',
@@ -200,7 +201,7 @@ const FeaturedProducts = (() => {
 
 		const button = event.currentTarget;
 		const productCard = button.closest('.product-card');
-		const productId = productCard?.querySelector('.product-card__id')?.textContent;
+		const productId = productCard?.dataset.productId;
 
 		if (!productId) return;
 
@@ -224,7 +225,7 @@ const FeaturedProducts = (() => {
 		}
 
 		const card = event.currentTarget;
-		const productId = card.querySelector('.product-card__id')?.textContent;
+		const productId = card.dataset.productId;
 		const productImage = card.querySelector('.product-card__image')?.src;
 		const productTitle = card.querySelector('.product-card__title')?.textContent;
 
@@ -250,7 +251,7 @@ const FeaturedProducts = (() => {
 
 			// Add hover animations
 			card.addEventListener('mouseenter', () => {
-				card.style.transform = 'translateY(-8px) scale(1.02)';
+				card.style.transform = 'translateY(-8px)';
 			});
 
 			card.addEventListener('mouseleave', () => {
@@ -263,7 +264,7 @@ const FeaturedProducts = (() => {
 		const featuredFavoriteButtons = document.querySelectorAll('.products-grid--featured .product-card__favorite');
 		featuredFavoriteButtons.forEach((button) => {
 			const productCard = button.closest('.product-card');
-			const productId = productCard?.querySelector('.product-card__id')?.textContent;
+			const productId = productCard?.dataset.productId;
 
 			if (productId && FavoriteStore.isFavorite(productId)) {
 				button.classList.add('is-favorite');
@@ -365,7 +366,7 @@ const FeaturedProducts = (() => {
 			const featuredProductCards = document.querySelectorAll('.products-grid--featured .product-card');
 
 			featuredProductCards.forEach((card) => {
-				const productId = card.querySelector('.product-card__id')?.textContent;
+				const productId = card.dataset.productId;
 				const favoriteButton = card.querySelector('.product-card__favorite');
 
 				if (productId && favoriteButton && favoriteButton.classList.contains('is-favorite')) {
