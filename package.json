@@ -25,5 +25,8 @@
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.32.0"
+  },
+  "dependencies": {
+    "swiper": "^11.2.10"
   }
 }

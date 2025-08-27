@@ -388,7 +388,101 @@
 }
 
 .products-grid--featured {
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	/* Now used as swiper-wrapper, remove grid properties */
+	display: flex;
+	align-items: stretch;
+}
+
+/* ===========================
+   Featured Products Swiper
+   =========================== */
+
+.featured-products-swiper {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+}
+
+.featured-products-swiper .swiper {
+	width: 100%;
+	padding-bottom: var(--space-2xl);
+}
+
+.featured-products-swiper .swiper-wrapper {
+	display: flex;
+}
+
+.featured-products-swiper .swiper-slide {
+	width: auto;
+	height: auto;
+	display: flex;
+	justify-content: center;
+}
+
+.featured-products-swiper .swiper-slide .product-card {
+	width: 100%;
+	max-width: 350px;
+	margin: 0 auto;
+}
+
+/* Swiper Navigation */
+.featured-products-swiper .swiper-button-next,
+.featured-products-swiper .swiper-button-prev {
+	color: var(--color-black);
+	background: var(--color-white);
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	margin-top: -25px;
+	box-shadow: var(--shadow-lg);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	transition: var(--transition-all);
+}
+
+.featured-products-swiper .swiper-button-next:after,
+.featured-products-swiper .swiper-button-prev:after {
+	font-size: 20px;
+	font-weight: 900;
+}
+
+.featured-products-swiper .swiper-button-next:hover,
+.featured-products-swiper .swiper-button-prev:hover {
+	background: var(--color-black);
+	color: var(--color-white);
+	transform: scale(1.1);
+}
+
+.featured-products-swiper .swiper-button-prev {
+	left: 10px;
+}
+
+.featured-products-swiper .swiper-button-next {
+	right: 10px;
+}
+
+/* Swiper Pagination */
+.featured-products-swiper .swiper-pagination {
+	bottom: 0;
+	position: relative;
+	text-align: center;
+	margin-top: var(--space-lg);
+}
+
+.featured-products-swiper .swiper-pagination-bullet {
+	background: var(--color-gray-300);
+	opacity: 1;
+	margin: 0 var(--space-xs);
+	transition: var(--transition-all);
+}
+
+.featured-products-swiper .swiper-pagination-bullet-active {
+	background: var(--color-black);
+	transform: scale(1.2);
+}
+
+.featured-products-swiper .swiper-pagination-bullet:hover {
+	background: var(--color-gray-600);
+	transform: scale(1.1);
 }
 
 .products-grid--main {

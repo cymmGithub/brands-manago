@@ -9,6 +9,7 @@
 			content="Discover premium outdoor gear and climbing equipment at Forma'Sint. Shop featured products and limited editions."
 		/>
 		<link rel="stylesheet" href="styles/index.css" />
+		<link rel="stylesheet" href="node_modules/swiper/swiper-bundle.min.css" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -128,155 +129,17 @@
 						<h2 id="featured-title" class="featured__title">Browse featured</h2>
 					</header>
 
-					<div class="products-grid products-grid--featured">
-						<article class="product-card">
-							<div class="product-card__id">ID: FJ-001</div>
-							<div class="product-card__badges">
-								<span class="badge badge--bestseller">BESTSELLER</span>
+					<div class="featured-products-swiper">
+						<div class="swiper">
+							<div class="swiper-wrapper products-grid products-grid--featured">
+								<!-- Featured products will be generated dynamically by FeaturedProducts.js -->
 							</div>
-							<div class="product-card__image-container">
-								<img
-									src="images/dark-blue-jacket.jpg"
-									alt="Dark blue alpine climbing jacket"
-									class="product-card__image"
-								/>
-								<button
-									class="product-card__favorite"
-									aria-label="Add to favorites"
-								>
-									<svg
-										width="24"
-										height="24"
-										viewBox="0 0 24 24"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
-											stroke="currentColor"
-											stroke-width="2"
-											fill="none"
-										/>
-									</svg>
-								</button>
-							</div>
-							<div class="product-card__content">
-								<h3 class="product-card__title">
-									Dark blue alpine climbing jacket
-								</h3>
-								<p class="product-card__price">€300.00 EUR</p>
-							</div>
-						</article>
-
-						<article class="product-card">
-							<div class="product-card__id">ID: HE-002</div>
-							<div class="product-card__badges">
-								<span class="badge badge--limited">LIMITED EDITION</span>
-							</div>
-							<div class="product-card__image-container">
-								<img
-									src="images/orange-helmet.jpg"
-									alt="Orange helmet for alpine climbing TOUNDRA"
-									class="product-card__image"
-								/>
-								<button
-									class="product-card__favorite"
-									aria-label="Add to favorites"
-								>
-									<svg
-										width="24"
-										height="24"
-										viewBox="0 0 24 24"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
-											stroke="currentColor"
-											stroke-width="2"
-											fill="none"
-										/>
-									</svg>
-								</button>
-							</div>
-							<div class="product-card__content">
-								<h3 class="product-card__title">
-									Orange helmet for alpine TOUNDRA
-								</h3>
-								<p class="product-card__price">€300.00 EUR</p>
-							</div>
-						</article>
-
-						<article class="product-card">
-							<div class="product-card__id">ID: GJ-003</div>
-							<div class="product-card__image-container">
-								<img
-									src="images/grey-jacket.jpg"
-									alt="Grey alpine climbing jacket"
-									class="product-card__image"
-								/>
-								<button
-									class="product-card__favorite"
-									aria-label="Add to favorites"
-								>
-									<svg
-										width="24"
-										height="24"
-										viewBox="0 0 24 24"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
-											stroke="currentColor"
-											stroke-width="2"
-											fill="none"
-										/>
-									</svg>
-								</button>
-							</div>
-							<div class="product-card__content">
-								<h3 class="product-card__title">Grey alpine climbing jacket</h3>
-								<p class="product-card__price">€300.00 EUR</p>
-							</div>
-						</article>
-
-						<article class="product-card">
-							<div class="product-card__id">ID: GAJ-004</div>
-							<div class="product-card__badges">
-								<span class="badge badge--bestseller">BESTSELLER</span>
-							</div>
-							<div class="product-card__image-container">
-								<img
-									src="images/grey-alpine-jacket.jpg"
-									alt="Grey alpine climbing jacket"
-									class="product-card__image"
-								/>
-								<button
-									class="product-card__favorite"
-									aria-label="Add to favorites"
-								>
-									<svg
-										width="24"
-										height="24"
-										viewBox="0 0 24 24"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<path
-											d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
-											stroke="currentColor"
-											stroke-width="2"
-											fill="none"
-										/>
-									</svg>
-								</button>
-							</div>
-							<div class="product-card__content">
-								<h3 class="product-card__title">Grey alpine climbing jacket</h3>
-								<p class="product-card__price">€300.00 EUR</p>
-							</div>
-						</article>
+							<!-- Add Pagination -->
+							<div class="swiper-pagination"></div>
+							<!-- Add Navigation -->
+							<div class="swiper-button-next"></div>
+							<div class="swiper-button-prev"></div>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -343,6 +206,9 @@
 		</dialog>
 
 		<!-- JavaScript - Load in dependency order -->
+		<!-- Swiper JS -->
+		<script src="node_modules/swiper/swiper-bundle.min.js"></script>
+
 		<!-- Utilities first -->
 		<script src="js/services/UtilsService.js"></script>
 
