@@ -151,32 +151,6 @@ textarea {
 }
 
 /* ===========================
-   Loading States
-   =========================== */
-
-.products__loading {
-	grid-column: 1 / -1;
-	text-align: center;
-	padding: var(--space-xl);
-	font-size: var(--font-size-base);
-	color: var(--color-gray-500);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: var(--space-sm);
-}
-
-.products__loading::before {
-	content: '';
-	width: 20px;
-	height: 20px;
-	border: 2px solid var(--color-gray-300);
-	border-top: 2px solid var(--color-black);
-	border-radius: var(--radius-circle);
-	animation: spin 1s linear infinite;
-}
-
-/* ===========================
    Error States
    =========================== */
 

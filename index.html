@@ -153,19 +153,24 @@
 							<span class="products__pagination-text"
 								>NUMBER OF PRODUCTS PER PAGE:</span
 							>
-							<select
-								class="products__pagination-select"
-								aria-label="Products per page"
-							>
-								<option value="8">8</option>
-								<option value="14" selected>14</option>
-								<option value="16">16</option>
-								<option value="24">24</option>
-								<option value="32">32</option>
-							</select>
-						</div>
-						<div class="products__loading" style="display: none">
-							<span>Loading products...</span>
+							<div class="custom-dropdown" data-value="14">
+								<button
+									class="custom-dropdown__trigger"
+									aria-haspopup="listbox"
+									aria-expanded="false"
+									aria-label="Products per page"
+								>
+									<span class="custom-dropdown__value">14</span>
+									<img src="assets/icons/icon-dropdown-arrow.svg" alt="" class="custom-dropdown__arrow" />
+								</button>
+								<ul class="custom-dropdown__list" role="listbox" aria-label="Products per page options">
+									<li class="custom-dropdown__item" role="option" data-value="10">10</li>
+									<li class="custom-dropdown__item custom-dropdown__item--selected" role="option" data-value="14" aria-selected="true">14</li>
+									<li class="custom-dropdown__item" role="option" data-value="18">18</li>
+									<li class="custom-dropdown__item" role="option" data-value="26">26</li>
+									<li class="custom-dropdown__item" role="option" data-value="36">36</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 
