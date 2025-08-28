@@ -1,5 +1,5 @@
 {
-  "name": "brands-manago",
+  "name": "brands-manago-fe",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,16 +15,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cymmGithub/brands-manago.git"
+    "url": "git+https://github.com/cymmGithub/brands-manago-fe.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/cymmGithub/brands-manago/issues"
+    "url": "https://github.com/cymmGithub/brands-manago-fe/issues"
   },
-  "homepage": "https://github.com/cymmGithub/brands-manago#readme",
+  "homepage": "https://github.com/cymmGithub/brands-manago-fe#readme",
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@types/node": "^24.3.0",
