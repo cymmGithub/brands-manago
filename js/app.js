@@ -211,8 +211,8 @@ const FormaSintApp = (() => {
 
 		// Load products from API
 		async loadProducts() {
-				const result = await ProductStore.fetchProducts();
-				ProductGrid.render(result.products);
+			const result = await ProductStore.fetchProducts();
+			ProductGrid.render(result.products);
 		},
 	};
 
