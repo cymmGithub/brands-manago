@@ -10,7 +10,10 @@
 		/>
 		<link rel="stylesheet" href="styles/index.css" />
 		<!-- Swiper CSS -->
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+		/>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -39,15 +42,25 @@
 				</div>
 				<ul class="nav__menu" role="menubar">
 					<li class="nav__item" role="none">
-						<a href="#" class="nav__link" role="menuitem" data-testid="nav-home">HOME</a>
+						<a href="#" class="nav__link" role="menuitem" data-testid="nav-home"
+							>HOME</a
+						>
 					</li>
 					<li class="nav__item" role="none">
-						<a href="#featured" class="nav__link" role="menuitem" data-testid="nav-featured"
+						<a
+							href="#featured"
+							class="nav__link"
+							role="menuitem"
+							data-testid="nav-featured"
 							>FEATURED PRODUCTS</a
 						>
 					</li>
 					<li class="nav__item" role="none">
-						<a href="#products" class="nav__link" role="menuitem" data-testid="nav-products"
+						<a
+							href="#products"
+							class="nav__link"
+							role="menuitem"
+							data-testid="nav-products"
 							>PRODUCT LISTING</a
 						>
 					</li>
@@ -83,20 +96,46 @@
 		<!-- Mobile Menu Overlay -->
 		<div class="mobile-menu" id="mobile-menu" data-testid="mobile-menu">
 			<div class="mobile-menu__header">
-				<button class="mobile-menu__close" aria-label="Close navigation menu" data-testid="mobile-menu-close">
-					<img src="assets/icons/icon-close.svg" alt="Close" class="mobile-menu__close-icon" />
+				<button
+					class="mobile-menu__close"
+					aria-label="Close navigation menu"
+					data-testid="mobile-menu-close"
+				>
+					<img
+						src="assets/icons/icon-close.svg"
+						alt="Close menu icon"
+						class="mobile-menu__close-icon"
+					/>
 					<span class="mobile-menu__close-text">CLOSE</span>
 				</button>
 			</div>
 			<ul class="mobile-menu__list" role="menubar">
 				<li class="mobile-menu__item" role="none">
-					<a href="#" class="mobile-menu__link" role="menuitem" data-testid="mobile-nav-home">HOME</a>
+					<a
+						href="#"
+						class="mobile-menu__link"
+						role="menuitem"
+						data-testid="mobile-nav-home"
+						>HOME</a
+					>
 				</li>
 				<li class="mobile-menu__item" role="none">
-					<a href="#featured" class="mobile-menu__link" role="menuitem" data-testid="mobile-nav-featured">FEATURED PRODUCTS</a>
+					<a
+						href="#featured"
+						class="mobile-menu__link"
+						role="menuitem"
+						data-testid="mobile-nav-featured"
+						>FEATURED PRODUCTS</a
+					>
 				</li>
 				<li class="mobile-menu__item" role="none">
-					<a href="#products" class="mobile-menu__link" role="menuitem" data-testid="mobile-nav-products">PRODUCT LISTING</a>
+					<a
+						href="#products"
+						class="mobile-menu__link"
+						role="menuitem"
+						data-testid="mobile-nav-products"
+						>PRODUCT LISTING</a
+					>
 				</li>
 			</ul>
 		</div>
@@ -154,7 +193,11 @@
 							<span class="products__pagination-text"
 								>NUMBER OF PRODUCTS PER PAGE:</span
 							>
-							<div class="custom-dropdown" data-value="14" data-testid="products-per-page-dropdown">
+							<div
+								class="custom-dropdown"
+								data-value="14"
+								data-testid="products-per-page-dropdown"
+							>
 								<button
 									class="custom-dropdown__trigger"
 									aria-haspopup="listbox"
@@ -163,14 +206,53 @@
 									data-testid="dropdown-trigger"
 								>
 									<span class="custom-dropdown__value">14</span>
-									<img src="assets/icons/icon-dropdown-arrow.svg" alt="" class="custom-dropdown__arrow" />
+									<img
+										src="assets/icons/icon-dropdown-arrow.svg"
+										alt=""
+										class="custom-dropdown__arrow"
+									/>
 								</button>
-								<ul class="custom-dropdown__list" role="listbox" aria-label="Products per page options">
-									<li class="custom-dropdown__item" role="option" data-value="10">10</li>
-									<li class="custom-dropdown__item custom-dropdown__item--selected" role="option" data-value="14" aria-selected="true">14</li>
-									<li class="custom-dropdown__item" role="option" data-value="18">18</li>
-									<li class="custom-dropdown__item" role="option" data-value="26">26</li>
-									<li class="custom-dropdown__item" role="option" data-value="36">36</li>
+								<ul
+									class="custom-dropdown__list"
+									role="listbox"
+									aria-label="Products per page options"
+								>
+									<li
+										class="custom-dropdown__item"
+										role="option"
+										data-value="10"
+									>
+										10
+									</li>
+									<li
+										class="custom-dropdown__item custom-dropdown__item--selected"
+										role="option"
+										data-value="14"
+										aria-selected="true"
+									>
+										14
+									</li>
+									<li
+										class="custom-dropdown__item"
+										role="option"
+										data-value="18"
+									>
+										18
+									</li>
+									<li
+										class="custom-dropdown__item"
+										role="option"
+										data-value="26"
+									>
+										26
+									</li>
+									<li
+										class="custom-dropdown__item"
+										role="option"
+										data-value="36"
+									>
+										36
+									</li>
 								</ul>
 							</div>
 						</div>
@@ -191,7 +273,7 @@
 				id="close-modal"
 				aria-label="Close modal"
 			>
-				<img src="assets/icons/icon-close.svg" alt="Close" />
+				<img src="assets/icons/icon-close.svg" alt="Close Modal Icon" />
 			</button>
 			<div class="product-modal__id" id="modal-id"></div>
 			<img class="product-modal__image" id="modal-image" src="" alt="" />
