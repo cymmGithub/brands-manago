@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/cymmGithub/manago-brands#readme",
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.32.0"
-  },
-  "dependencies": {
   }
 }
