@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="robots" content="index,follow" />
 		<title>Forma'Sint - Premium Outdoor Gear</title>
 		<meta
 			name="description"
@@ -26,7 +27,7 @@
 		<header class="header" role="banner">
 			<nav class="nav" aria-label="Main navigation">
 				<div class="nav__brand">
-					<a href="#" class="nav__logo">
+					<a href="/" class="nav__logo">
 						<span class="nav__logo-icon">F</span>
 						FORMA&rsquo;SINT.
 					</a>
@@ -69,8 +70,11 @@
 				<div class="nav__actions">
 					<img
 						src="assets/icons/icon-user.svg"
-						alt="User Icon"
+						alt="User profile icon"
 						class="nav__developer-icon"
+						width="24"
+						height="24"
+						loading="lazy"
 					/>
 					<a href="#" class="nav__developer-link">FRONTEND DEVELOPER</a>
 					<button
@@ -145,12 +149,15 @@
 			<!-- Hero Section -->
 			<section class="hero" aria-labelledby="hero-title">
 				<div class="hero__content">
+					<h1 id="hero-title" class="hero__title sr-only">Forma'Sint - Premium Outdoor Gear</h1>
 					<img
-						id="hero-title"
 						class="hero__title-image"
 						src="assets/images/hero-text.webp"
-						alt="Forma'Sint."
+						srcset="assets/images/hero-text.webp 1x"
+						alt="Forma'Sint brand logo"
 						loading="eager"
+						width="400"
+						height="120"
 					/>
 					<div class="hero__image-container">
 						<img
@@ -307,6 +314,7 @@
 		<script src="js/services/ModalService.js"></script>
 		<script src="js/services/NavigationService.js"></script>
 		<script src="js/services/ScrollService.js"></script>
+		<script src="js/services/SEOService.js"></script>
 
 		<!-- Components -->
 		<script src="js/components/FeaturedProducts.js"></script>

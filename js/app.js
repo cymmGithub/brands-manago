@@ -197,6 +197,7 @@ const FormaSintApp = (() => {
 			// Initialize all services and components
 			NavigationService.init();
 			ScrollService.init();
+			SEOService.init();
 			FeaturedProducts.init();
 			PromoBanner.init();
 			ProductGrid.init();
