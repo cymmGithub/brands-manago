@@ -76,11 +76,18 @@ const ProductGrid = (() => {
 
 			let productIndex = 0;
 			let promoInserted = false;
+			const wideScreenGridThreshold = 5;
+			const mobileGridThreshold = 6;
+
+			// Determine which threshold to use based on viewport width
+			const threshold = window.innerWidth > 770
+				? wideScreenGridThreshold
+				: mobileGridThreshold;
 
 			// Add products in the desired order
 			for (let i = 0; i < products.length + 1; i++) {
-				// Insert promo banner after 5th product (at position where it should be visually)
-				if (i === 5 && !promoInserted) {
+				// Insert promo banner at the calculated threshold position
+				if (i === threshold && !promoInserted) {
 					const bannerElement = PromoBanner.render(productGrid);
 					if (bannerElement) {
 						promoInserted = true;
@@ -99,7 +106,7 @@ const ProductGrid = (() => {
 				}
 			}
 
-			// If we have fewer than 5 products, still try to append the banner at the end
+			// If we have fewer products than the threshold, still try to append the banner at the end
 			if (!promoInserted) {
 				PromoBanner.render(productGrid);
 			}

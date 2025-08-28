@@ -1024,7 +1024,7 @@
 	}
 
 	.promo-banner {
-		grid-column: 2 / 4;
+		grid-column: 1 / 4;
 		grid-row: span 1;
 	}
 
