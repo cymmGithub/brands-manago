@@ -48,6 +48,8 @@ const ProductGrid = (() => {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
 					entry.target.classList.add('in-view');
+					// Stop observing this element after the animation is triggered
+					intersectionObserver.unobserve(entry.target);
 				}
 			});
 		}, observerOptions);
