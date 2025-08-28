@@ -1,1 +1,1 @@
-# manago-brands
+# brands-manago
