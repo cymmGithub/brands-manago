@@ -85,7 +85,7 @@ test.describe('UI Components Tests', () => {
 
 			// Check developer icon
 			await expect(page.locator('.nav__developer-icon')).toBeVisible();
-			await expect(page.locator('.nav__developer-icon')).toHaveAttribute('alt', 'User Icon');
+			await expect(page.locator('.nav__developer-icon')).toHaveAttribute('alt', 'User profile icon');
 		});
 
 		test('should display IDOMODS credit', async({page}) => {
