@@ -58,31 +58,8 @@ const FormaSintApp = (() => {
 		// DOM Content Loaded
 		document.addEventListener('DOMContentLoaded', handlePageLoad);
 
-		// Promotional banner CTA
-		const promoCTA = document.querySelector('.promo-banner__cta');
-		if (promoCTA) {
-			promoCTA.addEventListener('click', handlePromoCTA);
-		}
-
 		// Product pagination dropdown
 		setupCustomDropdown();
-	}
-
-	function handlePromoCTA(event) {
-		event.preventDefault();
-
-		// Add click animation
-		const button = event.currentTarget;
-		UtilsService.addClickAnimation(button, 'cta-clicked', 200);
-
-		// Scroll to featured products or handle navigation
-		const featuredSection = document.querySelector('#featured');
-		if (featuredSection) {
-			featuredSection.scrollIntoView({
-				behavior: 'smooth',
-				block: 'start',
-			});
-		}
 	}
 
 	function setupCustomDropdown() {
@@ -221,6 +198,7 @@ const FormaSintApp = (() => {
 			NavigationService.init();
 			ScrollService.init();
 			FeaturedProducts.init();
+			PromoBanner.init();
 			ProductGrid.init();
 
 			setupEventListeners();

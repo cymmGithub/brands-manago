@@ -67,8 +67,7 @@ const ProductGrid = (() => {
 				return;
 			}
 
-			// Clear existing products but keep the promo banner
-			const promoBanner = productGrid.querySelector('.promo-banner');
+			// Clear existing products
 			productGrid.innerHTML = '';
 
 			// For 4-column layout: [1][2][3][4] [5][P][P][6] [7][8][9][10] [11][12][13][14]
@@ -81,9 +80,18 @@ const ProductGrid = (() => {
 			// Add products in the desired order
 			for (let i = 0; i < products.length + 1; i++) {
 				// Insert promo banner after 5th product (at position where it should be visually)
-				if (i === 5 && promoBanner && !promoInserted) {
-					productGrid.appendChild(promoBanner);
-					promoInserted = true;
+				if (i === 5 && !promoInserted) {
+					const bannerElement = PromoBanner.render(productGrid);
+					if (bannerElement) {
+						promoInserted = true;
+					}
+					// If banner wasn't rendered (already seen), we don't count this as an insertion
+					// Continue with products in the same loop iteration
+					if (!bannerElement && productIndex < products.length) {
+						const productElement = createProductCard(products[productIndex]);
+						productGrid.appendChild(productElement);
+						productIndex++;
+					}
 				} else if (productIndex < products.length) {
 					const productElement = createProductCard(products[productIndex]);
 					productGrid.appendChild(productElement);
@@ -91,9 +99,9 @@ const ProductGrid = (() => {
 				}
 			}
 
-			// If we have fewer than 5 products, still append the banner at the end
-			if (!promoInserted && promoBanner) {
-				productGrid.appendChild(promoBanner);
+			// If we have fewer than 5 products, still try to append the banner at the end
+			if (!promoInserted) {
+				PromoBanner.render(productGrid);
 			}
 
 			// Setup intersection observer for new elements
