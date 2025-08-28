@@ -154,9 +154,22 @@
 					/>
 					<div class="hero__image-container">
 						<img
-							src="assets/images/hero-climber.jpg"
+							src="assets/images/hero-climber.webp"
+							srcset="
+								assets/images/hero-climber-mobile.webp   480w,
+								assets/images/hero-climber-tablet.webp   768w,
+								assets/images/hero-climber-desktop.webp 1200w,
+								assets/images/hero-climber-large.webp   1920w
+							"
+							sizes="
+								(max-width: 480px) 100vw,
+								(max-width: 768px) 100vw,
+								(max-width: 1200px) 90vw,
+								100vw
+							"
 							alt="Professional climber scaling an ice wall wearing orange Forma'Sint gear"
 							class="hero__image"
+							loading="eager"
 						/>
 					</div>
 				</div>

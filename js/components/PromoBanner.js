@@ -10,7 +10,7 @@ const PromoBanner = (() => {
 	const promoBannerData = {
 		brand: "FORMA'SINT",
 		title: "You'll look and feel like the champion.",
-		ctaText: 'CLICK THIS OUT →',
+		ctaText: 'Check this out →',
 		video: 'assets/videos/promo-banner-skis.mp4',
 		fallbackImage: 'assets/images/promo-banner-skis.jpg',
 		videoAlt: "Climber in action wearing Forma'Sint gear",
