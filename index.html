@@ -39,15 +39,15 @@
 				</div>
 				<ul class="nav__menu" role="menubar">
 					<li class="nav__item" role="none">
-						<a href="#" class="nav__link" role="menuitem">HOME</a>
+						<a href="#" class="nav__link" role="menuitem" data-testid="nav-home">HOME</a>
 					</li>
 					<li class="nav__item" role="none">
-						<a href="#featured" class="nav__link" role="menuitem"
+						<a href="#featured" class="nav__link" role="menuitem" data-testid="nav-featured"
 							>FEATURED PRODUCTS</a
 						>
 					</li>
 					<li class="nav__item" role="none">
-						<a href="#products" class="nav__link" role="menuitem"
+						<a href="#products" class="nav__link" role="menuitem" data-testid="nav-products"
 							>PRODUCT LISTING</a
 						>
 					</li>
@@ -64,6 +64,7 @@
 						class="nav__toggle"
 						aria-label="Toggle navigation menu"
 						aria-expanded="false"
+						data-testid="mobile-menu-toggle"
 					>
 						<span class="nav__toggle-lines">
 							<span class="nav__toggle-line"></span>
@@ -80,22 +81,22 @@
 		<div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
 
 		<!-- Mobile Menu Overlay -->
-		<div class="mobile-menu" id="mobile-menu">
+		<div class="mobile-menu" id="mobile-menu" data-testid="mobile-menu">
 			<div class="mobile-menu__header">
-				<button class="mobile-menu__close" aria-label="Close navigation menu">
+				<button class="mobile-menu__close" aria-label="Close navigation menu" data-testid="mobile-menu-close">
 					<img src="assets/icons/icon-close.svg" alt="Close" class="mobile-menu__close-icon" />
 					<span class="mobile-menu__close-text">CLOSE</span>
 				</button>
 			</div>
 			<ul class="mobile-menu__list" role="menubar">
 				<li class="mobile-menu__item" role="none">
-					<a href="#" class="mobile-menu__link" role="menuitem">HOME</a>
+					<a href="#" class="mobile-menu__link" role="menuitem" data-testid="mobile-nav-home">HOME</a>
 				</li>
 				<li class="mobile-menu__item" role="none">
-					<a href="#featured" class="mobile-menu__link" role="menuitem">FEATURED PRODUCTS</a>
+					<a href="#featured" class="mobile-menu__link" role="menuitem" data-testid="mobile-nav-featured">FEATURED PRODUCTS</a>
 				</li>
 				<li class="mobile-menu__item" role="none">
-					<a href="#products" class="mobile-menu__link" role="menuitem">PRODUCT LISTING</a>
+					<a href="#products" class="mobile-menu__link" role="menuitem" data-testid="mobile-nav-products">PRODUCT LISTING</a>
 				</li>
 			</ul>
 		</div>
@@ -153,12 +154,13 @@
 							<span class="products__pagination-text"
 								>NUMBER OF PRODUCTS PER PAGE:</span
 							>
-							<div class="custom-dropdown" data-value="14">
+							<div class="custom-dropdown" data-value="14" data-testid="products-per-page-dropdown">
 								<button
 									class="custom-dropdown__trigger"
 									aria-haspopup="listbox"
 									aria-expanded="false"
 									aria-label="Products per page"
+									data-testid="dropdown-trigger"
 								>
 									<span class="custom-dropdown__value">14</span>
 									<img src="assets/icons/icon-dropdown-arrow.svg" alt="" class="custom-dropdown__arrow" />
