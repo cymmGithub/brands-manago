@@ -34,14 +34,6 @@ const PromoBanner = (() => {
 		}
 	}
 
-	function resetSeenStatus() {
-		try {
-			localStorage.removeItem(STORAGE_KEY);
-		} catch (error) {
-			console.warn('Could not remove from LocalStorage:', error);
-		}
-	}
-
 	function shouldShowBanner() {
 		return !hasBeenSeen();
 	}
@@ -204,73 +196,9 @@ const PromoBanner = (() => {
 			return document.querySelector('.promo-banner');
 		},
 
-		// Update promo banner data
-		updateData(newData) {
-			Object.assign(promoBannerData, newData);
-
-			// If banner exists, update it
-			const existingBanner = this.getElement();
-			if (existingBanner) {
-				const container = existingBanner.parentElement;
-				existingBanner.remove();
-				this.render(container);
-			}
-		},
-
-		// Get current promo banner data
-		getData() {
-			return {...promoBannerData};
-		},
-
-		// Remove promo banner
-		remove() {
-			const promoBannerElement = this.getElement();
-			if (promoBannerElement) {
-				promoBannerElement.remove();
-			}
-		},
-
-		// Show/hide promo banner
-		setVisibility(isVisible) {
-			const promoBannerElement = this.getElement();
-			if (promoBannerElement) {
-				promoBannerElement.style.display = isVisible ? 'grid' : 'none';
-			}
-		},
-
-		// Refresh event listeners (useful after dynamic updates)
-		refreshEventListeners() {
-			setupEventListeners();
-		},
-
-		// Check if promo banner has been seen
-		hasBeenSeen() {
-			return hasBeenSeen();
-		},
-
 		// Check if promo banner should be shown
 		shouldShow() {
 			return shouldShowBanner();
-		},
-
-		// Force show the banner (ignores seen status)
-		forceRender(container) {
-			if (!container) {
-				console.warn('PromoBanner.forceRender: No container provided');
-				return null;
-			}
-
-			return insertPromoBanner(container);
-		},
-
-		// Reset the seen status (for testing or admin purposes)
-		resetSeenStatus() {
-			resetSeenStatus();
-		},
-
-		// Manually mark as seen
-		markAsSeen() {
-			markAsSeen();
 		},
 	};
 

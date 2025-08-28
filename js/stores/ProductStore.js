@@ -25,18 +25,10 @@ const ProductStore = (() => {
 			return currentPageSize;
 		},
 
-		getCurrentPage() {
-			return currentPage;
-		},
-
 		// Setters
 		setPageSize(size) {
 			currentPageSize = size;
 			currentPage = 1; // Reset to first page
-		},
-
-		setCurrentPage(page) {
-			currentPage = page;
 		},
 
 		// Data operations

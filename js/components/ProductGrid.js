@@ -119,16 +119,6 @@ const ProductGrid = (() => {
 				}
 			});
 		},
-
-		// Show loading state
-		showLoading(isLoading) {
-			const productGrid = document.getElementById('products-grid');
-
-			if (productGrid) {
-				productGrid.style.opacity = isLoading ? '0.5' : '1';
-				productGrid.style.pointerEvents = isLoading ? 'none' : 'auto';
-			}
-		},
 	};
 
 	return controller;

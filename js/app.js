@@ -13,9 +13,6 @@ const FormaSintApp = (() => {
 
 		// Animate hero title
 		animateHeroTitle();
-
-		// Setup lazy loading for images
-		setupLazyLoading();
 	}
 
 	function animateHeroTitle() {
@@ -31,26 +28,6 @@ const FormaSintApp = (() => {
 				heroTitleImage.style.opacity = '1';
 				heroTitleImage.style.transform = 'translateY(0)';
 			}, 200);
-		}
-	}
-
-	function setupLazyLoading() {
-		if ('IntersectionObserver' in window) {
-			const imageObserver = new IntersectionObserver((entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						const img = entry.target;
-						if (img.dataset.src) {
-							img.src = img.dataset.src;
-							img.classList.add('loaded');
-							imageObserver.unobserve(img);
-						}
-					}
-				});
-			});
-
-			const lazyImages = document.querySelectorAll('img[data-src]');
-			lazyImages.forEach((img) => imageObserver.observe(img));
 		}
 	}
 

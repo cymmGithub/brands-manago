@@ -95,14 +95,6 @@ const SEOService = (() => {
 			updateBasicOpenGraph({title, description});
 		},
 
-		// Update SEO for product page
-		updateProductSEO(productData) {
-			this.updateSEO('product', {
-				productName: productData.title || productData.name,
-				productDescription: productData.description || `Premium ${productData.title || 'outdoor gear'}.`,
-			});
-		},
-
 		// Initialize SEO service - simplified
 		init() {
 			// Set initial SEO
@@ -115,28 +107,6 @@ const SEOService = (() => {
 					this.updateSEO(hash);
 				}
 			});
-		},
-
-		// Add new SEO data for custom sections
-		addSEOData(section, data) {
-			seoData[section] = data;
-		},
-
-		// Simple structured data for products (when needed)
-		addProductStructuredData(productData) {
-			const script = document.createElement('script');
-			script.type = 'application/ld+json';
-			script.textContent = JSON.stringify({
-				'@context': 'https://schema.org/',
-				'@type': 'Product',
-				name: productData.name,
-				description: productData.description,
-				brand: {
-					'@type': 'Brand',
-					name: "Forma'Sint",
-				},
-			});
-			document.head.appendChild(script);
 		},
 	};
 

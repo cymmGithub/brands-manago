@@ -305,9 +305,6 @@ const FeaturedProducts = (() => {
 
 		if (!productId) return;
 
-		// Add click animation
-		UtilsService.addClickAnimation(card, 'product-clicked');
-
 		// Show product modal
 		ModalService.showProduct({
 			title: productTitle || productId,
@@ -384,75 +381,9 @@ const FeaturedProducts = (() => {
 			return swiperInstance;
 		},
 
-		// Control Swiper programmatically
-		nextSlide() {
-			if (swiperInstance) {
-				swiperInstance.slideNext();
-			}
-		},
-
-		prevSlide() {
-			if (swiperInstance) {
-				swiperInstance.slidePrev();
-			}
-		},
-
-		pauseAutoplay() {
-			if (swiperInstance && swiperInstance.autoplay) {
-				swiperInstance.autoplay.stop();
-			}
-		},
-
-		resumeAutoplay() {
-			if (swiperInstance && swiperInstance.autoplay) {
-				swiperInstance.autoplay.start();
-			}
-		},
-
 		// Get featured products data
 		getFeaturedProductsData() {
 			return featuredProductsData;
-		},
-
-		// Refresh favorite states (useful if called from external code)
-		refreshFavoriteStates() {
-			loadFavoriteStates();
-		},
-
-		// Get all favorited products from featured section
-		getFavoritedProducts() {
-			const favoritedProducts = [];
-			const featuredProductCards = document.querySelectorAll(
-				'.products-grid--featured .product-card',
-			);
-
-			featuredProductCards.forEach((card) => {
-				const productId = card.dataset.productId;
-				const favoriteButton = card.querySelector('.product-card__favorite');
-
-				if (
-					productId &&
-					favoriteButton &&
-					favoriteButton.classList.contains('is-favorite')
-				) {
-					const productTitle = card.querySelector(
-						'.product-card__title',
-					)?.textContent;
-					const productImage = card.querySelector('.product-card__image')?.src;
-					const productPrice = card.querySelector(
-						'.product-card__price',
-					)?.textContent;
-
-					favoritedProducts.push({
-						id: productId,
-						title: productTitle,
-						image: productImage,
-						price: productPrice,
-					});
-				}
-			});
-
-			return favoritedProducts;
 		},
 	};
 
