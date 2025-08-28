@@ -11,8 +11,9 @@ const PromoBanner = (() => {
 		brand: "FORMA'SINT",
 		title: "You'll look and feel like the champion.",
 		ctaText: 'CLICK THIS OUT →',
-		image: 'assets/images/promo-climber.jpg',
-		imageAlt: "Climber in action wearing Forma'Sint gear",
+		video: 'assets/videos/promo-banner-skis.mp4',
+		fallbackImage: 'assets/images/promo-banner-skis.jpg',
+		videoAlt: "Climber in action wearing Forma'Sint gear",
 	};
 
 	// Local storage methods
@@ -28,7 +29,6 @@ const PromoBanner = (() => {
 	function markAsSeen() {
 		try {
 			localStorage.setItem(STORAGE_KEY, 'true');
-			console.log('Promo banner marked as seen');
 		} catch (error) {
 			console.warn('Could not save to LocalStorage:', error);
 		}
@@ -37,7 +37,6 @@ const PromoBanner = (() => {
 	function resetSeenStatus() {
 		try {
 			localStorage.removeItem(STORAGE_KEY);
-			console.log('Promo banner seen status reset');
 		} catch (error) {
 			console.warn('Could not remove from LocalStorage:', error);
 		}
@@ -58,11 +57,23 @@ const PromoBanner = (() => {
 					</h3>
 					<button class="promo-banner__cta">${promoBannerData.ctaText}</button>
 				</div>
-				<div class="promo-banner__image-container">
+				<div class="promo-banner__video-container">
+					<video
+						src="${promoBannerData.video}"
+						class="promo-banner__video"
+						autoplay
+						muted
+						loop
+						playsinline
+						preload="metadata"
+						aria-label="${promoBannerData.videoAlt}"
+					></video>
+					<div class="promo-banner__video-mask"></div>
 					<img
-						src="${promoBannerData.image}"
-						alt="${promoBannerData.imageAlt}"
-						class="promo-banner__image"
+						src="${promoBannerData.fallbackImage}"
+						alt="${promoBannerData.videoAlt}"
+						class="promo-banner__fallback-image"
+						style="display: none;"
 					/>
 				</div>
 			</div>
@@ -99,18 +110,52 @@ const PromoBanner = (() => {
 		// Add click animation
 		UtilsService.addClickAnimation(button, 'cta-clicked');
 
-		// Log the interaction (can be extended with analytics)
-		console.log('Promo banner CTA clicked');
-
 		// Add your custom action here (e.g., navigation, modal, etc.)
-		// For now, we'll just show an alert as a placeholder
 		alert('Promo banner clicked! This can be customized to any action.');
+	}
+
+	function handleVideoError() {
+		const video = document.querySelector('.promo-banner__video');
+		const fallbackImage = document.querySelector('.promo-banner__fallback-image');
+
+		if (video && fallbackImage) {
+			video.style.display = 'none';
+			fallbackImage.style.display = 'block';
+		}
 	}
 
 	function setupEventListeners() {
 		const ctaButton = document.querySelector('.promo-banner__cta');
+		const video = document.querySelector('.promo-banner__video');
+
 		if (ctaButton) {
 			ctaButton.addEventListener('click', handleCtaClick);
+		}
+
+		if (video) {
+			video.addEventListener('canplaythrough', () => {
+				video.classList.add('loaded');
+			});
+
+			video.addEventListener('error', handleVideoError);
+
+			// Pause video when not in view for performance
+			const observerOptions = {
+				threshold: 0.1,
+				rootMargin: '50px 0px 50px 0px',
+			};
+
+			const videoObserver = new IntersectionObserver((entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting && video.style.display !== 'none') {
+						video.play().catch(handleVideoError);
+					} else {
+						video.pause();
+					}
+				});
+			}, observerOptions);
+
+			videoObserver.observe(video);
 		}
 	}
 
@@ -148,7 +193,6 @@ const PromoBanner = (() => {
 
 			// Check if banner should be shown
 			if (!shouldShowBanner()) {
-				console.log('Promo banner already seen, skipping render');
 				return null;
 			}
 
@@ -232,17 +276,3 @@ const PromoBanner = (() => {
 
 	return controller;
 })();
-
-// Development helper - expose some methods to global scope for testing
-if (typeof window !== 'undefined') {
-	window.PromoBannerDev = {
-		reset: () => PromoBanner.resetSeenStatus(),
-		check: () => console.log('Banner seen status:', PromoBanner.hasBeenSeen()),
-		force: () => {
-			const grid = document.getElementById('products-grid');
-			if (grid) {
-				PromoBanner.forceRender(grid);
-			}
-		},
-	};
-}
