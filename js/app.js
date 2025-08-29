@@ -189,8 +189,19 @@ const FormaSintApp = (() => {
 
 		// Load products from API
 		async loadProducts() {
-			const result = await ProductStore.fetchProducts();
-			ProductGrid.render(result.products);
+			try {
+				const result = await ProductStore.fetchProducts();
+				if (result.error) {
+					console.error('Error loading products:', result.error);
+					ProductGrid.render(result.products || []);
+				} else {
+					ProductGrid.render(result.products);
+				}
+			} catch (error) {
+				console.error('Failed to load products:', error);
+				// Render empty grid as fallback
+				ProductGrid.render([]);
+			}
 		},
 	};
 
