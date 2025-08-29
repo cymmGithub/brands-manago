@@ -49,7 +49,7 @@ const FeaturedProducts = (() => {
 			(badge) =>
 				`<span class="badge badge--${badge
 					.toLowerCase()
-					.replace(' ', '-')}"">${badge}</span>`,
+					.replace(' ', '-')}">${badge}</span>`,
 		)
 		.join('')}
 			</div>`

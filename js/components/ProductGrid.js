@@ -6,14 +6,25 @@ const ProductGrid = (() => {
 	let intersectionObserver = null;
 
 	// Private methods
+	function escapeHtml(text) {
+		const div = document.createElement('div');
+		div.textContent = text;
+		return div.innerHTML;
+	}
+
 	function createProductCard(product) {
 		const article = document.createElement('article');
 		article.className = 'product-card product-card--grid';
 
+		// Safely escape user data to prevent XSS
+		const safeId = escapeHtml(product.formattedId || '');
+		const safeImage = escapeHtml(product.image || '');
+		const safeText = escapeHtml(product.text || '');
+
 		article.innerHTML = `
-            <div class="product-card__id">ID: ${product.formattedId}</div>
+            <div class="product-card__id">ID: ${safeId}</div>
             <div class="product-card__image-container">
-                <img src="${product.image}" alt="${product.text}" class="product-card__image" loading="lazy">
+                <img src="${safeImage}" alt="${safeText}" class="product-card__image" loading="lazy">
             </div>
         `;
 

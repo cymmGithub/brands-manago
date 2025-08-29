@@ -151,11 +151,17 @@ const FormaSintApp = (() => {
 		});
 
 		// Close on outside click
-		document.addEventListener('click', (e) => {
+		const handleOutsideClick = (e) => {
 			if (!dropdown.contains(e.target)) {
 				closeDropdown();
 			}
-		});
+		};
+		document.addEventListener('click', handleOutsideClick);
+		
+		// Store cleanup function for proper memory management
+		dropdown._cleanupOutsideClick = () => {
+			document.removeEventListener('click', handleOutsideClick);
+		};
 	}
 
 	function handlePaginationChange(value) {
@@ -189,8 +195,20 @@ const FormaSintApp = (() => {
 
 		// Load products from API
 		async loadProducts() {
-			const result = await ProductStore.fetchProducts();
-			ProductGrid.render(result.products);
+			try {
+				const result = await ProductStore.fetchProducts();
+				if (result.error) {
+					console.error('Error loading products:', result.error);
+					// Still try to render what we have, even if empty
+					ProductGrid.render(result.products || []);
+				} else {
+					ProductGrid.render(result.products);
+				}
+			} catch (error) {
+				console.error('Failed to load products:', error);
+				// Render empty grid as fallback
+				ProductGrid.render([]);
+			}
 		},
 	};
 
