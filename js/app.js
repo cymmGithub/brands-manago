@@ -150,12 +150,18 @@ const FormaSintApp = (() => {
 			});
 		});
 
-		// Close on outside click
-		document.addEventListener('click', (e) => {
+		const handleOutsideClick = (e) => {
 			if (!dropdown.contains(e.target)) {
 				closeDropdown();
 			}
-		});
+		};
+
+		document.addEventListener('click', handleOutsideClick);
+
+		// Store cleanup function for proper memory management
+		dropdown._cleanupOutsideClick = () => {
+			document.removeEventListener('click', handleOutsideClick);
+		};
 	}
 
 	function handlePaginationChange(value) {
