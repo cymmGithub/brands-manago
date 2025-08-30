@@ -13,7 +13,7 @@ ENV BIND_HOST=${BIND_HOST}
 
 WORKDIR /app
 
-RUN apk add --no-cache wget
+RUN apk add --no-cache curl
 
 COPY package*.json ./
 
@@ -25,6 +25,6 @@ COPY . .
 EXPOSE ${PORT}
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-CMD wget --no-verbose --tries=1 --spider http://${APP_HOST}:${PORT} || exit 1
+CMD curl -f -s http://${APP_HOST}:${PORT} -o /dev/null || exit 1
 
 CMD ["node", "server.js"]
