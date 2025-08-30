@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const { getDb } = require('../database/mongodb');
+const {ObjectId} = require('mongodb');
+const {getDb} = require('../database/mongodb');
 
 /**
  * Product Model - MongoDB implementation
@@ -34,7 +34,7 @@ const productModel = {
 			}
 
 			// Sort by creation date (newest first)
-			options.sort = { createdAt: -1 };
+			options.sort = {createdAt: -1};
 
 			const products = await collection.find(query, options).toArray();
 
@@ -64,7 +64,7 @@ const productModel = {
 				return null;
 			}
 
-			const product = await collection.findOne({ _id: new ObjectId(id) });
+			const product = await collection.findOne({_id: new ObjectId(id)});
 
 			if (product) {
 				return {
@@ -143,9 +143,9 @@ const productModel = {
 			});
 
 			const result = await collection.findOneAndUpdate(
-				{ _id: new ObjectId(id) },
-				{ $set: updateFields },
-				{ returnDocument: 'after' }
+				{_id: new ObjectId(id)},
+				{$set: updateFields},
+				{returnDocument: 'after'},
 			);
 
 			if (result.value) {
@@ -177,7 +177,7 @@ const productModel = {
 				return false;
 			}
 
-			const result = await collection.deleteOne({ _id: new ObjectId(id) });
+			const result = await collection.deleteOne({_id: new ObjectId(id)});
 			return result.deletedCount === 1;
 		} catch (error) {
 			console.error('Error deleting product:', error);

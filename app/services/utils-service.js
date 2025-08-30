@@ -13,7 +13,7 @@ class UtilsService {
 		return {
 			complete: '=',
 			incomplete: ' ',
-			width: 30
+			width: 30,
 		};
 	}
 
@@ -29,7 +29,7 @@ class UtilsService {
 			throw new Error('Total must be a positive number');
 		}
 
-		const config = _.assign({}, this.DEFAULT_PROGRESS_CONFIG, customConfig, { total });
+		const config = _.assign({}, this.DEFAULT_PROGRESS_CONFIG, customConfig, {total});
 		const format = `${label} [:bar] :current/:total :percent :etas`;
 
 		return new ProgressBar(format, config);
@@ -47,7 +47,7 @@ class UtilsService {
 			throw new Error('Total must be a positive number');
 		}
 
-		const config = _.assign({}, this.DEFAULT_PROGRESS_CONFIG, customConfig, { total });
+		const config = _.assign({}, this.DEFAULT_PROGRESS_CONFIG, customConfig, {total});
 		const format = `${label} [:bar] :current/:total :percent (:created created, :updated updated)`;
 
 		return new ProgressBar(format, config);
@@ -69,7 +69,7 @@ class UtilsService {
 			throw new Error('Format string is required');
 		}
 
-		const config = _.assign({}, this.DEFAULT_PROGRESS_CONFIG, customConfig, { total });
+		const config = _.assign({}, this.DEFAULT_PROGRESS_CONFIG, customConfig, {total});
 
 		return new ProgressBar(format, config);
 	}
@@ -86,7 +86,7 @@ class UtilsService {
 			throw new Error('Total must be a positive number');
 		}
 
-		const config = _.assign({}, this.DEFAULT_PROGRESS_CONFIG, customConfig, { total });
+		const config = _.assign({}, this.DEFAULT_PROGRESS_CONFIG, customConfig, {total});
 		const format = `${operation} [:bar] :current/:total :percent :etas`;
 
 		return new ProgressBar(format, config);

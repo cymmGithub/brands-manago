@@ -47,13 +47,18 @@ class OrderCLI {
 
 	async downloadBySerialNumbers(serialNumbers, updateExisting = true) {
 		try {
-			const numbers = serialNumbers.split(',').map(num => parseInt(num.trim(), 10));
-			console.log(`📥 Downloading orders with serial numbers: ${numbers.join(', ')}`);
-
-			const results = await this.externalApiService.downloadAndSaveOrdersBySerialNumbers(
-				numbers,
-				{ updateExisting }
+			const numbers = serialNumbers
+				.split(',')
+				.map((num) => parseInt(num.trim(), 10));
+			console.log(
+				`📥 Downloading orders with serial numbers: ${numbers.join(', ')}`,
 			);
+
+			const results =
+				await this.externalApiService.downloadAndSaveOrdersBySerialNumbers(
+					numbers,
+					{updateExisting},
+				);
 
 			console.log('\n📊 Results:');
 			console.log(`   Downloaded: ${results.downloaded}`);
@@ -63,22 +68,30 @@ class OrderCLI {
 
 			if (results.errors.length > 0) {
 				console.log(`   Errors: ${results.errors.length}`);
-				results.errors.forEach(error => console.log(`     - ${error}`));
+				results.errors.forEach((error) => console.log(`     - ${error}`));
 			}
 		} catch (error) {
 			console.error('❌ Download failed:', error.message);
 		}
 	}
 
-	async downloadByDateRange(dateFrom, dateTo, dateType = 'add', updateExisting = true) {
+	async downloadByDateRange(
+		dateFrom,
+		dateTo,
+		dateType = 'add',
+		updateExisting = true,
+	) {
 		try {
-			console.log(`📥 Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)`);
-
-			const results = await this.externalApiService.downloadAndSaveOrdersByDateRange(
-				dateFrom,
-				dateTo,
-				{ dateType, updateExisting }
+			console.log(
+				`📥 Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)`,
 			);
+
+			const results =
+				await this.externalApiService.downloadAndSaveOrdersByDateRange(
+					dateFrom,
+					dateTo,
+					{dateType, updateExisting},
+				);
 
 			console.log('\n📊 Results:');
 			console.log(`   Downloaded: ${results.downloaded}`);
@@ -88,7 +101,7 @@ class OrderCLI {
 
 			if (results.errors.length > 0) {
 				console.log(`   Errors: ${results.errors.length}`);
-				results.errors.forEach(error => console.log(`     - ${error}`));
+				results.errors.forEach((error) => console.log(`     - ${error}`));
 			}
 		} catch (error) {
 			console.error('❌ Download failed:', error.message);
@@ -107,10 +120,18 @@ class OrderCLI {
 				return;
 			}
 
-			orders.forEach(order => {
-				console.log(`   📦 ${order.orderNumber || order.externalId} - ${order.customerName || order.customerEmail}`);
-				console.log(`      Status: ${order.status} | Total: ${order.totalAmount} ${order.currency}`);
-				console.log(`      Date: ${order.orderDate.toISOString().split('T')[0]}`);
+			orders.forEach((order) => {
+				console.log(
+					`   📦 ${order.orderNumber || order.externalId} - ${
+						order.customerName || order.customerEmail
+					}`,
+				);
+				console.log(
+					`      Status: ${order.status} | Total: ${order.totalAmount} ${order.currency}`,
+				);
+				console.log(
+					`      Date: ${order.orderDate.toISOString().split('T')[0]}`,
+				);
 				console.log('');
 			});
 		} catch (error) {
@@ -123,7 +144,9 @@ class OrderCLI {
 			const isReady = this.externalApiService.isReady();
 			const config = {
 				shopUrl: process.env.IDOSELL_SHOP_URL,
-				apiKey: process.env.IDOSELL_API_KEY ? '***configured***' : 'not configured',
+				apiKey: process.env.IDOSELL_API_KEY
+					? '***configured***'
+					: 'not configured',
 				apiVersion: this.externalApiService.apiVersion,
 			};
 
@@ -142,7 +165,7 @@ class OrderCLI {
 
 			// Show database status
 			const orderCount = await orderModel.getCount();
-			console.log(`\n🗄️  Database Status:`);
+			console.log('\n🗄️  Database Status:');
 			console.log(`   Total orders in database: ${orderCount}`);
 		} catch (error) {
 			console.error('❌ Failed to show status:', error.message);
@@ -203,14 +226,31 @@ Options:
 					const updateExisting = noUpdateIndex === -1;
 
 					if (serialNumbersIndex !== -1 && args[serialNumbersIndex + 1]) {
-						await this.downloadBySerialNumbers(args[serialNumbersIndex + 1], updateExisting);
-					} else if (dateRangeIndex !== -1 && args[dateRangeIndex + 1] && args[dateRangeIndex + 2]) {
+						await this.downloadBySerialNumbers(
+							args[serialNumbersIndex + 1],
+							updateExisting,
+						);
+					} else if (
+						dateRangeIndex !== -1 &&
+						args[dateRangeIndex + 1] &&
+						args[dateRangeIndex + 2]
+					) {
 						const dateFrom = args[dateRangeIndex + 1];
 						const dateTo = args[dateRangeIndex + 2];
-						const dateType = dateTypeIndex !== -1 && args[dateTypeIndex + 1] ? args[dateTypeIndex + 1] : 'add';
-						await this.downloadByDateRange(dateFrom, dateTo, dateType, updateExisting);
+						const dateType =
+							dateTypeIndex !== -1 && args[dateTypeIndex + 1]
+								? args[dateTypeIndex + 1]
+								: 'add';
+						await this.downloadByDateRange(
+							dateFrom,
+							dateTo,
+							dateType,
+							updateExisting,
+						);
 					} else {
-						console.error('❌ Invalid download command. Use --serial-numbers or --date-range');
+						console.error(
+							'❌ Invalid download command. Use --serial-numbers or --date-range',
+						);
 						this.printUsage();
 					}
 					break;
@@ -254,7 +294,7 @@ Options:
 // Run CLI if this file is executed directly
 if (require.main === module) {
 	const cli = new OrderCLI();
-	cli.run().catch(error => {
+	cli.run().catch((error) => {
 		console.error('❌ Unhandled error:', error);
 		process.exit(1);
 	});

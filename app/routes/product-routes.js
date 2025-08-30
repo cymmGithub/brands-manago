@@ -7,7 +7,7 @@ const router = express.Router();
 /**
  * GET /api/products - Get all products with optional filters
  */
-router.get('/products', async (req, res) => {
+router.get('/products', async(req, res) => {
 	try {
 		const products = await productModel.getAll(req.query);
 		const count = await productModel.getCount(req.query);
@@ -31,7 +31,7 @@ router.get('/products', async (req, res) => {
 /**
  * GET /api/products/:id - Get product by ID
  */
-router.get('/products/:id', async (req, res) => {
+router.get('/products/:id', async(req, res) => {
 	try {
 		const product = await productModel.getById(req.params.id);
 
@@ -58,9 +58,9 @@ router.get('/products/:id', async (req, res) => {
 /**
  * POST /api/products - Create a new product
  */
-router.post('/products', async (req, res) => {
+router.post('/products', async(req, res) => {
 	try {
-		const { name, price } = req.body;
+		const {name, price} = req.body;
 
 		if (!name || !price) {
 			return res.status(400).json({
@@ -89,7 +89,7 @@ router.post('/products', async (req, res) => {
 /**
  * PUT /api/products/:id - Update a product
  */
-router.put('/products/:id', async (req, res) => {
+router.put('/products/:id', async(req, res) => {
 	try {
 		const updatedProduct = await productModel.update(req.params.id, req.body);
 
@@ -118,7 +118,7 @@ router.put('/products/:id', async (req, res) => {
 /**
  * DELETE /api/products/:id - Delete a product
  */
-router.delete('/products/:id', async (req, res) => {
+router.delete('/products/:id', async(req, res) => {
 	try {
 		const deleted = await productModel.delete(req.params.id);
 

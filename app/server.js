@@ -7,7 +7,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 
 // Static file serving
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
@@ -61,17 +61,17 @@ async function startServer() {
 		});
 
 		// Graceful shutdown handling
-		process.on('SIGTERM', async () => {
+		process.on('SIGTERM', async() => {
 			console.log('🛑 SIGTERM received, shutting down gracefully...');
-			server.close(async () => {
+			server.close(async() => {
 				await mongodb.close();
 				process.exit(0);
 			});
 		});
 
-		process.on('SIGINT', async () => {
+		process.on('SIGINT', async() => {
 			console.log('🛑 SIGINT received, shutting down gracefully...');
-			server.close(async () => {
+			server.close(async() => {
 				await mongodb.close();
 				process.exit(0);
 			});

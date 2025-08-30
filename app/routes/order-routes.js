@@ -9,7 +9,7 @@ const externalApiService = new ExternalApiService();
  * GET /api/orders
  * Get all orders with optional filters
  */
-router.get('/orders', async (req, res) => {
+router.get('/orders', async(req, res) => {
 	try {
 		const filters = {
 			status: req.query.status,
@@ -48,7 +48,7 @@ router.get('/orders', async (req, res) => {
  * GET /api/orders/:id
  * Get order by ID
  */
-router.get('/orders/:id', async (req, res) => {
+router.get('/orders/:id', async(req, res) => {
 	try {
 		const order = await orderModel.getById(req.params.id);
 
@@ -78,9 +78,9 @@ router.get('/orders/:id', async (req, res) => {
  * Download orders by serial numbers from external API
  * Body: { orderSerialNumbers: [123, 456, 789], updateExisting: true }
  */
-router.post('/orders/download/serial-numbers', async (req, res) => {
+router.post('/orders/download/serial-numbers', async(req, res) => {
 	try {
-		const { orderSerialNumbers, updateExisting = true } = req.body;
+		const {orderSerialNumbers, updateExisting = true} = req.body;
 
 		if (!Array.isArray(orderSerialNumbers) || orderSerialNumbers.length === 0) {
 			return res.status(400).json({
@@ -98,7 +98,7 @@ router.post('/orders/download/serial-numbers', async (req, res) => {
 
 		const results = await externalApiService.downloadAndSaveOrdersBySerialNumbers(
 			orderSerialNumbers,
-			{ updateExisting }
+			{updateExisting},
 		);
 
 		res.json({
@@ -121,9 +121,9 @@ router.post('/orders/download/serial-numbers', async (req, res) => {
  * Download orders by date range from external API
  * Body: { dateFrom: '2023-12-01', dateTo: '2023-12-31', dateType: 'add', updateExisting: true }
  */
-router.post('/orders/download/date-range', async (req, res) => {
+router.post('/orders/download/date-range', async(req, res) => {
 	try {
-		const { dateFrom, dateTo, dateType = 'add', updateExisting = true } = req.body;
+		const {dateFrom, dateTo, dateType = 'add', updateExisting = true} = req.body;
 
 		if (!dateFrom || !dateTo) {
 			return res.status(400).json({
@@ -142,7 +142,7 @@ router.post('/orders/download/date-range', async (req, res) => {
 		const results = await externalApiService.downloadAndSaveOrdersByDateRange(
 			dateFrom,
 			dateTo,
-			{ dateType, updateExisting }
+			{dateType, updateExisting},
 		);
 
 		res.json({
@@ -191,7 +191,7 @@ router.get('/orders/download/status', (req, res) => {
  * POST /api/orders
  * Create a new order manually
  */
-router.post('/orders', async (req, res) => {
+router.post('/orders', async(req, res) => {
 	try {
 		const order = await orderModel.create(req.body);
 
@@ -214,7 +214,7 @@ router.post('/orders', async (req, res) => {
  * PUT /api/orders/:id
  * Update an order
  */
-router.put('/orders/:id', async (req, res) => {
+router.put('/orders/:id', async(req, res) => {
 	try {
 		const order = await orderModel.update(req.params.id, req.body);
 
@@ -244,7 +244,7 @@ router.put('/orders/:id', async (req, res) => {
  * DELETE /api/orders/:id
  * Delete an order
  */
-router.delete('/orders/:id', async (req, res) => {
+router.delete('/orders/:id', async(req, res) => {
 	try {
 		const deleted = await orderModel.delete(req.params.id);
 

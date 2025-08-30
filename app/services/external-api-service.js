@@ -22,7 +22,7 @@ class ExternalApiService {
 	initializeClient() {
 		if (!this.shopUrl || !this.apiKey) {
 			console.warn(
-				'Warning: Idosell credentials not configured. Set IDOSELL_SHOP_URL and IDOSELL_API_KEY environment variables.'
+				'Warning: Idosell credentials not configured. Set IDOSELL_SHOP_URL and IDOSELL_API_KEY environment variables.',
 			);
 			return;
 		}
@@ -51,7 +51,7 @@ class ExternalApiService {
 	async downloadOrdersBySerialNumbers(orderSerialNumbers) {
 		if (!this.isReady()) {
 			throw new Error(
-				'Idosell API client not initialized. Check your credentials.'
+				'Idosell API client not initialized. Check your credentials.',
 			);
 		}
 
@@ -61,10 +61,10 @@ class ExternalApiService {
 
 		try {
 			console.log(
-				`Downloading ${orderSerialNumbers.length} orders from Idosell API...`
+				`Downloading ${orderSerialNumbers.length} orders from Idosell API...`,
 			);
 
-			const { Results, resultsNumberAll } =
+			const {Results, resultsNumberAll} =
 				await this.idosellClient.searchOrders
 					.ordersSerialNumbers(orderSerialNumbers)
 					.exec();
@@ -87,7 +87,7 @@ class ExternalApiService {
 	async downloadOrdersByDateRange(dateFrom, dateTo, dateType = 'add') {
 		if (!this.isReady()) {
 			throw new Error(
-				'Idosell API client not initialized. Check your credentials.'
+				'Idosell API client not initialized. Check your credentials.',
 			);
 		}
 
@@ -97,10 +97,10 @@ class ExternalApiService {
 
 		try {
 			console.log(
-				`Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)...`
+				`Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)...`,
 			);
 
-			const { Results, resultsNumberAll } =
+			const {Results, resultsNumberAll} =
 				await this.idosellClient.searchOrders
 					.dates(dateFrom, dateTo, dateType)
 					.exec();
@@ -127,7 +127,7 @@ class ExternalApiService {
 	async downloadOrdersWithPagination(options = {}) {
 		if (!this.isReady()) {
 			throw new Error(
-				'Idosell API client not initialized. Check your credentials.'
+				'Idosell API client not initialized. Check your credentials.',
 			);
 		}
 
@@ -159,13 +159,13 @@ class ExternalApiService {
 				request = request.status(status);
 			}
 
-			const { Results, resultsNumberAll } = await request.exec();
+			const {Results} = await request.exec();
 
 			return Results || [];
 		} catch (error) {
 			console.error(
 				'Failed to download orders with pagination:',
-				error.message
+				error.message,
 			);
 			throw new Error(`Failed to download orders: ${error.message}`);
 		}
@@ -178,7 +178,7 @@ class ExternalApiService {
 	async getPaginationInfo() {
 		if (!this.isReady()) {
 			throw new Error(
-				'Idosell API client not initialized. Check your credentials.'
+				'Idosell API client not initialized. Check your credentials.',
 			);
 		}
 
@@ -206,24 +206,24 @@ class ExternalApiService {
 	async downloadAllOrders() {
 		if (!this.isReady()) {
 			throw new Error(
-				'Idosell API client not initialized. Check your credentials.'
+				'Idosell API client not initialized. Check your credentials.',
 			);
 		}
 
-		console.log(`Starting to download ALL orders from IdoSell...`);
+		console.log('Starting to download ALL orders from IdoSell...');
 
 		try {
 			// Get pagination information
-			console.log(`Getting pagination information...`);
+			console.log('Getting pagination information...');
 			const paginationInfo = await this.getPaginationInfo();
 
 			console.log(
-				`Found ${paginationInfo.totalOrders} total orders across ${paginationInfo.totalPages} pages`
+				`Found ${paginationInfo.totalOrders} total orders across ${paginationInfo.totalPages} pages`,
 			);
 			console.log(`Orders per page: ${paginationInfo.ordersPerPage}`);
 
 			if (paginationInfo.totalOrders === 0) {
-				console.log(` No orders found`);
+				console.log(' No orders found');
 				return [];
 			}
 
@@ -232,7 +232,7 @@ class ExternalApiService {
 			// Create progress bar for downloading pages
 			const progressBar = UtilsService.createDownloadProgressBar(
 				paginationInfo.totalPages,
-				'Downloading pages'
+				'Downloading pages',
 			);
 
 			// Download each page
@@ -256,7 +256,7 @@ class ExternalApiService {
 			}
 
 			console.log(
-				`\n Successfully downloaded ${allOrders.length} total orders`
+				`\n Successfully downloaded ${allOrders.length} total orders`,
 			);
 			return allOrders;
 		} catch (error) {
@@ -275,8 +275,8 @@ class ExternalApiService {
 			`${_.get(externalOrder, 'customerFirstName', '')} ${_.get(
 				externalOrder,
 				'customerLastName',
-				''
-			)}`
+				'',
+			)}`,
 		);
 
 		return {
@@ -295,7 +295,7 @@ class ExternalApiService {
 				? new Date(externalOrder.orderAddDate)
 				: new Date(),
 			items: this.transformOrderItems(
-				_.get(externalOrder, 'orderProducts', [])
+				_.get(externalOrder, 'orderProducts', []),
 			),
 			shippingAddress: _.mapKeys(
 				_.pick(externalOrder, [
@@ -308,7 +308,7 @@ class ExternalApiService {
 					'deliveryCountryName',
 					'deliveryPhone',
 				]),
-				(value, key) => _.camelCase(key.replace('delivery', ''))
+				(value, key) => _.camelCase(key.replace('delivery', '')),
 			),
 			billingAddress: _.mapKeys(
 				_.pick(externalOrder, [
@@ -321,7 +321,7 @@ class ExternalApiService {
 					'customerCountryName',
 					'customerPhone',
 				]),
-				(value, key) => _.camelCase(key.replace('customer', ''))
+				(value, key) => _.camelCase(key.replace('customer', '')),
 			),
 			paymentMethod: _.get(externalOrder, 'paymentName'),
 			shippingMethod: _.get(externalOrder, 'deliveryName'),
@@ -381,7 +381,7 @@ class ExternalApiService {
 	 * @returns {Promise<Object>} Save results
 	 */
 	async saveOrdersToDatabase(orders, options = {}) {
-		const { updateExisting = true } = options;
+		const {updateExisting = true} = options;
 		const results = {
 			total: orders.length,
 			created: 0,
@@ -397,7 +397,7 @@ class ExternalApiService {
 		// Create progress bar for saving orders
 		const progressBar = UtilsService.createSaveProgressBar(
 			orders.length,
-			'Saving orders'
+			'Saving orders',
 		);
 
 		for (const externalOrder of orders) {
@@ -407,7 +407,7 @@ class ExternalApiService {
 				if (!transformedOrder.externalId) {
 					results.skipped++;
 					results.errors.push(
-						`Order missing external ID: ${JSON.stringify(externalOrder)}`
+						`Order missing external ID: ${JSON.stringify(externalOrder)}`,
 					);
 					UtilsService.tickProgress(progressBar, {
 						created: results.created,
@@ -418,14 +418,14 @@ class ExternalApiService {
 
 				// Check if order already exists
 				const existingOrder = await orderModel.getByExternalId(
-					transformedOrder.externalId
+					transformedOrder.externalId,
 				);
 
 				if (existingOrder) {
 					if (updateExisting) {
 						await orderModel.updateByExternalId(
 							transformedOrder.externalId,
-							transformedOrder
+							transformedOrder,
 						);
 						results.updated++;
 					} else {
@@ -458,17 +458,17 @@ class ExternalApiService {
 	async downloadAndSaveOrdersBySerialNumbers(orderSerialNumbers, options = {}) {
 		try {
 			const orders = await this.downloadOrdersBySerialNumbers(
-				orderSerialNumbers
+				orderSerialNumbers,
 			);
 			const saveResults = await this.saveOrdersToDatabase(orders, options);
 
-			console.log(`Download and save completed:`, saveResults);
+			console.log('Download and save completed:', saveResults);
 			return _.assign(
 				{
 					success: true,
 					downloaded: orders.length,
 				},
-				saveResults
+				saveResults,
 			);
 		} catch (error) {
 			console.error('Download and save failed:', error.message);
@@ -485,21 +485,21 @@ class ExternalApiService {
 	 */
 	async downloadAndSaveOrdersByDateRange(dateFrom, dateTo, options = {}) {
 		try {
-			const { dateType = 'add', ...saveOptions } = options;
+			const {dateType = 'add', ...saveOptions} = options;
 			const orders = await this.downloadOrdersByDateRange(
 				dateFrom,
 				dateTo,
-				dateType
+				dateType,
 			);
 			const saveResults = await this.saveOrdersToDatabase(orders, saveOptions);
 
-			console.log(`Download and save completed:`, saveResults);
+			console.log('Download and save completed:', saveResults);
 			return _.assign(
 				{
 					success: true,
 					downloaded: orders.length,
 				},
-				saveResults
+				saveResults,
 			);
 		} catch (error) {
 			console.error('Download and save failed:', error.message);
@@ -516,13 +516,13 @@ class ExternalApiService {
 			const orders = await this.downloadAllOrders();
 			const saveResults = await this.saveOrdersToDatabase(orders);
 
-			console.log(`Download and save all orders completed:`, saveResults);
+			console.log('Download and save all orders completed:', saveResults);
 			return _.assign(
 				{
 					success: true,
 					downloaded: orders.length,
 				},
-				saveResults
+				saveResults,
 			);
 		} catch (error) {
 			console.error('Download and save all orders failed:', error.message);

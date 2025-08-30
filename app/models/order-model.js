@@ -1,5 +1,5 @@
-const { ObjectId } = require('mongodb');
-const { getDb } = require('../database/mongodb');
+const {ObjectId} = require('mongodb');
+const {getDb} = require('../database/mongodb');
 
 /**
  * Order Model - MongoDB implementation
@@ -40,7 +40,7 @@ const orderModel = {
 			}
 
 			// Sort by order date (newest first)
-			options.sort = { orderDate: -1 };
+			options.sort = {orderDate: -1};
 
 			const orders = await collection.find(query, options).toArray();
 
@@ -70,7 +70,7 @@ const orderModel = {
 				return null;
 			}
 
-			const order = await collection.findOne({ _id: new ObjectId(id) });
+			const order = await collection.findOne({_id: new ObjectId(id)});
 
 			if (order) {
 				return {
@@ -96,7 +96,7 @@ const orderModel = {
 			const db = getDb();
 			const collection = db.collection('orders');
 
-			const order = await collection.findOne({ externalId: externalId });
+			const order = await collection.findOne({externalId: externalId});
 
 			if (order) {
 				return {
@@ -183,9 +183,9 @@ const orderModel = {
 			});
 
 			const result = await collection.findOneAndUpdate(
-				{ _id: new ObjectId(id) },
-				{ $set: updateFields },
-				{ returnDocument: 'after' }
+				{_id: new ObjectId(id)},
+				{$set: updateFields},
+				{returnDocument: 'after'},
 			);
 
 			if (result.value) {
@@ -226,9 +226,9 @@ const orderModel = {
 			});
 
 			const result = await collection.findOneAndUpdate(
-				{ externalId: externalId },
-				{ $set: updateFields },
-				{ returnDocument: 'after' }
+				{externalId: externalId},
+				{$set: updateFields},
+				{returnDocument: 'after'},
 			);
 
 			if (result.value) {
@@ -260,7 +260,7 @@ const orderModel = {
 				return false;
 			}
 
-			const result = await collection.deleteOne({ _id: new ObjectId(id) });
+			const result = await collection.deleteOne({_id: new ObjectId(id)});
 			return result.deletedCount === 1;
 		} catch (error) {
 			console.error('Error deleting order:', error);

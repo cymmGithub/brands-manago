@@ -15,47 +15,47 @@ db.createCollection('products', {
 			properties: {
 				name: {
 					bsonType: 'string',
-					description: 'Product name is required and must be a string'
+					description: 'Product name is required and must be a string',
 				},
 				price: {
 					bsonType: 'number',
 					minimum: 0,
-					description: 'Price must be a positive number'
+					description: 'Price must be a positive number',
 				},
 				category: {
 					bsonType: 'string',
-					description: 'Category is required and must be a string'
+					description: 'Category is required and must be a string',
 				},
 				description: {
 					bsonType: 'string',
-					description: 'Product description'
+					description: 'Product description',
 				},
 				imageUrl: {
 					bsonType: 'string',
-					description: 'Image URL'
+					description: 'Image URL',
 				},
 				inStock: {
 					bsonType: 'bool',
-					description: 'Stock availability'
+					description: 'Stock availability',
 				},
 				createdAt: {
 					bsonType: 'date',
-					description: 'Creation timestamp'
+					description: 'Creation timestamp',
 				},
 				updatedAt: {
 					bsonType: 'date',
-					description: 'Last update timestamp'
-				}
-			}
-		}
-	}
+					description: 'Last update timestamp',
+				},
+			},
+		},
+	},
 });
 
 // Create indexes for better performance
-db.products.createIndex({ name: 1 });
-db.products.createIndex({ category: 1 });
-db.products.createIndex({ price: 1 });
-db.products.createIndex({ createdAt: -1 });
+db.products.createIndex({name: 1});
+db.products.createIndex({category: 1});
+db.products.createIndex({price: 1});
+db.products.createIndex({createdAt: -1});
 
 // Insert sample data
 const sampleProducts = [
@@ -67,7 +67,7 @@ const sampleProducts = [
 		imageUrl: '/assets/images/featured-product-1.webp',
 		inStock: true,
 		createdAt: new Date(),
-		updatedAt: new Date()
+		updatedAt: new Date(),
 	},
 	{
 		name: 'Alpine Ski Set',
@@ -77,7 +77,7 @@ const sampleProducts = [
 		imageUrl: '/assets/images/featured-product-2.webp',
 		inStock: true,
 		createdAt: new Date(),
-		updatedAt: new Date()
+		updatedAt: new Date(),
 	},
 	{
 		name: 'Waterproof Hiking Boots',
@@ -87,8 +87,8 @@ const sampleProducts = [
 		imageUrl: '/assets/images/featured-product-3.webp',
 		inStock: true,
 		createdAt: new Date(),
-		updatedAt: new Date()
-	}
+		updatedAt: new Date(),
+	},
 ];
 
 db.products.insertMany(sampleProducts);
