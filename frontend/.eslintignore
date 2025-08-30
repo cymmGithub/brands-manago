@@ -1,5 +1,10 @@
 # Dependencies
 node_modules/
 
-# HTML files
 *.html
+**/*.html
+public/
+
+# Test results
+test-results/
+playwright-report/
