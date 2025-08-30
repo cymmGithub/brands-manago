@@ -1,6 +1,6 @@
 const idosell = require('idosell').default || require('idosell');
 const orderModel = require('../models/order-model');
-const ProgressBar = require('progress');
+const UtilsService = require('./utils-service');
 const _ = require('lodash');
 
 /**
@@ -200,12 +200,10 @@ class ExternalApiService {
 			let allOrders = [];
 
 			// Create progress bar for downloading pages
-			const progressBar = new ProgressBar(' Downloading pages [:bar] :current/:total :percent :etas', {
-				complete: '=',
-				incomplete: ' ',
-				width: 30,
-				total: paginationInfo.totalPages
-			});
+			const progressBar = UtilsService.createDownloadProgressBar(
+				paginationInfo.totalPages,
+				'Downloading pages'
+			);
 
 			// Download each page
 			for (let currentPage = 0; currentPage < paginationInfo.totalPages; currentPage++) {
@@ -214,8 +212,8 @@ class ExternalApiService {
 					limit: paginationInfo.ordersPerPage
 				});
 
-				allOrders = _.concat(allOrders, pageOrders);
-				progressBar.tick();
+							allOrders = _.concat(allOrders, pageOrders);
+			UtilsService.tickProgress(progressBar);
 
 				// Small delay to avoid overwhelming the API
 				if (currentPage < paginationInfo.totalPages - 1) {
@@ -339,12 +337,10 @@ class ExternalApiService {
 		}
 
 		// Create progress bar for saving orders
-		const progressBar = new ProgressBar(' Saving orders [:bar] :current/:total :percent (:created created, :updated updated)', {
-			complete: '=',
-			incomplete: ' ',
-			width: 30,
-			total: orders.length
-		});
+		const progressBar = UtilsService.createSaveProgressBar(
+			orders.length,
+			'Saving orders'
+		);
 
 		for (const externalOrder of orders) {
 			try {
@@ -353,7 +349,7 @@ class ExternalApiService {
 				if (!transformedOrder.externalId) {
 					results.skipped++;
 					results.errors.push(`Order missing external ID: ${JSON.stringify(externalOrder)}`);
-					progressBar.tick({ created: results.created, updated: results.updated });
+					UtilsService.tickProgress(progressBar, { created: results.created, updated: results.updated });
 					continue;
 				}
 
@@ -375,7 +371,7 @@ class ExternalApiService {
 				results.errors.push(`Failed to save order: ${error.message}`);
 			}
 
-			progressBar.tick({ created: results.created, updated: results.updated });
+			UtilsService.tickProgress(progressBar, { created: results.created, updated: results.updated });
 		}
 
 		console.log('\n Database save completed');
