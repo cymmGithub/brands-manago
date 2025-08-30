@@ -12,11 +12,7 @@ services:
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     volumes:
-      - ./app:/app
       - ./frontend:/frontend
-
-      # Named volume for node_modules to prevent host conflicts
-      - node_modules:/app/node_modules
     env_file:
       - .env
     restart: unless-stopped
@@ -32,6 +28,11 @@ services:
       - mongodb
     develop:
       watch:
+        - action: sync+restart
+          path: ./app
+          target: /app
+          ignore:
+            - node_modules/
         - action: rebuild
           path: ./app/package.json
 
