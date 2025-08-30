@@ -1,6 +1,7 @@
 const idosell = require('idosell').default || require('idosell');
 const orderModel = require('../models/order-model');
 const ProgressBar = require('progress');
+const _ = require('lodash');
 
 /**
  * External API Service - Handles communication with Idosell API
@@ -50,7 +51,7 @@ class ExternalApiService {
 			throw new Error('Idosell API client not initialized. Check your credentials.');
 		}
 
-		if (!Array.isArray(orderSerialNumbers) || orderSerialNumbers.length === 0) {
+		if (!_.isArray(orderSerialNumbers) || _.isEmpty(orderSerialNumbers)) {
 			throw new Error('orderSerialNumbers must be a non-empty array');
 		}
 
@@ -82,7 +83,7 @@ class ExternalApiService {
 			throw new Error('Idosell API client not initialized. Check your credentials.');
 		}
 
-		if (!dateFrom || !dateTo) {
+		if (_.isEmpty(dateFrom) || _.isEmpty(dateTo)) {
 			throw new Error('dateFrom and dateTo are required');
 		}
 
@@ -161,10 +162,10 @@ class ExternalApiService {
 			const response = await this.idosellClient.searchOrders.page(1, 100).exec();
 
 			return {
-				totalOrders: response.resultsNumberAll || 0,
-				totalPages: response.resultsNumberPage || 0,
-				ordersPerPage: response.resultsLimit || 100,
-				currentPageResults: response.Results?.length || 0
+				totalOrders: _.get(response, 'resultsNumberAll', 0),
+				totalPages: _.get(response, 'resultsNumberPage', 0),
+				ordersPerPage: _.get(response, 'resultsLimit', 100),
+				currentPageResults: _.size(_.get(response, 'Results', []))
 			};
 		} catch (error) {
 			console.error('Failed to get pagination info:', error.message);
@@ -213,7 +214,7 @@ class ExternalApiService {
 					limit: paginationInfo.ordersPerPage
 				});
 
-				allOrders = allOrders.concat(pageOrders);
+				allOrders = _.concat(allOrders, pageOrders);
 				progressBar.tick();
 
 				// Small delay to avoid overwhelming the API
@@ -236,40 +237,42 @@ class ExternalApiService {
 	 * @returns {Object} Transformed order data
 	 */
 	transformOrderData(externalOrder) {
+		const customerName = _.trim(`${_.get(externalOrder, 'customerFirstName', '')} ${_.get(externalOrder, 'customerLastName', '')}`);
+
 		return {
-			externalId: externalOrder.orderSerialNumber?.toString(),
-			orderNumber: externalOrder.orderNumber || externalOrder.orderSerialNumber?.toString(),
-			customerEmail: externalOrder.customerEmail,
-			customerName: `${externalOrder.customerFirstName || ''} ${externalOrder.customerLastName || ''}`.trim(),
-			totalAmount: externalOrder.orderGrossValue || externalOrder.orderNetValue || 0,
-			currency: externalOrder.orderCurrency || 'PLN',
-			status: this.mapOrderStatus(externalOrder.orderStatusId),
-			orderDate: externalOrder.orderAddDate ? new Date(externalOrder.orderAddDate) : new Date(),
-			items: this.transformOrderItems(externalOrder.orderProducts || []),
-			shippingAddress: {
-				firstName: externalOrder.deliveryFirstName,
-				lastName: externalOrder.deliveryLastName,
-				company: externalOrder.deliveryCompanyName,
-				street: externalOrder.deliveryStreet,
-				city: externalOrder.deliveryCity,
-				postalCode: externalOrder.deliveryPostCode,
-				country: externalOrder.deliveryCountryName,
-				phone: externalOrder.deliveryPhone,
-			},
-			billingAddress: {
-				firstName: externalOrder.customerFirstName,
-				lastName: externalOrder.customerLastName,
-				company: externalOrder.customerCompanyName,
-				street: externalOrder.customerStreet,
-				city: externalOrder.customerCity,
-				postalCode: externalOrder.customerPostCode,
-				country: externalOrder.customerCountryName,
-				phone: externalOrder.customerPhone,
-			},
-			paymentMethod: externalOrder.paymentName,
-			shippingMethod: externalOrder.deliveryName,
-			notes: externalOrder.orderComment || '',
-			externalData: externalOrder, // Store complete external data for reference
+			externalId: _.get(externalOrder, 'orderSerialNumber', '').toString(),
+			orderNumber: _.get(externalOrder, 'orderNumber') || _.get(externalOrder, 'orderSerialNumber', '').toString(),
+			customerEmail: _.get(externalOrder, 'customerEmail'),
+			customerName: _.isEmpty(customerName) ? 'Unknown Customer' : customerName,
+			totalAmount: _.get(externalOrder, 'orderGrossValue') || _.get(externalOrder, 'orderNetValue', 0),
+			currency: _.get(externalOrder, 'orderCurrency', 'PLN'),
+			status: this.mapOrderStatus(_.get(externalOrder, 'orderStatusId')),
+			orderDate: _.get(externalOrder, 'orderAddDate') ? new Date(externalOrder.orderAddDate) : new Date(),
+			items: this.transformOrderItems(_.get(externalOrder, 'orderProducts', [])),
+			shippingAddress: _.mapKeys(_.pick(externalOrder, [
+				'deliveryFirstName',
+				'deliveryLastName',
+				'deliveryCompanyName',
+				'deliveryStreet',
+				'deliveryCity',
+				'deliveryPostCode',
+				'deliveryCountryName',
+				'deliveryPhone'
+			]), (value, key) => _.camelCase(key.replace('delivery', ''))),
+			billingAddress: _.mapKeys(_.pick(externalOrder, [
+				'customerFirstName',
+				'customerLastName',
+				'customerCompanyName',
+				'customerStreet',
+				'customerCity',
+				'customerPostCode',
+				'customerCountryName',
+				'customerPhone'
+			]), (value, key) => _.camelCase(key.replace('customer', ''))),
+			paymentMethod: _.get(externalOrder, 'paymentName'),
+			shippingMethod: _.get(externalOrder, 'deliveryName'),
+			notes: _.get(externalOrder, 'orderComment', ''),
+			externalData: externalOrder
 		};
 	}
 
@@ -279,15 +282,20 @@ class ExternalApiService {
 	 * @returns {Array} Transformed order items
 	 */
 	transformOrderItems(externalItems) {
-		return externalItems.map(item => ({
-			productId: item.productId,
-			productCode: item.productCode,
-			productName: item.productName,
-			quantity: item.orderProductQuantity || 1,
-			unitPrice: item.orderProductGrossPrice || item.orderProductNetPrice || 0,
-			totalPrice: (item.orderProductQuantity || 1) * (item.orderProductGrossPrice || item.orderProductNetPrice || 0),
-			currency: item.orderProductCurrency || 'PLN',
-		}));
+		return _.map(externalItems, item => {
+			const quantity = _.get(item, 'orderProductQuantity', 1);
+			const unitPrice = _.get(item, 'orderProductGrossPrice') || _.get(item, 'orderProductNetPrice', 0);
+
+			return {
+				productId: _.get(item, 'productId'),
+				productCode: _.get(item, 'productCode'),
+				productName: _.get(item, 'productName'),
+				quantity,
+				unitPrice,
+				totalPrice: _.multiply(quantity, unitPrice),
+				currency: _.get(item, 'orderProductCurrency', 'PLN')
+			};
+		});
 	}
 
 	/**
@@ -306,7 +314,7 @@ class ExternalApiService {
 			7: 'returned',
 		};
 
-		return statusMap[externalStatusId] || 'pending';
+		return _.get(statusMap, externalStatusId, 'pending');
 	}
 
 	/**
@@ -326,7 +334,7 @@ class ExternalApiService {
 			errors: []
 		};
 
-		if (orders.length === 0) {
+		if (_.isEmpty(orders)) {
 			return results;
 		}
 
@@ -386,11 +394,10 @@ class ExternalApiService {
 			const saveResults = await this.saveOrdersToDatabase(orders, options);
 
 			console.log(`Download and save completed:`, saveResults);
-			return {
+			return _.assign({
 				success: true,
-				downloaded: orders.length,
-				...saveResults
-			};
+				downloaded: orders.length
+			}, saveResults);
 		} catch (error) {
 			console.error('Download and save failed:', error.message);
 			throw error;
@@ -411,11 +418,10 @@ class ExternalApiService {
 			const saveResults = await this.saveOrdersToDatabase(orders, saveOptions);
 
 			console.log(`Download and save completed:`, saveResults);
-			return {
+			return _.assign({
 				success: true,
-				downloaded: orders.length,
-				...saveResults
-			};
+				downloaded: orders.length
+			}, saveResults);
 		} catch (error) {
 			console.error('Download and save failed:', error.message);
 			throw error;
@@ -432,11 +438,10 @@ class ExternalApiService {
 			const saveResults = await this.saveOrdersToDatabase(orders);
 
 			console.log(`Download and save all orders completed:`, saveResults);
-			return {
+			return _.assign({
 				success: true,
-				downloaded: orders.length,
-				...saveResults
-			};
+				downloaded: orders.length
+			}, saveResults);
 		} catch (error) {
 			console.error('Download and save all orders failed:', error.message);
 			throw error;
