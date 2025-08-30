@@ -1,10 +1,9 @@
 // @ts-check
 import {test, expect} from '@playwright/test';
 
-// Base URL for local testing - update this when you have a local server running
-const BASE_URL = 'file://' + process.cwd() + '/index.html';
+const BASE_URL = 'http://localhost:3000';
 
-test.describe('Forma\'Sint Homepage', () => {
+test.describe("Forma'Sint Homepage", () => {
 	test('should display hero section correctly', async({page}) => {
 		await page.goto(BASE_URL);
 
@@ -14,7 +13,10 @@ test.describe('Forma\'Sint Homepage', () => {
 		await expect(page.locator('.hero__image')).toBeVisible();
 
 		// Check hero image alt text
-		await expect(page.locator('.hero__image')).toHaveAttribute('alt', /climber.*ice wall.*orange.*gear/i);
+		await expect(page.locator('.hero__image')).toHaveAttribute(
+			'alt',
+			/climber.*ice wall.*orange.*gear/i,
+		);
 	});
 });
 
@@ -24,8 +26,12 @@ test.describe('Featured Products Section', () => {
 
 		// Check featured products section
 		await expect(page.locator('#featured')).toBeVisible();
-		await expect(page.locator('.featured__title')).toContainText('Browse featured');
-		await expect(page.locator('.featured__subtitle')).toContainText('FEATURED PRODUCTS');
+		await expect(page.locator('.featured__title')).toContainText(
+			'Browse featured',
+		);
+		await expect(page.locator('.featured__subtitle')).toContainText(
+			'FEATURED PRODUCTS',
+		);
 
 		// Check Swiper is present
 		await expect(page.locator('.swiper')).toBeVisible();
@@ -44,7 +50,9 @@ test.describe('Products Section', () => {
 		// Check pagination dropdown
 		await expect(page.locator('.custom-dropdown')).toBeVisible();
 		await expect(page.locator('.custom-dropdown__value')).toContainText('14');
-		await expect(page.locator('.products__pagination-text')).toContainText('NUMBER OF PRODUCTS PER PAGE:');
+		await expect(page.locator('.products__pagination-text')).toContainText(
+			'NUMBER OF PRODUCTS PER PAGE:',
+		);
 	});
 });
 
@@ -69,7 +77,9 @@ test.describe('Navigation Scroll Tests', () => {
 		await page.waitForLoadState('networkidle');
 	});
 
-	test('should scroll to featured products section when clicking featured products nav link', async({page}) => {
+	test('should scroll to featured products section when clicking featured products nav link', async({
+		page,
+	}) => {
 		// Initially, hero should be in viewport
 		await expect(page.locator('.hero')).toBeInViewport();
 
@@ -87,7 +97,9 @@ test.describe('Navigation Scroll Tests', () => {
 		await expect(page.locator('.featured__subtitle')).toBeVisible();
 	});
 
-	test('should scroll to products section when clicking product listing nav link', async({page}) => {
+	test('should scroll to products section when clicking product listing nav link', async({
+		page,
+	}) => {
 		// Initially, hero should be in viewport
 		await expect(page.locator('.hero')).toBeInViewport();
 
@@ -105,7 +117,9 @@ test.describe('Navigation Scroll Tests', () => {
 		await expect(page.locator('.custom-dropdown')).toBeVisible();
 	});
 
-	test('should scroll back to top when clicking home nav link', async({page}) => {
+	test('should scroll back to top when clicking home nav link', async({
+		page,
+	}) => {
 		// First scroll to featured products
 		await page.getByTestId('nav-featured').click();
 		await page.waitForTimeout(1000);
@@ -120,7 +134,9 @@ test.describe('Navigation Scroll Tests', () => {
 		await expect(page.locator('.hero__title-image')).toBeVisible();
 	});
 
-	test('should navigate between all sections sequentially', async({page}) => {
+	test('should navigate between all sections sequentially', async({
+		page,
+	}) => {
 		// Start at hero (home)
 		await expect(page.locator('.hero')).toBeInViewport();
 

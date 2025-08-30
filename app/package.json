@@ -1,0 +1,31 @@
+{
+  "name": "brands-manago-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Forma'Sint - Premium Outdoor Gear",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "lint": "eslint **/*.js",
+    "lint:fix": "eslint **/*.js --fix",
+    "lint:check": "eslint **/*.js --max-warnings 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cymmGithub/brands-manago-fe.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/cymmGithub/brands-manago-fe/issues"
+  },
+  "homepage": "https://github.com/cymmGithub/brands-manago-fe#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0"
+  }
+}
