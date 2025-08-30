@@ -35,6 +35,7 @@ app.get('*', (req, res) => {
 });
 
 // Global error handler
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
 	console.error('Global error handler:', err.stack);
 	res.status(500).json({

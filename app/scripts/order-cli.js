@@ -17,7 +17,7 @@ const mongodb = require('../database/mongodb');
 // Load environment variables from .env file if available
 try {
 	require('dotenv').config();
-} catch (e) {
+} catch (_e) {
 	// dotenv not available, that's okay
 }
 

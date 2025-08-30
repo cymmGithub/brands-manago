@@ -6,9 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "lint": "eslint *.js {models,routes,services,scripts,database}/**/*.js",
-    "lint:fix": "eslint *.js {models,routes,services,scripts,database}/**/*.js --fix",
-    "lint:check": "eslint *.js {models,routes,services,scripts,database}/**/*.js --max-warnings 0"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:check": "eslint . --max-warnings 0"
   },
   "repository": {
     "type": "git",
