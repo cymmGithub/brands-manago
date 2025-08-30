@@ -52,13 +52,13 @@ class ExternalApiService {
 		try {
 			console.log(`📥 Downloading ${orderSerialNumbers.length} orders from Idosell API...`);
 
-			const orders = await this.idosellClient
+			const {Results, resultsNumberAll} = await this.idosellClient
 				.searchOrders
 				.ordersSerialNumbers(orderSerialNumbers)
 				.exec();
 
-			console.log(`✅ Successfully downloaded ${orders?.length || 0} orders`);
-			return orders || [];
+			console.log(`✅ Successfully downloaded ${resultsNumberAll || 0} orders`);
+			return Results || [];
 		} catch (error) {
 			console.error('❌ Failed to download orders:', error.message);
 			throw new Error(`Failed to download orders: ${error.message}`);
@@ -80,50 +80,15 @@ class ExternalApiService {
 		try {
 			console.log(`📥 Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)...`);
 
-			const orders = await this.idosellClient
+			const {Results, resultsNumberAll} = await this.idosellClient
 				.searchOrders
 				.dates(dateFrom, dateTo, dateType)
 				.exec();
 
-			console.log(`✅ Successfully downloaded ${orders?.length || 0} orders`);
-			return orders || [];
+			console.log(`✅ Successfully downloaded ${resultsNumberAll || 0} orders`);
+			return Results || [];
 		} catch (error) {
 			console.error('❌ Failed to download orders by date range:', error.message);
-			throw new Error(`Failed to download orders: ${error.message}`);
-		}
-	}
-
-	/**
-	 * Download orders with pagination
-	 * @param {Object} options - Download options
-	 * @param {number} options.page - Page number (default: 1)
-	 * @param {number} options.limit - Items per page (default: 50)
-	 * @param {string} options.status - Order status filter (optional)
-	 * @returns {Promise<Array>} Array of downloaded orders
-	 */
-	async downloadOrdersWithPagination(options = {}) {
-		if (!this.isReady()) {
-			throw new Error('Idosell API client not initialized. Check your credentials.');
-		}
-
-		const { page = 1, limit = 50, status } = options;
-
-		try {
-			console.log(`📥 Downloading orders (page ${page}, limit ${limit})...`);
-
-			let request = this.idosellClient.searchOrders.page(page, limit);
-
-			// Add status filter if provided
-			if (status) {
-				request = request.status(status);
-			}
-
-			const orders = await request.exec();
-
-			console.log(`✅ Successfully downloaded ${orders?.length || 0} orders`);
-			return orders || [];
-		} catch (error) {
-			console.error('❌ Failed to download orders with pagination:', error.message);
 			throw new Error(`Failed to download orders: ${error.message}`);
 		}
 	}
@@ -268,13 +233,13 @@ class ExternalApiService {
 	 */
 	async downloadAndSaveOrdersBySerialNumbers(orderSerialNumbers, options = {}) {
 		try {
-			const {Results, resultsNumberAll} = await this.downloadOrdersBySerialNumbers(orderSerialNumbers);
-			const saveResults = await this.saveOrdersToDatabase(Results, options);
+			const orders = await this.downloadOrdersBySerialNumbers(orderSerialNumbers);
+			const saveResults = await this.saveOrdersToDatabase(orders, options);
 
 			console.log(`📊 Download and save completed:`, saveResults);
 			return {
 				success: true,
-				downloaded: resultsNumberAll,
+				downloaded: orders.length,
 				...saveResults
 			};
 		} catch (error) {
