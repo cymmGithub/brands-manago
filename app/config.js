@@ -7,4 +7,9 @@ module.exports = {
 		uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/brands-manago',
 		dbName: process.env.MONGODB_DB_NAME || 'brands-manago',
 	},
+	idosell: {
+		shopUrl: process.env.IDOSELL_SHOP_URL,
+		apiKey: process.env.IDOSELL_API_KEY,
+		apiVersion: process.env.IDOSELL_API_VERSION || 'v6',
+	},
 };

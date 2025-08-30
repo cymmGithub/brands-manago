@@ -15,7 +15,9 @@ app.use('/js', express.static(path.join(__dirname, '..', 'frontend', 'src', 'js'
 
 // API Routes
 const productRoutes = require('./routes/product-routes');
+const orderRoutes = require('./routes/order-routes');
 app.use('/api', productRoutes);
+app.use('/api', orderRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
