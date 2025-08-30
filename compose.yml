@@ -8,6 +8,7 @@ services:
         NODE_ENV: ${NODE_ENV}
         PORT: ${PORT:-3000}
         APP_HOST: ${APP_HOST}
+        BIND_HOST: ${BIND_HOST}
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     volumes:
@@ -27,13 +28,36 @@ services:
       start_period: 40s
     networks:
       - brands-manago-network
+    depends_on:
+      - mongodb
     develop:
       watch:
         - action: rebuild
           path: ./app/package.json
 
+  mongodb:
+    image: mongo:7-jammy
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-brands-manago}
+    volumes:
+      - mongodb_data:/data/db
+      - ./app/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - brands-manago-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 volumes:
   node_modules:
+    driver: local
+  mongodb_data:
     driver: local
 
 networks:
