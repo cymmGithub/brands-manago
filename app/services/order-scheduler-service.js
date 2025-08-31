@@ -58,7 +58,6 @@ class OrderSchedulerService {
 
 	/**
 	 * Run the scheduled download task
-	 * Uses the configured lookbackMinutes to determine how far back to look for orders
 	 */
 	async runScheduledTask() {
 		if (this.isRunning) {
@@ -69,62 +68,19 @@ class OrderSchedulerService {
 		this.isRunning = true;
 
 		try {
-			const dateFrom = this.getDateFromMinutesAgo(this.lookbackMinutes);
-			const dateTo = this.getCurrentDateString();
-
-			const results = await this.externalApiService.downloadAndSaveOrdersByDateRange(
-				dateFrom,
-				dateTo,
-				{
-					dateType: 'add',
+			const results = await this.externalApiService
+				.downloadAndSaveNewlyAddedOrdersFromScheduler({
+					minutes: this.lookbackMinutes,
+					dateType: this.externalApiService.DATE_TYPES.ADD,
 					updateExisting: true,
-				},
-			);
+				});
 
-			console.log(`✅ Download completed: ${results.created} created, ${results.updated} updated`);
-
+			console.log(`✅ Scheduler run completed: ${results.downloaded} downloaded, ${results.created} created, ${results.updated} updated`);
 		} catch (error) {
-			console.error('❌ Download failed:', error.message);
+			console.error('❌ Scheduler run failed:', error.message);
 		} finally {
 			this.isRunning = false;
 		}
-	}
-
-	/**
-	 * Run download immediately (for debugging)
-	 * Uses the configured lookbackMinutes value
-	 */
-	async runNow() {
-		console.log('🚀 Running download now...');
-		await this.runScheduledTask();
-	}
-
-	/**
-	 * Get date string from X minutes ago
-	 * @param {number} minutes - Number of minutes ago
-	 * @returns {string} Date string in YYYY-MM-DD format
-	 */
-	getDateFromMinutesAgo(minutes) {
-		const date = new Date();
-		date.setMinutes(date.getMinutes() - minutes);
-		return date.toISOString().split('T')[0];
-	}
-
-	/**
-	 * Get current date string
-	 * @returns {string} Date string in YYYY-MM-DD format
-	 */
-	getCurrentDateString() {
-		return new Date().toISOString().split('T')[0];
-	}
-
-	/**
-	 * Set the lookback period
-	 * @param {number} minutes - Minutes to look back for orders
-	 */
-	setLookbackMinutes(minutes) {
-		this.lookbackMinutes = parseInt(minutes, 10);
-		console.log(`📅 Lookback period set to ${this.lookbackMinutes} minutes`);
 	}
 
 	/**
