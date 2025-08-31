@@ -1,3 +1,4 @@
+require('dotenv').config();
 module.exports = {
 	port: process.env.PORT || 3000,
 	env: process.env.NODE_ENV || 'development',
@@ -11,5 +12,9 @@ module.exports = {
 		shopUrl: process.env.IDOSELL_SHOP_URL,
 		apiKey: process.env.IDOSELL_API_KEY,
 		apiVersion: process.env.IDOSELL_API_VERSION || 'v6',
+	},
+	scheduler: {
+		intervalMinutes: +process.env.SCHEDULER_INTERVAL_MINUTES,
+		lookbackMinutes: +process.env.SCHEDULER_LOOKBACK_MINUTES,
 	},
 };
