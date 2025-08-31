@@ -76,8 +76,6 @@ const ProductGrid = (() => {
 			// We want promo banner to appear after position 5 (so it takes positions 6-7 in the DOM order)
 			// but visually appears in the center columns of row 2
 
-			let productIndex = 0;
-			let promoInserted = false;
 			const wideScreenGridThreshold = 5;
 			const mobileGridThreshold = 6;
 
@@ -86,29 +84,24 @@ const ProductGrid = (() => {
 				? wideScreenGridThreshold
 				: mobileGridThreshold;
 
-			// Add products in the desired order
-			for (let i = 0; i < products.length + 1; i++) {
-				// Insert promo banner at the calculated threshold position
+			let promoInserted = false;
+
+			// Add products and promo banner
+			for (let i = 0; i < products.length; i++) {
+				// Insert promo banner at the threshold position
 				if (i === threshold && !promoInserted) {
 					const bannerElement = PromoBanner.render(productGrid);
 					if (bannerElement) {
 						promoInserted = true;
 					}
-					// If banner wasn't rendered (already seen), we don't count this as an insertion
-					// Continue with products in the same loop iteration
-					if (!bannerElement && productIndex < products.length) {
-						const productElement = createProductCard(products[productIndex]);
-						productGrid.appendChild(productElement);
-						productIndex++;
-					}
-				} else if (productIndex < products.length) {
-					const productElement = createProductCard(products[productIndex]);
-					productGrid.appendChild(productElement);
-					productIndex++;
 				}
+
+				// Add the product
+				const productElement = createProductCard(products[i]);
+				productGrid.appendChild(productElement);
 			}
 
-			// If we have fewer products than the threshold, still try to append the banner at the end
+			// If we have fewer products than the threshold, try to append the banner at the end
 			if (!promoInserted) {
 				PromoBanner.render(productGrid);
 			}
