@@ -10,7 +10,7 @@ services:
         APP_HOST: ${APP_HOST}
         BIND_HOST: ${BIND_HOST}
     ports:
-      - "80:${PORT}"
+      - "1337:${PORT}"
     volumes:
       - ./frontend:/frontend
 
