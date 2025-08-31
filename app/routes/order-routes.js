@@ -1,154 +1,111 @@
 const express = require('express');
+const _ = require('lodash');
 const orderModel = require('../models/order-model');
-const ExternalApiService = require('../services/external-api-service');
 
 const router = express.Router();
-const externalApiService = new ExternalApiService();
 
 /**
- * GET /api/orders
- * Get all orders with optional filters
+ * Helper function to convert array of objects to CSV format
+ * @param {Array} data - Array of order objects
+ * @returns {string} CSV formatted string
  */
-router.get('/orders', async(req, res) => {
-	try {
-		const filters = {
-			status: req.query.status,
-			dateFrom: req.query.dateFrom,
-			dateTo: req.query.dateTo,
-			limit: req.query.limit,
-		};
-
-		// Remove undefined filters
-		Object.keys(filters).forEach(key => {
-			if (filters[key] === undefined) {
-				delete filters[key];
-			}
-		});
-
-		const orders = await orderModel.getAll(filters);
-		const totalCount = await orderModel.getCount(filters);
-
-		res.json({
-			success: true,
-			data: orders,
-			total: totalCount,
-			filters: filters,
-		});
-	} catch (error) {
-		console.error('Error fetching orders:', error);
-		res.status(500).json({
-			success: false,
-			message: 'Failed to fetch orders',
-			error: error.message,
-		});
+function convertToCSV(data) {
+	if (_.isEmpty(data)) {
+		return 'No orders found';
 	}
-});
 
+	// Define CSV headers based on order structure
+	const headers = [
+		'ID',
+		'External ID',
+		'External Serial Number',
+		'Currency',
+		'Status',
+		'Order Products Cost',
+		'Products Count',
+		'Products Details',
+		'External Created At',
+		'External Updated At',
+		'Created At',
+		'Updated At',
+	];
 
-/**
- * GET /api/orders/download/status
- * Check external API service status
- */
-router.get('/orders/download/status', (req, res) => {
-	try {
-		const isReady = externalApiService.isReady();
+	// Create CSV content
+	const csvRows = [];
+	csvRows.push(_.join(headers, ','));
 
-		res.json({
-			success: true,
-			data: {
-				ready: isReady,
-				shopUrl: process.env.IDOSELL_SHOP_URL ? '***configured***' : 'not configured',
-				apiKey: process.env.IDOSELL_API_KEY ? '***configured***' : 'not configured',
-				apiVersion: externalApiService.apiVersion,
-			},
-		});
-	} catch (error) {
-		console.error('Error checking external API status:', error);
-		res.status(500).json({
-			success: false,
-			message: 'Failed to check external API status',
-			error: error.message,
-		});
-	}
-});
+	const formatDate = (date) => {
+		return _.isNil(date) ? 'N/A' : new Date(date).toISOString();
+	};
 
-/**
- * POST /api/orders
- * Create a new order manually
- */
-router.post('/orders', async(req, res) => {
-	try {
-		const order = await orderModel.create(req.body);
-
-		res.status(201).json({
-			success: true,
-			message: 'Order created successfully',
-			data: order,
-		});
-	} catch (error) {
-		console.error('Error creating order:', error);
-		res.status(500).json({
-			success: false,
-			message: 'Failed to create order',
-			error: error.message,
-		});
-	}
-});
-
-/**
- * PUT /api/orders/:id
- * Update an order
- */
-router.put('/orders/:id', async(req, res) => {
-	try {
-		const order = await orderModel.update(req.params.id, req.body);
-
-		if (!order) {
-			return res.status(404).json({
-				success: false,
-				message: 'Order not found',
-			});
+	const formatProductDetails = (products) => {
+		if (_.isEmpty(products)) {
+			return 'No products';
 		}
+		return _.join(
+			_.map(products, (p, index) => `Product ${index + 1} (Qty: ${_.get(p, 'productQuantity', 'N/A')})`),
+			'; ',
+		);
+	};
 
-		res.json({
-			success: true,
-			message: 'Order updated successfully',
-			data: order,
-		});
-	} catch (error) {
-		console.error('Error updating order:', error);
-		res.status(500).json({
-			success: false,
-			message: 'Failed to update order',
-			error: error.message,
-		});
-	}
-});
+	_.forEach(data, order => {
+		const productsCount = _.size(_.get(order, 'orderProducts', []));
+		const productsDetails = formatProductDetails(_.get(order, 'orderProducts'));
 
-/**
- * DELETE /api/orders/:id
- * Delete an order
- */
-router.delete('/orders/:id', async(req, res) => {
+		// Create row data array with safe property access
+		const row = [
+			_.get(order, 'id', 'N/A'),
+			_.get(order, 'externalId', 'N/A'),
+			_.get(order, 'externalSerialNumber', 'N/A'),
+			_.get(order, 'currency', 'N/A'),
+			_.get(order, 'status', 'N/A'),
+			_.get(order, 'orderProductsCost', 'N/A'),
+			productsCount,
+			`"${productsDetails}"`, // Wrap in quotes to handle commas in product details
+			formatDate(_.get(order, 'externalCreatedAt')),
+			formatDate(_.get(order, 'externalUpdatedAt')),
+			formatDate(_.get(order, 'createdAt')),
+			formatDate(_.get(order, 'updatedAt')),
+		];
+
+		csvRows.push(_.join(row, ','));
+	});
+
+	return _.join(csvRows, '\n');
+}
+
+router.get('/orders/download-csv', async(req, res) => {
 	try {
-		const deleted = await orderModel.delete(req.params.id);
+		console.log('CSV download request received');
 
-		if (!deleted) {
-			return res.status(404).json({
-				success: false,
-				message: 'Order not found',
-			});
-		}
+		// Get all orders without any filters or limits
+		const orders = await orderModel.getAll();
 
-		res.json({
-			success: true,
-			message: 'Order deleted successfully',
-		});
+		console.log(`Found ${orders.length} orders for CSV export`);
+
+		// Convert to CSV format
+		const csvContent = convertToCSV(orders);
+
+		// Generate filename with current timestamp
+		const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
+		const filename = `orders-export-${timestamp}.csv`;
+
+		// Set headers for file download
+		res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+		res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+		res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+		res.setHeader('Pragma', 'no-cache');
+		res.setHeader('Expires', '0');
+
+		// Send CSV content
+		res.send(csvContent);
+
+		console.log(`CSV file "${filename}" sent successfully`);
 	} catch (error) {
-		console.error('Error deleting order:', error);
+		console.error('Error generating CSV export:', error);
 		res.status(500).json({
 			success: false,
-			message: 'Failed to delete order',
+			message: 'Failed to generate CSV export',
 			error: error.message,
 		});
 	}
