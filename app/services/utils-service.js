@@ -137,6 +137,36 @@ class UtilsService {
 		}
 		return Math.round(progressBar.ratio * 100);
 	}
+
+	/**
+	 * Check if error is IdoSell empty result error (not a real error, just no data)
+	 * @param {Error} error - Error object to check
+	 * @returns {boolean} True if this is an empty result error
+	 */
+	static isIdosellEmptyResultError(error) {
+		return error && error.cause &&
+			error.cause.faultCode === 2 &&
+			error.cause.faultString === 'Wyszukiwarka zamówień: zwrócono pusty wynik';
+	}
+
+	/**
+	 * Handle IdoSell API call with proper empty result error handling
+	 * @param {Function} apiCall - Async function that makes the IdoSell API call
+	 * @param {string} logMessage - Message to log when empty results are found
+	 * @returns {Promise<Array>} Results array or empty array if no results
+	 */
+	static async handleIdosellApiCall(apiCall, logMessage = 'No results found from API') {
+		try {
+			const result = await apiCall();
+			return result.Results || [];
+		} catch (error) {
+			if (this.isIdosellEmptyResultError(error)) {
+				console.log(logMessage);
+				return [];
+			}
+			throw error; // Re-throw if it's a different error
+		}
+	}
 }
 
 module.exports = UtilsService;

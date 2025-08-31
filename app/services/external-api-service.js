@@ -166,17 +166,15 @@ class ExternalApiService {
 				dateType,
 			});
 
-			const {Results, resultsNumberAll} =
-				await this.idosellClient.searchOrders
-					.ordersRange(ordersRangeQuery.ordersRange)
-					.exec();
+			const {Results, resultsNumberAll} = await this.idosellClient.searchOrders
+				.ordersRange(ordersRangeQuery.ordersRange)
+				.exec();
 
 			console.log(`Successfully downloaded ${resultsNumberAll || 0} orders within ${minutes} minute time window`);
 			return Results || [];
 		} catch (error) {
-			// Handle the specific case where no orders are found - this is not an error, just empty results
-			if (error.cause && error.cause.faultCode === 2 &&
-				error.cause.faultString === 'Wyszukiwarka zamówień: zwrócono pusty wynik') {
+			if (UtilsService.isIdosellEmptyResultError(error)) {
+				console.log(`No orders found within ${minutes} minute time window`);
 				return [];
 			}
 			console.log('error', error.cause);
@@ -336,9 +334,7 @@ class ExternalApiService {
 				}
 			}
 
-			console.log(
-				`\n Successfully downloaded ${allOrders.length} total orders`,
-			);
+			console.log(`Successfully downloaded ${allOrders.length} total orders`);
 			return allOrders;
 		} catch (error) {
 			console.error('Failed to download all orders:', error.message);
@@ -444,7 +440,6 @@ class ExternalApiService {
 			});
 		}
 
-		console.log('\n Database save completed');
 		return results;
 	}
 
@@ -488,7 +483,6 @@ class ExternalApiService {
 
 			const saveResults = await this.saveOrdersToDatabase(orders, {updateExisting});
 
-			console.log('Scheduler download and save completed:', saveResults);
 			return _.assign(
 				{
 					success: true,
@@ -600,11 +594,23 @@ class ExternalApiService {
 				dateType: this.DATE_TYPES.MODIFIED, // This catches status changes!
 			});
 
-			const {Results} = await this.idosellClient.searchOrders
-				.ordersRange(ordersRangeQuery.ordersRange)
-				.exec();
+			let freshOrders = [];
 
-			const freshOrders = Results || [];
+			try {
+				const {Results} = await this.idosellClient.searchOrders
+					.ordersRange(ordersRangeQuery.ordersRange)
+					.exec();
+
+				freshOrders = Results || [];
+			} catch (apiError) {
+				if (UtilsService.isIdosellEmptyResultError(apiError)) {
+					console.log('No modified orders found in the time range (empty result from API)');
+					freshOrders = [];
+				} else {
+					throw apiError; // Re-throw if it's a different error
+				}
+			}
+
 			console.log(`Found ${freshOrders.length} modified orders from IdoSell`);
 
 			// Compare our local orders with fresh data from IdoSell
@@ -689,7 +695,6 @@ class ExternalApiService {
 		console.log('🔍 Starting order status monitoring...');
 
 		try {
-			// Step 1: Get incomplete orders from our database
 			const incompleteOrders = await this.getIncompleteOrders(lookbackMinutes);
 
 			if (incompleteOrders.length === 0) {
@@ -702,13 +707,11 @@ class ExternalApiService {
 				};
 			}
 
-			// Step 2: Check their status with IdoSell API
 			const statusUpdates = await this.checkOrderStatusesWithIdosell(
 				incompleteOrders,
 				modifiedLookbackHours,
 			);
 
-			// Step 3: Update our database with any changes
 			const updateResults = await this.updateOrderStatuses(statusUpdates);
 
 			const results = {
