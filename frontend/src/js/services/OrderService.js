@@ -118,11 +118,78 @@ const OrderService = (() => {
 					}
 				});
 			}
+
+			// Setup filter controls for bulk download
+			const clearFiltersBtn = document.getElementById('clear-filters-btn');
+			if (clearFiltersBtn) {
+				clearFiltersBtn.addEventListener('click', controller.clearFilters);
+			}
+
+			// Add input validation for filter inputs
+			const minWorthInput = document.getElementById('min-worth-input');
+			const maxWorthInput = document.getElementById('max-worth-input');
+			if (minWorthInput) {
+				minWorthInput.addEventListener('input', controller.validateFilterInputs);
+			}
+			if (maxWorthInput) {
+				maxWorthInput.addEventListener('input', controller.validateFilterInputs);
+			}
 		},
 
 		// Handle input change to enable/disable download button
 		handleInputChange() {
 			updateSingleDownloadButton(false);
+		},
+
+		// Clear all filter inputs
+		clearFilters() {
+			const minWorthInput = document.getElementById('min-worth-input');
+			const maxWorthInput = document.getElementById('max-worth-input');
+			if (minWorthInput) minWorthInput.value = '';
+			if (maxWorthInput) maxWorthInput.value = '';
+
+			showNotification('Filters cleared', 'info');
+		},
+
+		// Validate filter inputs
+		validateFilterInputs() {
+			const minWorthInput = document.getElementById('min-worth-input');
+			const maxWorthInput = document.getElementById('max-worth-input');
+			if (!minWorthInput || !maxWorthInput) return;
+
+			const minValue = parseFloat(minWorthInput.value);
+			const maxValue = parseFloat(maxWorthInput.value);
+
+			// Check if both values are present and min > max
+			if (!isNaN(minValue) && !isNaN(maxValue) && minValue > maxValue) {
+				maxWorthInput.setCustomValidity('Maximum value must be greater than minimum value');
+				maxWorthInput.reportValidity();
+			} else {
+				maxWorthInput.setCustomValidity('');
+			}
+		},
+
+		// Get current filter values
+		getFilterValues() {
+			const minWorthInput = document.getElementById('min-worth-input');
+			const maxWorthInput = document.getElementById('max-worth-input');
+			const filters = {};
+
+			if (minWorthInput && minWorthInput.value.trim()) {
+				const minValue = parseFloat(minWorthInput.value);
+				if (!isNaN(minValue) && minValue >= 0) {
+					filters.minWorth = minValue;
+				}
+			}
+
+			if (maxWorthInput && maxWorthInput.value.trim()) {
+				const maxValue = parseFloat(maxWorthInput.value);
+				if (!isNaN(maxValue) && maxValue >= 0) {
+					filters.maxWorth = maxValue;
+				}
+			}
+
+			return filters;
 		},
 
 		// Download orders as CSV
@@ -135,9 +202,28 @@ const OrderService = (() => {
 				isDownloading = true;
 				updateDownloadButton(true);
 
-				showNotification('Preparing CSV download...', 'info');
+				// Get filter values
+				const filters = controller.getFilterValues();
 
-				const response = await fetch(`${API_BASE_URL}/orders/download-csv`, {
+				// Build query string for filters
+				const queryParams = new URLSearchParams();
+				if (filters.minWorth !== undefined) {
+					queryParams.append('minWorth', filters.minWorth.toString());
+				}
+				if (filters.maxWorth !== undefined) {
+					queryParams.append('maxWorth', filters.maxWorth.toString());
+				}
+
+				const queryString = queryParams.toString();
+				const requestUrl = `${API_BASE_URL}/orders/download-csv${queryString ? `?${queryString}` : ''}`;
+
+				// Show appropriate loading message
+				const filterDescription = Object.keys(filters).length > 0
+					? `with filters (${Object.keys(filters).length} applied)`
+					: '';
+				showNotification(`Preparing CSV download ${filterDescription}...`, 'info');
+
+				const response = await fetch(requestUrl, {
 					method: 'GET',
 					headers: {
 						Accept: 'text/csv',
@@ -178,7 +264,10 @@ const OrderService = (() => {
 				// Clean up
 				URL.revokeObjectURL(url);
 
-				showNotification('CSV file downloaded successfully!', 'success');
+				const successMessage = Object.keys(filters).length > 0
+					? `Filtered CSV downloaded successfully! (${Object.keys(filters).length} filters applied)`
+					: 'CSV file downloaded successfully!';
+				showNotification(successMessage, 'success');
 
 			} catch (error) {
 				console.error('Error downloading CSV:', error);
