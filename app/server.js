@@ -3,21 +3,26 @@ const path = require('path');
 const config = require('./config');
 const mongodb = require('./database/mongodb');
 const OrderSchedulerService = require('./services/order-scheduler-service');
+const {setupSecurity} = require('./middleware/security-middleware');
 
 const app = express();
 const orderScheduler = new OrderSchedulerService();
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+// Setup security middleware first
+setupSecurity(app);
+
+// Body parsing middleware (with size limits for security)
+app.use(express.json({limit: '1mb'}));
+app.use(express.urlencoded({extended: true, limit: '1mb'}));
 
 // Static file serving
 app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
 app.use('/js', express.static(path.join(__dirname, '..', 'frontend', 'src', 'js')));
 
-// API Routes
+// API Routes with additional security
 const orderRoutes = require('./routes/order-routes');
-app.use('/api', orderRoutes);
+const {getAPISecurityMiddleware} = require('./middleware/security-middleware');
+app.use('/api', getAPISecurityMiddleware(), orderRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
