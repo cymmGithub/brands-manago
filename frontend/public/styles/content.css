@@ -156,6 +156,199 @@
 	color: var(--color-gray-600);
 }
 
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+/* Developer Tools Modal */
+.developer-modal-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.8);
+	backdrop-filter: blur(4px);
+	z-index: var(--z-index-modal);
+	opacity: 0;
+	visibility: hidden;
+	transition: var(--transition-normal);
+}
+
+.developer-modal-backdrop.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+.developer-modal {
+	position: fixed;
+	top: 0;
+	right: -100%;
+	width: 100%;
+	max-width: 500px;
+	height: 100%;
+	z-index: var(--z-index-dev-tools-modal);
+	transition: var(--transition-all);
+}
+
+.developer-modal.active {
+	right: 0;
+}
+
+.developer-modal__container {
+	height: 100%;
+	background: var(--color-white);
+	display: flex;
+	flex-direction: column;
+	box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.developer-modal__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--space-lg);
+	border-bottom: 1px solid var(--color-gray-200);
+	background: var(--color-gray-50);
+}
+
+.developer-modal__title {
+	font-size: var(--font-size-xl);
+	font-weight: var(--font-weight-semibold);
+	color: var(--color-black);
+	text-transform: uppercase;
+	letter-spacing: var(--letter-spacing-wide);
+}
+
+.developer-modal__close {
+	padding: var(--space-xs);
+	background: none;
+	border: none;
+	cursor: pointer;
+	border-radius: 4px;
+	transition: var(--transition-normal);
+}
+
+.developer-modal__close:hover {
+	background: var(--color-gray-200);
+}
+
+.developer-modal__close-icon {
+	width: 20px;
+	height: 20px;
+}
+
+.developer-modal__content {
+	flex: 1;
+	overflow-y: auto;
+	padding: var(--space-lg);
+}
+
+.developer-tools {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xl);
+}
+
+.developer-tool {
+	padding: var(--space-lg);
+	border: 1px solid var(--color-gray-200);
+	border-radius: 8px;
+	background: var(--color-white);
+}
+
+.developer-tool__title {
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
+	color: var(--color-black);
+	margin-bottom: var(--space-sm);
+	text-transform: uppercase;
+	letter-spacing: var(--letter-spacing-wide);
+}
+
+.developer-tool__description {
+	color: var(--color-gray-600);
+	font-size: var(--font-size-base);
+	line-height: var(--line-height-relaxed);
+	margin-bottom: var(--space-lg);
+}
+
+.developer-tool__button {
+	display: flex;
+	align-items: center;
+	gap: var(--space-sm);
+	padding: var(--space-md) var(--space-lg);
+	background: var(--color-black);
+	color: var(--color-white);
+	border: 1px solid var(--color-black);
+	border-radius: 6px;
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-medium);
+	letter-spacing: var(--letter-spacing-wide);
+	text-transform: uppercase;
+	transition: var(--transition-normal);
+	cursor: pointer;
+	width: 100%;
+	justify-content: center;
+}
+
+.developer-tool__button:hover {
+	background: var(--color-white);
+	color: var(--color-black);
+}
+
+.developer-tool__button:disabled,
+.developer-tool__button.downloading {
+	opacity: 0.7;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.developer-tool__button-icon {
+	font-size: 18px;
+	line-height: 1;
+}
+
+.developer-info {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+}
+
+.developer-info__item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--space-sm) 0;
+	border-bottom: 1px solid var(--color-gray-100);
+}
+
+.developer-info__item:last-child {
+	border-bottom: none;
+}
+
+.developer-info__label {
+	font-weight: var(--font-weight-medium);
+	color: var(--color-gray-700);
+	text-transform: uppercase;
+	font-size: var(--font-size-sm);
+	letter-spacing: var(--letter-spacing-wide);
+}
+
+.developer-info__value {
+	font-weight: var(--font-weight-semibold);
+	color: var(--color-black);
+}
+
+.api-status.online {
+	color: var(--color-success);
+}
+
+.api-status.offline {
+	color: var(--color-error);
+}
+
 .nav__toggle {
 	display: none;
 	flex-direction: row;

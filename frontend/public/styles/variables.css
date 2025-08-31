@@ -91,6 +91,7 @@
 	--z-index-dropdown: 10;
 	--z-index-modal-backdrop: 100;
 	--z-index-modal: 1000;
+	--z-index-dev-tools-modal: 1001;
 	--z-index-header: 1000;
 
 	/* Layout */

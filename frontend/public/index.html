@@ -70,13 +70,15 @@
 				<div class="nav__actions">
 					<img
 						src="assets/icons/icon-user.svg"
-						alt="User profile icon"
+						alt="Developer profile icon"
 						class="nav__developer-icon"
 						width="24"
 						height="24"
 						loading="lazy"
 					/>
-					<a href="#" class="nav__developer-link">FRONTEND DEVELOPER</a>
+					<button id="developer-tools-btn" class="nav__developer-link" data-testid="developer-tools-btn">
+						FULLSTACK DEVELOPER
+					</button>
 					<button
 						class="nav__toggle"
 						aria-label="Toggle navigation menu"
@@ -346,6 +348,64 @@
 			<img class="product-modal__image" id="modal-image" src="" alt="" />
 		</dialog>
 
+		<!-- Developer Tools Modal -->
+		<div class="developer-modal-backdrop" id="developer-modal-backdrop"></div>
+		<div class="developer-modal" id="developer-modal" data-testid="developer-modal">
+			<div class="developer-modal__container">
+				<div class="developer-modal__header">
+					<h2 class="developer-modal__title">Developer Tools</h2>
+					<button
+						class="developer-modal__close"
+						id="developer-modal-close"
+						aria-label="Close developer tools"
+						data-testid="developer-modal-close"
+					>
+						<img
+							src="assets/icons/icon-close.svg"
+							alt="Close icon"
+							class="developer-modal__close-icon"
+						/>
+					</button>
+				</div>
+				<div class="developer-modal__content">
+					<div class="developer-tools">
+						<div class="developer-tool">
+							<h3 class="developer-tool__title">Order Management</h3>
+							<p class="developer-tool__description">
+								Download all orders from the database in CSV format for analysis and reporting.
+							</p>
+							<button
+								id="download-orders-btn"
+								class="developer-tool__button"
+								aria-label="Download orders CSV"
+								data-testid="download-orders-btn"
+							>
+								<span class="developer-tool__button-icon">📥</span>
+								<span class="download-btn-text">Download Orders CSV</span>
+							</button>
+						</div>
+
+						<div class="developer-tool">
+							<h3 class="developer-tool__title">System Information</h3>
+							<p class="developer-tool__description">
+								View current system status and configuration details.
+							</p>
+							<div class="developer-info">
+								<div class="developer-info__item">
+									<span class="developer-info__label">Frontend Version:</span>
+									<span class="developer-info__value">1.0.0</span>
+								</div>
+								<div class="developer-info__item">
+									<span class="developer-info__label">API Status:</span>
+									<span class="developer-info__value api-status" id="api-status">Checking...</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- JavaScript - Load in dependency order -->
 		<!-- Swiper JS -->
 		<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -362,6 +422,8 @@
 		<script src="js/services/NavigationService.js"></script>
 		<script src="js/services/ScrollService.js"></script>
 		<script src="js/services/SEOService.js"></script>
+		<script src="js/services/OrderService.js"></script>
+		<script src="js/services/DeveloperModalService.js"></script>
 
 		<!-- Components -->
 		<script src="js/components/FeaturedProducts.js"></script>
