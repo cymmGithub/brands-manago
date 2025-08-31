@@ -526,6 +526,216 @@ class ExternalApiService {
 			throw error;
 		}
 	}
+
+	/**
+	 * Order status constants for monitoring
+	 */
+	get ORDER_STATUSES() {
+		return {
+			INCOMPLETE: ['new', 'on_order', 'packed', 'ready', 'payment_waiting', 'delivery_waiting', 'suspended', 'joined', 'finished_ext'],
+			FINAL: ['finished', 'lost', 'false'],
+			CANCELLED: ['canceled'],
+		};
+	}
+
+	/**
+	 * Get incomplete orders from database that need status checking
+	 * @param {number} lookbackMinutes - How many minutes back to avoid checking recently updated orders
+	 * @returns {Promise<Array>} Array of orders that need status checking
+	 */
+	async getIncompleteOrders(lookbackMinutes = 15) {
+		const {getDb} = require('../database/mongodb');
+
+		try {
+			const db = getDb();
+			const collection = db.collection('orders');
+			const cutoffTime = moment.utc().subtract(lookbackMinutes, 'minutes').toDate();
+
+			const query = {
+				status: {$in: this.ORDER_STATUSES.INCOMPLETE},
+				updatedAt: {$lt: cutoffTime},
+			};
+
+			const orders = await collection.find(query).toArray();
+			console.log(`Found ${orders.length} incomplete orders needing status check`);
+
+			// Convert MongoDB _id to id for consistency
+			return orders.map(order => ({
+				...order,
+				id: order._id.toString(),
+			}));
+		} catch (error) {
+			console.error('Failed to get incomplete orders:', error.message);
+			throw error;
+		}
+	}
+
+	/**
+	 * Check order statuses with IdoSell API using modified date
+	 * @param {Array} orders - Array of orders to check
+	 * @param {number} lookbackHours - How many hours back to check for modifications
+	 * @returns {Promise<Array>} Array of status updates
+	 */
+	async checkOrderStatusesWithIdosell(orders, lookbackHours = 1) {
+		if (!this.isReady()) {
+			throw new Error('Idosell API client not initialized. Check your credentials.');
+		}
+
+		if (_.isEmpty(orders)) {
+			return [];
+		}
+
+		try {
+			const statusUpdates = [];
+
+			// Query IdoSell for orders modified in the last hour
+			const dateFrom = moment.utc().subtract(lookbackHours, 'hours');
+			const dateTo = moment.utc();
+
+			console.log(`Checking order statuses modified between ${this.formatDateTime(dateFrom)} and ${this.formatDateTime(dateTo)}`);
+
+			const ordersRangeQuery = this.createOrdersRange({
+				dateFrom,
+				dateTo,
+				dateType: this.DATE_TYPES.MODIFIED, // This catches status changes!
+			});
+
+			const {Results} = await this.idosellClient.searchOrders
+				.ordersRange(ordersRangeQuery.ordersRange)
+				.exec();
+
+			const freshOrders = Results || [];
+			console.log(`Found ${freshOrders.length} modified orders from IdoSell`);
+
+			// Compare our local orders with fresh data from IdoSell
+			for (const localOrder of orders) {
+				const freshOrder = freshOrders.find(
+					fo => fo.orderId === localOrder.externalId,
+				);
+
+				if (freshOrder) {
+					const newStatus = _.get(freshOrder, 'orderDetails.orderStatus');
+					const currentStatus = localOrder.status;
+
+					if (newStatus && newStatus !== currentStatus) {
+						statusUpdates.push({
+							externalId: localOrder.externalId,
+							oldStatus: currentStatus,
+							newStatus: newStatus,
+						});
+					}
+				}
+			}
+
+			console.log(`Found ${statusUpdates.length} status changes`);
+			return statusUpdates;
+
+		} catch (error) {
+			console.error('Failed to check order statuses with IdoSell:', error.message);
+			throw error;
+		}
+	}
+
+	/**
+	 * Update order statuses in database
+	 * @param {Array} statusUpdates - Array of status updates
+	 * @returns {Promise<Object>} Update results
+	 */
+	async updateOrderStatuses(statusUpdates) {
+		const results = {updated: 0, completed: 0, errors: []};
+
+		if (_.isEmpty(statusUpdates)) {
+			return results;
+		}
+
+		for (const update of statusUpdates) {
+			try {
+				await orderModel.updateByExternalId(update.externalId, {
+					status: update.newStatus,
+				});
+
+				console.log(`Order ${update.externalId}: ${update.oldStatus} → ${update.newStatus}`);
+				results.updated++;
+
+				// Check if order reached final status
+				if (this.ORDER_STATUSES.FINAL.includes(update.newStatus)) {
+					console.log(`🎉 Order ${update.externalId} completed with status: ${update.newStatus}`);
+					results.completed++;
+				}
+
+			} catch (error) {
+				const errorMsg = `Failed to update ${update.externalId}: ${error.message}`;
+				results.errors.push(errorMsg);
+				console.error(errorMsg);
+			}
+		}
+
+		return results;
+	}
+
+	/**
+	 * Main status monitoring job - checks and updates order statuses
+	 * @param {Object} options - Monitoring options
+	 * @param {number} options.lookbackMinutes - Minutes to avoid re-checking recently updated orders
+	 * @param {number} options.modifiedLookbackHours - Hours to look back for modified orders
+	 * @returns {Promise<Object>} Monitoring results
+	 */
+	async runStatusMonitoringJob(options = {}) {
+		const {
+			lookbackMinutes = 15,
+			modifiedLookbackHours = 1,
+		} = options;
+
+		console.log('🔍 Starting order status monitoring...');
+
+		try {
+			// Step 1: Get incomplete orders from our database
+			const incompleteOrders = await this.getIncompleteOrders(lookbackMinutes);
+
+			if (incompleteOrders.length === 0) {
+				console.log('✅ No orders need status checking');
+				return {
+					success: true,
+					checked: 0,
+					updated: 0,
+					completed: 0,
+				};
+			}
+
+			// Step 2: Check their status with IdoSell API
+			const statusUpdates = await this.checkOrderStatusesWithIdosell(
+				incompleteOrders,
+				modifiedLookbackHours,
+			);
+
+			// Step 3: Update our database with any changes
+			const updateResults = await this.updateOrderStatuses(statusUpdates);
+
+			const results = {
+				success: true,
+				checked: incompleteOrders.length,
+				updated: updateResults.updated,
+				completed: updateResults.completed,
+				errors: updateResults.errors,
+			};
+
+			console.log('✅ Status monitoring completed:', {
+				checked: results.checked,
+				updated: results.updated,
+				completed: results.completed,
+			});
+
+			if (updateResults.errors.length > 0) {
+				console.error('❌ Errors during status monitoring:', updateResults.errors);
+			}
+
+			return results;
+
+		} catch (error) {
+			console.error('❌ Status monitoring failed:', error.message);
+			throw error;
+		}
+	}
 }
 
 module.exports = ExternalApiService;

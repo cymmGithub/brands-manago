@@ -96,6 +96,52 @@ class OrderSchedulerService {
 			apiReady: this.externalApiService.isReady(),
 		};
 	}
+
+	/**
+	 * Run the order status monitoring task
+	 * Checks incomplete orders and updates their statuses
+	 */
+	async runStatusMonitoringTask() {
+		if (this.isRunning) {
+			console.log('⏭️  Skipping status monitoring - previous task still running');
+			return;
+		}
+
+		this.isRunning = true;
+
+		try {
+			const results = await this.externalApiService.runStatusMonitoringJob({
+				lookbackMinutes: 15, // Don't check orders updated in last 15 minutes
+				modifiedLookbackHours: 1, // Check for orders modified in last hour
+			});
+
+			if (results.checked > 0) {
+				console.log(`🔄 Status monitoring completed: ${results.checked} checked, ${results.updated} updated, ${results.completed} completed`);
+			}
+
+		} catch (error) {
+			console.error('❌ Status monitoring failed:', error.message);
+		} finally {
+			this.isRunning = false;
+		}
+	}
+
+	/**
+	 * Run status monitoring immediately (for debugging)
+	 */
+	async runStatusMonitoringNow() {
+		console.log('🔍 Running status monitoring now...');
+		await this.runStatusMonitoringTask();
+	}
+
+	/**
+	 * Run download immediately (for debugging)
+	 * Uses the configured lookbackMinutes value
+	 */
+	async runNow() {
+		console.log('🚀 Running download now...');
+		await this.runScheduledTask();
+	}
 }
 
 module.exports = OrderSchedulerService;
