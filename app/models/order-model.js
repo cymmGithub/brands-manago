@@ -124,20 +124,12 @@ const orderModel = {
 
 			const newOrder = {
 				externalId: orderData.externalId,
-				orderNumber: orderData.orderNumber,
-				customerEmail: orderData.customerEmail,
-				customerName: orderData.customerName,
+				orderExternalNumber: orderData.orderSerialNumber,
 				totalAmount: parseFloat(orderData.totalAmount || 0),
-				currency: orderData.currency || 'PLN',
-				status: orderData.status || 'pending',
+				currency: orderData.currency,
+				status: orderData.status,
 				orderDate: orderData.orderDate ? new Date(orderData.orderDate) : new Date(),
 				items: orderData.items || [],
-				shippingAddress: orderData.shippingAddress || {},
-				billingAddress: orderData.billingAddress || {},
-				paymentMethod: orderData.paymentMethod || '',
-				shippingMethod: orderData.shippingMethod || '',
-				notes: orderData.notes || '',
-				externalData: orderData.externalData || {}, // Store raw data from external API
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			};

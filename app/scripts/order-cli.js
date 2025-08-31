@@ -72,13 +72,11 @@ class OrderCLI {
 			console.log(
 				`📥 Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)`,
 			);
-			const results = await this.externalApiService.downloadOrdersByDateRange(
+			await this.externalApiService.downloadOrdersByDateRange(
 				dateFrom,
 				dateTo,
 				dateType,
 			);
-
-			this.printResults(results);
 		} catch (error) {
 			console.error('❌ Download failed:', error.message);
 		}
@@ -87,10 +85,7 @@ class OrderCLI {
 	async downloadAllOrders() {
 		try {
 			console.log('📥 Downloading ALL orders from IdoSell...');
-
-			const results = await this.externalApiService.downloadAndSaveAllOrders();
-
-			this.printResults(results);
+			await this.externalApiService.downloadAndSaveAllOrders();
 		} catch (error) {
 			console.error('❌ Download all orders failed:', error.message);
 		}
