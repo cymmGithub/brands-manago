@@ -68,6 +68,28 @@ class OrderSchedulerService {
 		this.isRunning = true;
 
 		try {
+			console.log('🔄 Starting scheduled tasks...');
+
+			// First: Sync new orders
+			await this.syncNewOrders();
+
+			// Then: Monitor status of incomplete orders
+			await this.runStatusMonitoringTask();
+
+			console.log('✅ All scheduled tasks completed');
+		} catch (error) {
+			console.error('❌ Scheduled tasks failed:', error.message);
+		} finally {
+			this.isRunning = false;
+		}
+	}
+
+	/**
+	 * Sync newly added orders from external API
+	 */
+	async syncNewOrders() {
+		console.log('📥 Syncing new orders...');
+		try {
 			const results = await this.externalApiService
 				.downloadAndSaveNewlyAddedOrdersFromScheduler({
 					minutes: this.lookbackMinutes,
@@ -102,13 +124,7 @@ class OrderSchedulerService {
 	 * Checks incomplete orders and updates their statuses
 	 */
 	async runStatusMonitoringTask() {
-		if (this.isRunning) {
-			console.log('⏭️  Skipping status monitoring - previous task still running');
-			return;
-		}
-
-		this.isRunning = true;
-
+		console.log('🔍 Monitoring order statuses...');
 		try {
 			const results = await this.externalApiService.runStatusMonitoringJob({
 				lookbackMinutes: 15, // Don't check orders updated in last 15 minutes
@@ -121,8 +137,7 @@ class OrderSchedulerService {
 
 		} catch (error) {
 			console.error('❌ Status monitoring failed:', error.message);
-		} finally {
-			this.isRunning = false;
+			throw error; // Re-throw to let orchestrator handle it
 		}
 	}
 
@@ -130,8 +145,33 @@ class OrderSchedulerService {
 	 * Run status monitoring immediately (for debugging)
 	 */
 	async runStatusMonitoringNow() {
-		console.log('🔍 Running status monitoring now...');
-		await this.runStatusMonitoringTask();
+		if (this.isRunning) {
+			console.log('⏭️  Skipping status monitoring - scheduler is currently running');
+			return;
+		}
+
+		this.isRunning = true;
+		try {
+			console.log('🔍 Running status monitoring now...');
+			await this.runStatusMonitoringTask();
+		} catch (error) {
+			console.error('❌ Status monitoring test failed:', error.message);
+		} finally {
+			this.isRunning = false;
+		}
+	}
+
+	/**
+	 * Run all scheduled tasks immediately (for debugging)
+	 */
+	async runAllTasksNow() {
+		if (this.isRunning) {
+			console.log('⏭️  Skipping - scheduler is currently running');
+			return;
+		}
+
+		console.log('🚀 Running all scheduled tasks now...');
+		await this.runScheduledTasks();
 	}
 
 	/**

@@ -5,16 +5,20 @@
  * node scripts/order-cli.js download --all
  * node scripts/order-cli.js list --status pending
  * node scripts/order-cli.js status
+ * node scripts/order-cli.js scheduler:run-now
+ * node scripts/order-cli.js scheduler:monitor-now
  */
 
 const config = require('../config');
 const ExternalApiService = require('../services/external-api-service');
+const OrderSchedulerService = require('../services/order-scheduler-service');
 const orderModel = require('../models/order-model');
 const mongodb = require('../database/mongodb');
 
 class OrderCLI {
 	constructor() {
 		this.externalApiService = new ExternalApiService();
+		this.orderScheduler = new OrderSchedulerService();
 	}
 
 	async init() {
@@ -117,18 +121,45 @@ Commands:
   download --all                          Download ALL orders from IdoSell (with pagination)
   list [--status <status>]                List orders in database
   status                                  Show service and database status
+  scheduler:run-now                       Test scheduler download task immediately
+  scheduler:monitor-now                   Test status monitoring task immediately
   help                                    Show this help message
 
 Examples:
   node scripts/order-cli.js download --all
   node scripts/order-cli.js list --status pending
   node scripts/order-cli.js list --limit 10
-  node scripts/order-cli.js status
+  node scripts/order-cli.js scheduler:monitor-now
 
 Options:
   --all                         Download ALL orders (no additional options)
   --limit <number>              Limit number of results (for list command)
 		`);
+	}
+
+	/**
+	 * Run scheduler download task now (for testing)
+	 */
+	async runSchedulerNow() {
+		console.log('🚀 Testing scheduler download task...');
+		try {
+			await this.orderScheduler.runNow();
+			console.log('✅ Scheduler download test completed');
+		} catch (error) {
+			console.error('❌ Scheduler download test failed:', error.message);
+		}
+	}
+
+	/**
+	 * Run status monitoring now (for testing)
+	 */
+	async runStatusMonitoringNow() {
+		console.log('🔍 Testing status monitoring task...');
+		try {
+			await this.orderScheduler.runStatusMonitoringNow();
+		} catch (error) {
+			console.error('❌ Status monitoring test failed:', error.message);
+		}
 	}
 
 	async run() {
@@ -177,6 +208,16 @@ Options:
 
 				case 'status': {
 					await this.showStatus();
+					break;
+				}
+
+				case 'scheduler:run-now': {
+					await this.runSchedulerNow();
+					break;
+				}
+
+				case 'scheduler:monitor-now': {
+					await this.runStatusMonitoringNow();
 					break;
 				}
 
