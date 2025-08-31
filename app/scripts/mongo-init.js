@@ -1,8 +1,6 @@
 // MongoDB initialization script
 // This script runs when the MongoDB container starts for the first time
 
-print('MongoDB: Starting database initialization...');
-
 // Switch to the brands-manago database
 db = db.getSiblingDB('brands-manago');
 
@@ -51,7 +49,6 @@ db.createCollection('products', {
 	},
 });
 
-// Create indexes for better performance
 db.products.createIndex({name: 1});
 db.products.createIndex({category: 1});
 db.products.createIndex({price: 1});
@@ -93,6 +90,9 @@ const sampleProducts = [
 
 db.products.insertMany(sampleProducts);
 
-print('MongoDB: Database initialization completed successfully!');
-print('MongoDB: Created products collection with sample data');
-print('MongoDB: Created indexes for optimal performance');
+db.createCollection('orders');
+db.orders.createIndex({status: 1}, {name: 'status_1', background: true});
+db.orders.createIndex({externalId: 1}, {name: 'externalId_1', unique: true, background: true});
+db.orders.createIndex({status: 1, updatedAt: -1}, {name: 'status_1_updatedAt_-1', background: true});
+db.orders.createIndex({orderDate: -1}, {name: 'orderDate_-1', background: true});
+db.orders.createIndex({status: 1, orderDate: -1}, {name: 'status_1_orderDate_-1', background: true});
