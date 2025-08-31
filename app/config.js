@@ -1,17 +1,17 @@
 require('dotenv').config();
 module.exports = {
-	port: process.env.PORT || 3000,
-	env: process.env.NODE_ENV || 'development',
-	host: process.env.APP_HOST || 'localhost', // For URLs and external references
-	bindHost: process.env.BIND_HOST || '0.0.0.0', // For server binding (Docker needs 0.0.0.0)
+	port: process.env.PORT,
+	env: process.env.NODE_ENV,
+	host: process.env.APP_HOST, // For URLs and external references
+	bindHost: process.env.BIND_HOST, // For server binding (Docker needs 0.0.0.0)
 	mongodb: {
-		uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/brands-manago',
-		dbName: process.env.MONGODB_DB_NAME || 'brands-manago',
+		uri: process.env.MONGODB_URI,
+		dbName: process.env.MONGODB_DB_NAME,
 	},
 	idosell: {
 		shopUrl: process.env.IDOSELL_SHOP_URL,
 		apiKey: process.env.IDOSELL_API_KEY,
-		apiVersion: process.env.IDOSELL_API_VERSION || 'v6',
+		apiVersion: process.env.IDOSELL_API_VERSION,
 	},
 	scheduler: {
 		intervalMinutes: +process.env.SCHEDULER_INTERVAL_MINUTES,
