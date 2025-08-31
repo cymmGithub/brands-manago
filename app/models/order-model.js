@@ -34,6 +34,17 @@ const orderModel = {
 				}
 			}
 
+			// Apply order worth filter
+			if (filters.minWorth !== undefined || filters.maxWorth !== undefined) {
+				query.orderProductsCost = {};
+				if (filters.minWorth !== undefined) {
+					query.orderProductsCost.$gte = parseFloat(filters.minWorth);
+				}
+				if (filters.maxWorth !== undefined) {
+					query.orderProductsCost.$lte = parseFloat(filters.maxWorth);
+				}
+			}
+
 			// Apply limit
 			if (filters.limit) {
 				options.limit = parseInt(filters.limit, 10);
@@ -311,6 +322,17 @@ const orderModel = {
 				}
 				if (filters.dateTo) {
 					query.orderDate.$lte = new Date(filters.dateTo);
+				}
+			}
+
+			// Apply order worth filter
+			if (filters.minWorth !== undefined || filters.maxWorth !== undefined) {
+				query.orderProductsCost = {};
+				if (filters.minWorth !== undefined) {
+					query.orderProductsCost.$gte = parseFloat(filters.minWorth);
+				}
+				if (filters.maxWorth !== undefined) {
+					query.orderProductsCost.$lte = parseFloat(filters.maxWorth);
 				}
 			}
 

@@ -78,17 +78,50 @@ router.get('/orders/download-csv', async(req, res) => {
 	try {
 		console.log('CSV download request received');
 
-		// Get all orders without any filters or limits
-		const orders = await orderModel.getAll();
+		// Extract filter parameters from query
+		const filters = {};
+
+		if (req.query.minWorth !== undefined) {
+			const minWorth = parseFloat(req.query.minWorth);
+			if (!_.isNaN(minWorth) && minWorth >= 0) {
+				filters.minWorth = minWorth;
+			}
+		}
+
+		if (req.query.maxWorth !== undefined) {
+			const maxWorth = parseFloat(req.query.maxWorth);
+			if (!_.isNaN(maxWorth) && maxWorth >= 0) {
+				filters.maxWorth = maxWorth;
+			}
+		}
+
+		// Validate filter logic
+		if (filters.minWorth !== undefined && filters.maxWorth !== undefined) {
+			if (filters.minWorth > filters.maxWorth) {
+				return res.status(400).json({
+					success: false,
+					message: 'Minimum worth cannot be greater than maximum worth',
+				});
+			}
+		}
+
+		const filterCount = _.size(filters);
+		if (filterCount > 0) {
+			console.log(`Applying ${filterCount} filter(s):`, filters);
+		}
+
+		// Get orders with filters
+		const orders = await orderModel.getAll(filters);
 
 		console.log(`Found ${orders.length} orders for CSV export`);
 
 		// Convert to CSV format
 		const csvContent = convertToCSV(orders);
 
-		// Generate filename with current timestamp
+		// Generate filename with current timestamp and filter indication
 		const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
-		const filename = `orders-export-${timestamp}.csv`;
+		const filterSuffix = filterCount > 0 ? '-filtered' : '';
+		const filename = `orders-export${filterSuffix}-${timestamp}.csv`;
 
 		// Set headers for file download
 		res.setHeader('Content-Type', 'text/csv; charset=utf-8');
