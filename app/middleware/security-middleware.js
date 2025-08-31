@@ -63,11 +63,11 @@ const helmetOptions = {
 	contentSecurityPolicy: {
 		directives: {
 			defaultSrc: ["'self'"],
-			styleSrc: ["'self'", "'unsafe-inline'"],
-			scriptSrc: ["'self'", "'unsafe-inline'"],
+			styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://fonts.googleapis.com'],
+			scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
 			imgSrc: ["'self'", 'data:', 'https:'],
-			connectSrc: ["'self'"],
-			fontSrc: ["'self'"],
+			connectSrc: ["'self'", 'https://brandstestowy.smallhost.pl'],
+			fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
 			objectSrc: ["'none'"],
 			mediaSrc: ["'self'"],
 			frameSrc: ["'none'"],
