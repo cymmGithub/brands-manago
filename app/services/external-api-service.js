@@ -274,39 +274,24 @@ class ExternalApiService {
 	 * @returns {Object} Transformed order data
 	 */
 	transformOrderData(externalOrder) {
+		const {orderDetails} = externalOrder;
+		const paymentInfo = _.get(orderDetails, 'payments', {});
+		const currencyInfo = _.get(paymentInfo, 'orderCurrency', {});
+		const productsResults = _.get(orderDetails, 'productsResults', {});
+
 		return {
 			externalId: _.get(externalOrder, 'orderId', '').toString(),
-			orderSerialNumber: _.get(externalOrder, 'orderSerialNumber', '').toString(),
-			totalAmount:
-				_.get(externalOrder, 'orderGrossValue') ||
-				_.get(externalOrder, 'orderNetValue', 0),
-			currency: _.get(externalOrder, 'orderCurrency', 'PLN'),
+			orderSerialNumber: _.get(externalOrder, 'orderSerialNumber', null).toString(),
+			currency: _.get(currencyInfo, 'currencyId', 'unknown'),
+			orderProducts: _.map(productsResults, (product) => ({
+				productId: _.get(product, 'productId'),
+				productQuantity: _.get(product, 'productQuantity'),
+			})),
+			orderProductsCost: _.get(currencyInfo, 'orderProductsCost', 0),
 			status: _.get(externalOrder, 'orderDetails.orderStatus', 'unknown'),
+			externalCreatedAt: _.get(orderDetails, 'orderAddDate', 'unknown'),
+			externalUpdatedAt: _.get(orderDetails, 'orderChangeDate', 'unknown'),
 		};
-	}
-
-	/**
-	 * Transform order items from external format
-	 * @param {Array} externalItems - Array of order items from external API
-	 * @returns {Array} Transformed order items
-	 */
-	transformOrderItems(externalItems) {
-		return _.map(externalItems, (item) => {
-			const quantity = _.get(item, 'orderProductQuantity', 1);
-			const unitPrice =
-				_.get(item, 'orderProductGrossPrice') ||
-				_.get(item, 'orderProductNetPrice', 0);
-
-			return {
-				productId: _.get(item, 'productId'),
-				productCode: _.get(item, 'productCode'),
-				productName: _.get(item, 'productName'),
-				quantity,
-				unitPrice,
-				totalPrice: _.multiply(quantity, unitPrice),
-				currency: _.get(item, 'orderProductCurrency', 'PLN'),
-			};
-		});
 	}
 
 	/**

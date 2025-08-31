@@ -122,16 +122,18 @@ const orderModel = {
 			const db = getDb();
 			const collection = db.collection('orders');
 
+			const now = new Date();
 			const newOrder = {
 				externalId: orderData.externalId,
-				orderExternalNumber: orderData.orderSerialNumber,
-				totalAmount: parseFloat(orderData.totalAmount || 0),
+				orderSerialNumber: orderData.orderSerialNumber,
 				currency: orderData.currency,
 				status: orderData.status,
-				orderDate: orderData.orderDate ? new Date(orderData.orderDate) : new Date(),
-				items: orderData.items || [],
-				createdAt: new Date(),
-				updatedAt: new Date(),
+				orderProducts: orderData.orderProducts || [],
+				orderProductsCost: orderData.orderProductsCost,
+				externalCreatedAt: orderData.externalCreatedAt,
+				externalUpdatedAt: orderData.externalUpdatedAt,
+				createdAt: orderData.createdAt || now,
+				updatedAt: orderData.updatedAt || now,
 			};
 
 			const result = await collection.insertOne(newOrder);
