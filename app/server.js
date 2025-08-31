@@ -54,11 +54,7 @@ async function startServer() {
 		await mongodb.connect();
 
 		const server = app.listen(config.port, config.bindHost, () => {
-			console.log(`🚀 Forma'Sint server running at http://${config.host}:${config.port}`);
-			console.log(`📁 Serving static files from: ${path.join(__dirname, '..', 'frontend', 'public')}`);
-			console.log(`🔌 API endpoints available at: http://${config.host}:${config.port}/api`);
-			console.log(`🏥 Health check available at: http://${config.host}:${config.port}/health`);
-
+			console.log(`App running at http://${config.host}:${config.port}`);
 			orderScheduler.start();
 		});
 

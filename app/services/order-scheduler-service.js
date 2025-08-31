@@ -42,7 +42,7 @@ class OrderSchedulerService {
 		});
 
 		this.scheduledTask.start();
-		console.log(`✅ Scheduler started: every ${intervalMinutes} minutes`);
+		console.log(`✅ Scheduler started: every ${intervalMinutes} minute(s)`);
 	}
 
 	/**
