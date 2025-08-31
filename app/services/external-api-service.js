@@ -1,4 +1,5 @@
 const idosell = require('idosell').default || require('idosell');
+const moment = require('moment');
 const config = require('../config');
 const orderModel = require('../models/order-model');
 const UtilsService = require('./utils-service');
@@ -6,6 +7,7 @@ const _ = require('lodash');
 
 /**
  * External API Service - Handles communication with Idosell API
+ * Note: All date/time operations use UTC timezone for consistency
  */
 class ExternalApiService {
 	constructor() {
@@ -13,6 +15,16 @@ class ExternalApiService {
 		this.apiKey = config.idosell.apiKey;
 		this.apiVersion = config.idosell.apiVersion;
 		this.idosellClient = null;
+
+		// IdoSell API ordersDateType constants
+		this.DATE_TYPES = {
+			ADD: 'add', // Date order was placed
+			MODIFIED: 'modified', // Date of order modification
+			DISPATCH: 'dispatch', // Date of order dispatch
+			PAYMENT: 'payment', // Date of order payment
+			LAST_PAYMENTS_OPERATION: 'last_payments_operation', // Date of last payment operation
+			DECLARED_PAYMENTS: 'declared_payments', // Date of last payment
+		};
 
 		this.initializeClient();
 	}
@@ -45,75 +57,152 @@ class ExternalApiService {
 	}
 
 	/**
-	 * Download specific orders by their serial numbers
-	 * @param {Array<number>} orderSerialNumbers - Array of order serial numbers
+	 * Download newly added orders using scheduler configuration
+	 * Uses SCHEDULER_LOOKBACK_MINUTES to determine how far back to look
+	 * @param {Object} options - Download options
+	 * @param {number} options.lookbackMinutes - Override default lookback minutes
+	 * @param {string} options.dateType - Type of date (use DATE_TYPES constants)
+	 *   - DATE_TYPES.ADD: date order was placed
+	 *   - DATE_TYPES.MODIFIED: date of order modification
+	 *   - DATE_TYPES.DISPATCH: date of order dispatch
+	 *   - DATE_TYPES.PAYMENT: date of order payment
+	 *   - DATE_TYPES.LAST_PAYMENTS_OPERATION: date of last payment operation
+	 *   - DATE_TYPES.DECLARED_PAYMENTS: date of last payment
 	 * @returns {Promise<Array>} Array of downloaded orders
 	 */
-	async downloadOrdersBySerialNumbers(orderSerialNumbers) {
+	async downloadNewlyAddedOrdersFromScheduler(options = {}) {
+		const {
+			lookbackMinutes = config.scheduler.lookbackMinutes || 60,
+			dateType = this.DATE_TYPES.ADD,
+		} = options;
+
+		// Use the simplified minutes-based method
+		const orders = await this.downloadOrdersByTimeWindow({
+			minutes: lookbackMinutes,
+			dateType,
+		});
+
+		// Handle empty results gracefully
+		if (_.isEmpty(orders)) {
+			console.log(`No new orders found in ${lookbackMinutes} minute lookback window (${dateType} date)`);
+			return [];
+		}
+
+		return orders;
+	}
+
+	/**
+	 * Get current UTC time as moment object
+	 * @returns {moment} Current UTC time
+	 */
+	getCurrentUtcTime() {
+		return moment.utc();
+	}
+
+	/**
+	 * Format Date to IdoSell API format (YYYY-MM-DD HH:mm:ss) using moment.js in UTC
+	 * @param {Date|moment|string} date - Date to format
+	 * @returns {string} Formatted date string in UTC
+	 */
+	formatDateTime(date) {
+		return moment.utc(date).format('YYYY-MM-DD HH:mm:ss');
+	}
+
+	/**
+	 * Create ordersRange object for IdoSell API
+	 * @param {Object} options - Range options
+	 * @param {Date|moment|string} options.dateFrom - Start date
+	 * @param {Date|moment|string} options.dateTo - End date
+	 * @param {string} options.dateType - Type of date (use DATE_TYPES constants)
+	 * @returns {Object} Properly formatted ordersRange object
+	 */
+	createOrdersRange(options) {
+		const {dateFrom, dateTo, dateType = this.DATE_TYPES.ADD} = options;
+
+		return {
+			ordersRange: {
+				ordersDateRange: {
+					ordersDateBegin: this.formatDateTime(dateFrom),
+					ordersDateEnd: this.formatDateTime(dateTo),
+					ordersDateType: dateType,
+				},
+			},
+		};
+	}
+
+	/**
+	 * Download orders within a specified time window from current moment
+	 * Uses UTC timezone for all date calculations
+	 * @param {Object} options - Time period options
+	 * @param {number} options.minutes - Number of minutes to look back (default: uses config)
+	 * @param {string} options.dateType - Type of date (use DATE_TYPES constants)
+	 * @returns {Promise<Array>} Array of downloaded orders
+	 */
+	async downloadOrdersByTimeWindow(options = {}) {
+		const {
+			minutes = config.scheduler.lookbackMinutes || 60,
+			dateType = this.DATE_TYPES.ADD,
+		} = options;
+
 		if (!this.isReady()) {
 			throw new Error(
 				'Idosell API client not initialized. Check your credentials.',
 			);
 		}
 
-		if (!_.isArray(orderSerialNumbers) || _.isEmpty(orderSerialNumbers)) {
-			throw new Error('orderSerialNumbers must be a non-empty array');
-		}
-
 		try {
+			const dateTo = this.getCurrentUtcTime();
+			const dateFrom = this.getCurrentUtcTime().subtract(minutes, 'minutes');
+
 			console.log(
-				`Downloading ${orderSerialNumbers.length} orders from Idosell API...`,
+				`Checking for new orders within ${minutes} minute time window...`,
 			);
+			console.log(`Time range: ${this.formatDateTime(dateFrom)} UTC to ${this.formatDateTime(dateTo)} UTC`);
+
+			const ordersRangeQuery = this.createOrdersRange({
+				dateFrom,
+				dateTo,
+				dateType,
+			});
 
 			const {Results, resultsNumberAll} =
 				await this.idosellClient.searchOrders
-					.ordersSerialNumbers(orderSerialNumbers)
+					.ordersRange(ordersRangeQuery.ordersRange)
 					.exec();
 
-			console.log(`Successfully downloaded ${resultsNumberAll || 0} orders`);
-
+			console.log(`Successfully downloaded ${resultsNumberAll || 0} orders within ${minutes} minute time window`);
 			return Results || [];
 		} catch (error) {
-			console.error('Failed to download orders:', error.message);
+			// Handle the specific case where no orders are found - this is not an error, just empty results
+			if (error.cause && error.cause.faultCode === 2 &&
+				error.cause.faultString === 'Wyszukiwarka zamówień: zwrócono pusty wynik') {
+				return [];
+			}
+			console.log('error', error.cause);
+			console.error('Failed to download orders by time window:', error.message);
 			throw new Error(`Failed to download orders: ${error.message}`);
 		}
 	}
 
 	/**
-	 * Download orders by date range
-	 * @param {string} dateFrom - Start date (YYYY-MM-DD)
-	 * @param {string} dateTo - End date (YYYY-MM-DD)
-	 * @param {string} dateType - Type of date ('add', 'modify', 'dispatch') - default: 'add'
+	 * Download newly added orders using exact scheduler config values
+	 * This is the most convenient method for scheduler operations
+	 * @param {string} dateType - Type of date (use DATE_TYPES constants, default: ADD)
 	 * @returns {Promise<Array>} Array of downloaded orders
 	 */
-	async downloadOrdersByDateRange(dateFrom, dateTo, dateType = 'add') {
-		if (!this.isReady()) {
-			throw new Error(
-				'Idosell API client not initialized. Check your credentials.',
-			);
+	async downloadNewlyAddedOrdersForScheduler(dateType = this.DATE_TYPES.ADD) {
+		const orders = await this.downloadOrdersByTimeWindow({
+			minutes: config.scheduler.lookbackMinutes,
+			dateType,
+		});
+
+		// Handle empty results gracefully
+		if (_.isEmpty(orders)) {
+			console.log(`No new orders found in ${config.scheduler.lookbackMinutes} minute scheduler window (${dateType} date)`);
+			return [];
 		}
 
-		if (_.isEmpty(dateFrom) || _.isEmpty(dateTo)) {
-			throw new Error('dateFrom and dateTo are required');
-		}
-
-		try {
-			console.log(
-				`Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)...`,
-			);
-
-			const {Results, resultsNumberAll} =
-				await this.idosellClient.searchOrders
-					.dates(dateFrom, dateTo, dateType)
-					.exec();
-
-			console.log(`Successfully downloaded ${resultsNumberAll || 0} orders`);
-			return Results || [];
-		} catch (error) {
-			console.log('error', error);
-			console.error('Failed to download orders by date range:', error.message);
-			throw new Error(`Failed to download orders: ${error.message}`);
-		}
+		return orders;
 	}
 
 	/**
@@ -136,26 +225,14 @@ class ExternalApiService {
 
 		const {
 			page = 1,
-			limit = 50,
+			limit,
 			status,
-			dateFrom,
-			dateTo,
-			dateType = 'add',
 		} = options;
 
 		try {
 			let request;
 
-			// Choose between date-based search or regular pagination
-			if (dateFrom && dateTo) {
-				// Use date-based search with pagination
-				request = this.idosellClient.searchOrders
-					.dates(dateFrom, dateTo, dateType)
-					.page(page, limit);
-			} else {
-				// Use regular pagination
-				request = this.idosellClient.searchOrders.page(page, limit);
-			}
+			request = this.idosellClient.searchOrders.page(page, limit);
 
 			// Add status filter if provided
 			if (status) {
@@ -241,7 +318,7 @@ class ExternalApiService {
 			// Download each page
 			for (
 				let currentPage = 0;
-				currentPage < 1;
+				currentPage < paginationInfo.totalPages;
 				currentPage++
 			) {
 				const pageOrders = await this.downloadOrdersWithPagination({
@@ -274,6 +351,7 @@ class ExternalApiService {
 	 * @returns {Object} Transformed order data
 	 */
 	transformOrderData(externalOrder) {
+		console.log('externalOrder', externalOrder);
 		const {orderDetails} = externalOrder;
 		const paymentInfo = _.get(orderDetails, 'payments', {});
 		const currencyInfo = _.get(paymentInfo, 'orderCurrency', {});
@@ -281,7 +359,7 @@ class ExternalApiService {
 
 		return {
 			externalId: _.get(externalOrder, 'orderId', '').toString(),
-			orderSerialNumber: _.get(externalOrder, 'orderSerialNumber', null).toString(),
+			externalSerialNumber: _.get(externalOrder, 'orderSerialNumber', null).toString(),
 			currency: _.get(currencyInfo, 'currencyId', 'unknown'),
 			orderProducts: _.map(productsResults, (product) => ({
 				productId: _.get(product, 'productId'),
@@ -370,60 +448,58 @@ class ExternalApiService {
 		return results;
 	}
 
-	/**
-	 * Download and save orders by serial numbers
-	 * @param {Array<number>} orderSerialNumbers - Array of order serial numbers
-	 * @param {Object} options - Options
-	 * @returns {Promise<Object>} Results object
-	 */
-	async downloadAndSaveOrdersBySerialNumbers(orderSerialNumbers, options = {}) {
-		try {
-			const orders = await this.downloadOrdersBySerialNumbers(
-				orderSerialNumbers,
-			);
-			const saveResults = await this.saveOrdersToDatabase(orders, options);
-
-			console.log('Download and save completed:', saveResults);
-			return _.assign(
-				{
-					success: true,
-					downloaded: orders.length,
-				},
-				saveResults,
-			);
-		} catch (error) {
-			console.error('Download and save failed:', error.message);
-			throw error;
-		}
-	}
 
 	/**
-	 * Download and save orders by date range
-	 * @param {string} dateFrom - Start date
-	 * @param {string} dateTo - End date
+	 * Download and save newly added orders using scheduler configuration
 	 * @param {Object} options - Options
+	 * @param {number} options.lookbackMinutes - Override default lookback minutes
+	 * @param {string} options.dateType - Type of date ('add', 'modify', 'dispatch') - default: 'add'
+	 * @param {boolean} options.updateExisting - Whether to update existing orders (default: true)
 	 * @returns {Promise<Object>} Results object
 	 */
-	async downloadAndSaveOrdersByDateRange(dateFrom, dateTo, options = {}) {
+	async downloadAndSaveNewlyAddedOrdersFromScheduler(options = {}) {
 		try {
-			const {dateType = 'add', ...saveOptions} = options;
-			const orders = await this.downloadOrdersByDateRange(
-				dateFrom,
-				dateTo,
+			const {
+				updateExisting = true,
+				dateType = this.DATE_TYPES.ADD,
+				minutes = config.scheduler.lookbackMinutes,
+			} = options;
+
+			const orders = await this.downloadOrdersByTimeWindow({
+				minutes,
 				dateType,
-			);
-			const saveResults = await this.saveOrdersToDatabase(orders, saveOptions);
+			});
 
-			console.log('Download and save completed:', saveResults);
+			// Handle empty results gracefully - early return to avoid unnecessary database operations
+			if (_.isEmpty(orders)) {
+				console.log(`No new orders found in ${minutes} minute scheduler window (${dateType} date) - skipping database operations`);
+				return {
+					success: true,
+					downloaded: 0,
+					lookbackMinutes: minutes,
+					dateType,
+					total: 0,
+					created: 0,
+					updated: 0,
+					skipped: 0,
+					errors: [],
+				};
+			}
+
+			const saveResults = await this.saveOrdersToDatabase(orders, {updateExisting});
+
+			console.log('Scheduler download and save completed:', saveResults);
 			return _.assign(
 				{
 					success: true,
 					downloaded: orders.length,
+					lookbackMinutes: minutes,
+					dateType,
 				},
 				saveResults,
 			);
 		} catch (error) {
-			console.error('Download and save failed:', error.message);
+			console.error('Scheduler download and save failed:', error.message);
 			throw error;
 		}
 	}

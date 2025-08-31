@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const config = require('../config');
 const ExternalApiService = require('./external-api-service');
 /**
- * Order Scheduler Service - Scheduler for downloading orders at regular intervals
+ * Order Scheduler Service - Scheduler for checking newly added orders at regular intervals
  */
 class OrderSchedulerService {
 	constructor() {
