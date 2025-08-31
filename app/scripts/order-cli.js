@@ -2,8 +2,8 @@
  * Order Management CLI Tool
  *
  * Usage examples:
- * node scripts/order-cli.js download --serial-numbers 123,456,789
  * node scripts/order-cli.js download --date-range 2023-12-01 2023-12-31
+ * node scripts/order-cli.js download --all
  * node scripts/order-cli.js list --status pending
  * node scripts/order-cli.js status
  */
@@ -34,36 +34,6 @@ class OrderCLI {
 			console.log('✅ MongoDB connection closed');
 		} catch (error) {
 			console.error('❌ Error closing MongoDB:', error.message);
-		}
-	}
-
-	async downloadBySerialNumbers(serialNumbers) {
-		try {
-			const numbers = serialNumbers
-				.split(',')
-				.map((num) => parseInt(num.trim(), 10));
-			console.log(
-				`📥 Downloading orders with serial numbers: ${numbers.join(', ')}`,
-			);
-			const {Results, resultsNumberAll} =
-				await this.externalApiService.downloadOrdersBySerialNumbers(numbers);
-
-			this.printResults(Results, resultsNumberAll);
-		} catch (error) {
-			console.error('❌ Download failed:', error.message);
-		}
-	}
-
-	printResults(results) {
-		console.log('\n📊 Results:');
-		console.log(`   Downloaded: ${results.downloaded}`);
-		console.log(`   Created: ${results.created}`);
-		console.log(`   Updated: ${results.updated}`);
-		console.log(`   Skipped: ${results.skipped}`);
-
-		if (results.errors && results.errors.length > 0) {
-			console.log(`   Errors: ${results.errors.length}`);
-			results.errors.forEach((error) => console.log(`     - ${error}`));
 		}
 	}
 
@@ -160,7 +130,6 @@ class OrderCLI {
 Usage: node scripts/order-cli.js <command> [options]
 
 Commands:
-  download --serial-numbers <numbers>     Download orders by serial numbers (comma-separated)
   download --date-range <from> <to>       Download orders by date range (YYYY-MM-DD format)
   download --all                          Download ALL orders from IdoSell (with pagination)
   list [--status <status>]                List orders in database
@@ -168,7 +137,6 @@ Commands:
   help                                    Show this help message
 
 Examples:
-  node scripts/order-cli.js download --serial-numbers 123,456,789
   node scripts/order-cli.js download --date-range 2023-12-01 2023-12-31
   node scripts/order-cli.js download --date-range 2023-12-01 2023-12-31 --date-type dispatch
   node scripts/order-cli.js download --all
@@ -177,7 +145,6 @@ Examples:
   node scripts/order-cli.js status
 
 Options:
-  --serial-numbers <numbers>    Comma-separated list of order serial numbers
   --date-range <from> <to>      Date range (YYYY-MM-DD format)
   --all                         Download ALL orders (no additional options)
   --date-type <type>            Date type: add, modify, dispatch (default: add)
@@ -201,7 +168,6 @@ Options:
 
 			switch (command) {
 				case 'download': {
-					const serialNumbersIndex = args.indexOf('--serial-numbers');
 					const dateRangeIndex = args.indexOf('--date-range');
 					const allIndex = args.indexOf('--all');
 					const dateTypeIndex = args.indexOf('--date-type');
@@ -209,12 +175,7 @@ Options:
 
 					const updateExisting = noUpdateIndex === -1;
 
-					if (serialNumbersIndex !== -1 && args[serialNumbersIndex + 1]) {
-						await this.downloadBySerialNumbers(
-							args[serialNumbersIndex + 1],
-							updateExisting,
-						);
-					} else if (
+					if (
 						dateRangeIndex !== -1 &&
 						args[dateRangeIndex + 1] &&
 						args[dateRangeIndex + 2]
@@ -235,7 +196,7 @@ Options:
 						await this.downloadAllOrders();
 					} else {
 						console.error(
-							'❌ Invalid download command. Use --serial-numbers, --date-range, or --all',
+							'❌ Invalid download command. Use --date-range or --all',
 						);
 						this.printUsage();
 					}
