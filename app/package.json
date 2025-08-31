@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/cymmGithub/brands-manago-fe#readme",
   "dependencies": {
+    "dotenv": "^17.2.1",
     "express": "^4.18.2",
     "idosell": "^0.4.4",
     "lodash": "^4.17.21",
