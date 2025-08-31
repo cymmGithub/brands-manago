@@ -2,7 +2,6 @@
  * Order Management CLI Tool
  *
  * Usage examples:
- * node scripts/order-cli.js download --date-range 2023-12-01 2023-12-31
  * node scripts/order-cli.js download --all
  * node scripts/order-cli.js list --status pending
  * node scripts/order-cli.js status
@@ -34,21 +33,6 @@ class OrderCLI {
 			console.log('✅ MongoDB connection closed');
 		} catch (error) {
 			console.error('❌ Error closing MongoDB:', error.message);
-		}
-	}
-
-	async downloadByDateRange(dateFrom, dateTo, dateType = 'add') {
-		try {
-			console.log(
-				`📥 Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)`,
-			);
-			await this.externalApiService.downloadOrdersByDateRange(
-				dateFrom,
-				dateTo,
-				dateType,
-			);
-		} catch (error) {
-			console.error('❌ Download failed:', error.message);
 		}
 	}
 
@@ -130,26 +114,20 @@ class OrderCLI {
 Usage: node scripts/order-cli.js <command> [options]
 
 Commands:
-  download --date-range <from> <to>       Download orders by date range (YYYY-MM-DD format)
   download --all                          Download ALL orders from IdoSell (with pagination)
   list [--status <status>]                List orders in database
   status                                  Show service and database status
   help                                    Show this help message
 
 Examples:
-  node scripts/order-cli.js download --date-range 2023-12-01 2023-12-31
-  node scripts/order-cli.js download --date-range 2023-12-01 2023-12-31 --date-type dispatch
   node scripts/order-cli.js download --all
   node scripts/order-cli.js list --status pending
   node scripts/order-cli.js list --limit 10
   node scripts/order-cli.js status
 
 Options:
-  --date-range <from> <to>      Date range (YYYY-MM-DD format)
   --all                         Download ALL orders (no additional options)
-  --date-type <type>            Date type: add, modify, dispatch (default: add)
   --limit <number>              Limit number of results (for list command)
-  --no-update                   Don't update existing orders (only create new ones)
 		`);
 	}
 
@@ -168,35 +146,13 @@ Options:
 
 			switch (command) {
 				case 'download': {
-					const dateRangeIndex = args.indexOf('--date-range');
 					const allIndex = args.indexOf('--all');
-					const dateTypeIndex = args.indexOf('--date-type');
-					const noUpdateIndex = args.indexOf('--no-update');
 
-					const updateExisting = noUpdateIndex === -1;
-
-					if (
-						dateRangeIndex !== -1 &&
-						args[dateRangeIndex + 1] &&
-						args[dateRangeIndex + 2]
-					) {
-						const dateFrom = args[dateRangeIndex + 1];
-						const dateTo = args[dateRangeIndex + 2];
-						const dateType =
-							dateTypeIndex !== -1 && args[dateTypeIndex + 1]
-								? args[dateTypeIndex + 1]
-								: 'add';
-						await this.downloadByDateRange(
-							dateFrom,
-							dateTo,
-							dateType,
-							updateExisting,
-						);
-					} else if (allIndex !== -1) {
+					if (allIndex !== -1) {
 						await this.downloadAllOrders();
 					} else {
 						console.error(
-							'❌ Invalid download command. Use --date-range or --all',
+							'❌ Invalid download command. Use --all to download all orders',
 						);
 						this.printUsage();
 					}
