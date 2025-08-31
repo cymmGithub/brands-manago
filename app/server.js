@@ -2,8 +2,10 @@ const express = require('express');
 const path = require('path');
 const config = require('./config');
 const mongodb = require('./database/mongodb');
+const OrderSchedulerService = require('./services/order-scheduler-service');
 
 const app = express();
+const orderScheduler = new OrderSchedulerService();
 
 // Middleware
 app.use(express.json());
@@ -14,9 +16,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend', 'public')));
 app.use('/js', express.static(path.join(__dirname, '..', 'frontend', 'src', 'js')));
 
 // API Routes
-const productRoutes = require('./routes/product-routes');
 const orderRoutes = require('./routes/order-routes');
-app.use('/api', productRoutes);
 app.use('/api', orderRoutes);
 
 // Health check endpoint
@@ -26,6 +26,7 @@ app.get('/health', (req, res) => {
 		timestamp: new Date().toISOString(),
 		database: mongodb.isConnected() ? 'connected' : 'disconnected',
 		environment: config.env,
+		scheduler: orderScheduler.getStatus(),
 	});
 });
 
@@ -57,13 +58,14 @@ async function startServer() {
 			console.log(`📁 Serving static files from: ${path.join(__dirname, '..', 'frontend', 'public')}`);
 			console.log(`🔌 API endpoints available at: http://${config.host}:${config.port}/api`);
 			console.log(`🏥 Health check available at: http://${config.host}:${config.port}/health`);
-			console.log(`🗄️  MongoDB connected to: ${config.mongodb.dbName}`);
-			console.log(`🌍 Environment: ${config.env}`);
+
+			orderScheduler.start();
 		});
 
 		// Graceful shutdown handling
 		process.on('SIGTERM', async() => {
 			console.log('🛑 SIGTERM received, shutting down gracefully...');
+			orderScheduler.stop();
 			server.close(async() => {
 				await mongodb.close();
 				process.exit(0);
@@ -72,6 +74,7 @@ async function startServer() {
 
 		process.on('SIGINT', async() => {
 			console.log('🛑 SIGINT received, shutting down gracefully...');
+			orderScheduler.stop();
 			server.close(async() => {
 				await mongodb.close();
 				process.exit(0);
