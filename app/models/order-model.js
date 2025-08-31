@@ -96,7 +96,7 @@ const orderModel = {
 			const db = getDb();
 			const collection = db.collection('orders');
 
-			const order = await collection.findOne({externalId: externalId});
+			const order = await collection.findOne({externalId});
 
 			if (order) {
 				return {

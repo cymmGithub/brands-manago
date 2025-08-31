@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * Order Management CLI Tool
  *
@@ -10,16 +8,10 @@
  * node scripts/order-cli.js status
  */
 
+const config = require('../config');
 const ExternalApiService = require('../services/external-api-service');
 const orderModel = require('../models/order-model');
 const mongodb = require('../database/mongodb');
-
-// Load environment variables from .env file if available
-try {
-	require('dotenv').config();
-} catch (_e) {
-	// dotenv not available, that's okay
-}
 
 class OrderCLI {
 	constructor() {
@@ -45,7 +37,7 @@ class OrderCLI {
 		}
 	}
 
-	async downloadBySerialNumbers(serialNumbers, updateExisting = true) {
+	async downloadBySerialNumbers(serialNumbers) {
 		try {
 			const numbers = serialNumbers
 				.split(',')
@@ -53,58 +45,54 @@ class OrderCLI {
 			console.log(
 				`📥 Downloading orders with serial numbers: ${numbers.join(', ')}`,
 			);
+			const {Results, resultsNumberAll} =
+				await this.externalApiService.downloadOrdersBySerialNumbers(numbers);
 
-			const results =
-				await this.externalApiService.downloadAndSaveOrdersBySerialNumbers(
-					numbers,
-					{updateExisting},
-				);
-
-			console.log('\n📊 Results:');
-			console.log(`   Downloaded: ${results.downloaded}`);
-			console.log(`   Created: ${results.created}`);
-			console.log(`   Updated: ${results.updated}`);
-			console.log(`   Skipped: ${results.skipped}`);
-
-			if (results.errors.length > 0) {
-				console.log(`   Errors: ${results.errors.length}`);
-				results.errors.forEach((error) => console.log(`     - ${error}`));
-			}
+			this.printResults(Results, resultsNumberAll);
 		} catch (error) {
 			console.error('❌ Download failed:', error.message);
 		}
 	}
 
-	async downloadByDateRange(
-		dateFrom,
-		dateTo,
-		dateType = 'add',
-		updateExisting = true,
-	) {
+	printResults(results) {
+		console.log('\n📊 Results:');
+		console.log(`   Downloaded: ${results.downloaded}`);
+		console.log(`   Created: ${results.created}`);
+		console.log(`   Updated: ${results.updated}`);
+		console.log(`   Skipped: ${results.skipped}`);
+
+		if (results.errors && results.errors.length > 0) {
+			console.log(`   Errors: ${results.errors.length}`);
+			results.errors.forEach((error) => console.log(`     - ${error}`));
+		}
+	}
+
+	async downloadByDateRange(dateFrom, dateTo, dateType = 'add') {
 		try {
 			console.log(
 				`📥 Downloading orders from ${dateFrom} to ${dateTo} (${dateType} date)`,
 			);
+			const results = await this.externalApiService.downloadOrdersByDateRange(
+				dateFrom,
+				dateTo,
+				dateType,
+			);
 
-			const results =
-				await this.externalApiService.downloadAndSaveOrdersByDateRange(
-					dateFrom,
-					dateTo,
-					{dateType, updateExisting},
-				);
-
-			console.log('\n📊 Results:');
-			console.log(`   Downloaded: ${results.downloaded}`);
-			console.log(`   Created: ${results.created}`);
-			console.log(`   Updated: ${results.updated}`);
-			console.log(`   Skipped: ${results.skipped}`);
-
-			if (results.errors.length > 0) {
-				console.log(`   Errors: ${results.errors.length}`);
-				results.errors.forEach((error) => console.log(`     - ${error}`));
-			}
+			this.printResults(results);
 		} catch (error) {
 			console.error('❌ Download failed:', error.message);
+		}
+	}
+
+	async downloadAllOrders() {
+		try {
+			console.log('📥 Downloading ALL orders from IdoSell...');
+
+			const results = await this.externalApiService.downloadAndSaveAllOrders();
+
+			this.printResults(results);
+		} catch (error) {
+			console.error('❌ Download all orders failed:', error.message);
 		}
 	}
 
@@ -142,19 +130,17 @@ class OrderCLI {
 	async showStatus() {
 		try {
 			const isReady = this.externalApiService.isReady();
-			const config = {
-				shopUrl: process.env.IDOSELL_SHOP_URL,
-				apiKey: process.env.IDOSELL_API_KEY
-					? '***configured***'
-					: 'not configured',
+			const apiConfig = {
+				shopUrl: config.idosell.shopUrl,
+				apiKey: config.idosell.apiKey ? '***configured***' : 'not configured',
 				apiVersion: this.externalApiService.apiVersion,
 			};
 
 			console.log('\n🔧 External API Service Status:');
 			console.log(`   Ready: ${isReady ? '✅ Yes' : '❌ No'}`);
-			console.log(`   Shop URL: ${config.shopUrl || 'not configured'}`);
-			console.log(`   API Key: ${config.apiKey}`);
-			console.log(`   API Version: ${config.apiVersion}`);
+			console.log(`   Shop URL: ${apiConfig.shopUrl || 'not configured'}`);
+			console.log(`   API Key: ${apiConfig.apiKey}`);
+			console.log(`   API Version: ${apiConfig.apiVersion}`);
 
 			if (!isReady) {
 				console.log('\n⚠️  To configure the external API service:');
@@ -181,6 +167,7 @@ Usage: node scripts/order-cli.js <command> [options]
 Commands:
   download --serial-numbers <numbers>     Download orders by serial numbers (comma-separated)
   download --date-range <from> <to>       Download orders by date range (YYYY-MM-DD format)
+  download --all                          Download ALL orders from IdoSell (with pagination)
   list [--status <status>]                List orders in database
   status                                  Show service and database status
   help                                    Show this help message
@@ -189,6 +176,7 @@ Examples:
   node scripts/order-cli.js download --serial-numbers 123,456,789
   node scripts/order-cli.js download --date-range 2023-12-01 2023-12-31
   node scripts/order-cli.js download --date-range 2023-12-01 2023-12-31 --date-type dispatch
+  node scripts/order-cli.js download --all
   node scripts/order-cli.js list --status pending
   node scripts/order-cli.js list --limit 10
   node scripts/order-cli.js status
@@ -196,9 +184,9 @@ Examples:
 Options:
   --serial-numbers <numbers>    Comma-separated list of order serial numbers
   --date-range <from> <to>      Date range (YYYY-MM-DD format)
+  --all                         Download ALL orders (no additional options)
   --date-type <type>            Date type: add, modify, dispatch (default: add)
-  --status <status>             Filter by order status
-  --limit <number>              Limit number of results
+  --limit <number>              Limit number of results (for list command)
   --no-update                   Don't update existing orders (only create new ones)
 		`);
 	}
@@ -220,6 +208,7 @@ Options:
 				case 'download': {
 					const serialNumbersIndex = args.indexOf('--serial-numbers');
 					const dateRangeIndex = args.indexOf('--date-range');
+					const allIndex = args.indexOf('--all');
 					const dateTypeIndex = args.indexOf('--date-type');
 					const noUpdateIndex = args.indexOf('--no-update');
 
@@ -247,9 +236,11 @@ Options:
 							dateType,
 							updateExisting,
 						);
+					} else if (allIndex !== -1) {
+						await this.downloadAllOrders();
 					} else {
 						console.error(
-							'❌ Invalid download command. Use --serial-numbers or --date-range',
+							'❌ Invalid download command. Use --serial-numbers, --date-range, or --all',
 						);
 						this.printUsage();
 					}
