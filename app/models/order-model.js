@@ -113,6 +113,32 @@ const orderModel = {
 	},
 
 	/**
+	 * Get order by external serial number (from Idosell)
+	 * @param {string} externalSerialNumber - External order serial number
+	 * @returns {Promise<Object|null>} Order or null if not found
+	 */
+	async getByExternalSerialNumber(externalSerialNumber) {
+		try {
+			const db = getDb();
+			const collection = db.collection('orders');
+
+			const order = await collection.findOne({externalSerialNumber});
+
+			if (order) {
+				return {
+					...order,
+					id: order._id.toString(),
+				};
+			}
+
+			return null;
+		} catch (error) {
+			console.error('Error fetching order by external serial number:', error);
+			throw error;
+		}
+	},
+
+	/**
 	 * Create a new order
 	 * @param {Object} orderData - Order data
 	 * @returns {Promise<Object>} Created order
