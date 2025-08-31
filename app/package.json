@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "test": "node --test **/*.tape.js",
+    "test:watch": "node --test --watch **/*.tape.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:check": "eslint . --max-warnings 0"
@@ -39,6 +41,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
-    "eslint": "^9.34.0"
+    "eslint": "^9.34.0",
+    "supertest": "^7.0.0"
   }
 }
