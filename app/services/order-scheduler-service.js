@@ -68,15 +68,8 @@ class OrderSchedulerService {
 		this.isRunning = true;
 
 		try {
-			console.log('🔄 Starting scheduled tasks...');
-
-			// First: Sync new orders
-			await this.syncNewOrders();
-
-			// Then: Monitor status of incomplete orders
+			await this.downloadNewOrders();
 			await this.runStatusMonitoringTask();
-
-			console.log('✅ All scheduled tasks completed');
 		} catch (error) {
 			console.error('❌ Scheduled tasks failed:', error.message);
 		} finally {
@@ -87,8 +80,8 @@ class OrderSchedulerService {
 	/**
 	 * Sync newly added orders from external API
 	 */
-	async syncNewOrders() {
-		console.log('📥 Syncing new orders...');
+	async downloadNewOrders() {
+		console.log('📥 Downloading new orders...');
 		try {
 			const results = await this.externalApiService
 				.downloadAndSaveNewlyAddedOrdersFromScheduler({
@@ -97,7 +90,7 @@ class OrderSchedulerService {
 					updateExisting: true,
 				});
 
-			console.log(`✅ Scheduler run completed: ${results.downloaded} downloaded, ${results.created} created, ${results.updated} updated`);
+			console.log(`Downloading new orders completed: ${results.downloaded} downloaded, ${results.created} created, ${results.updated} updated`);
 		} catch (error) {
 			console.error('❌ Scheduler run failed:', error.message);
 		} finally {
@@ -124,17 +117,11 @@ class OrderSchedulerService {
 	 * Checks incomplete orders and updates their statuses
 	 */
 	async runStatusMonitoringTask() {
-		console.log('🔍 Monitoring order statuses...');
 		try {
-			const results = await this.externalApiService.runStatusMonitoringJob({
+			await this.externalApiService.runStatusMonitoringJob({
 				lookbackMinutes: 15, // Don't check orders updated in last 15 minutes
 				modifiedLookbackHours: 1, // Check for orders modified in last hour
 			});
-
-			if (results.checked > 0) {
-				console.log(`🔄 Status monitoring completed: ${results.checked} checked, ${results.updated} updated, ${results.completed} completed`);
-			}
-
 		} catch (error) {
 			console.error('❌ Status monitoring failed:', error.message);
 			throw error; // Re-throw to let orchestrator handle it
