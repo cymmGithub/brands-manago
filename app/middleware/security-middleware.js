@@ -25,7 +25,7 @@ const corsOptions = {
 /**
  * Rate Limiting Configuration
  */
-const createRateLimiter = (windowMs = 15 * 60 * 1000, max = 100, message = 'Too many requests') => {
+const createRateLimiter = (windowMs = 1 * 60 * 1000, max = 100, message = 'Too many requests') => {
 	return rateLimit({
 		windowMs,
 		max,
