@@ -1,4 +1,5 @@
 const idosell = require('idosell').default || require('idosell');
+const config = require('../config');
 const orderModel = require('../models/order-model');
 const UtilsService = require('./utils-service');
 const _ = require('lodash');
@@ -8,9 +9,9 @@ const _ = require('lodash');
  */
 class ExternalApiService {
 	constructor() {
-		this.shopUrl = process.env.IDOSELL_SHOP_URL;
-		this.apiKey = process.env.IDOSELL_API_KEY;
-		this.apiVersion = process.env.IDOSELL_API_VERSION || 'v6';
+		this.shopUrl = config.idosell.shopUrl;
+		this.apiKey = config.idosell.apiKey;
+		this.apiVersion = config.idosell.apiVersion;
 		this.idosellClient = null;
 
 		this.initializeClient();
@@ -70,6 +71,7 @@ class ExternalApiService {
 					.exec();
 
 			console.log(`Successfully downloaded ${resultsNumberAll || 0} orders`);
+
 			return Results || [];
 		} catch (error) {
 			console.error('Failed to download orders:', error.message);
@@ -108,6 +110,7 @@ class ExternalApiService {
 			console.log(`Successfully downloaded ${resultsNumberAll || 0} orders`);
 			return Results || [];
 		} catch (error) {
+			console.log('error', error);
 			console.error('Failed to download orders by date range:', error.message);
 			throw new Error(`Failed to download orders: ${error.message}`);
 		}
@@ -238,7 +241,7 @@ class ExternalApiService {
 			// Download each page
 			for (
 				let currentPage = 0;
-				currentPage < paginationInfo.totalPages;
+				currentPage < 1;
 				currentPage++
 			) {
 				const pageOrders = await this.downloadOrdersWithPagination({
@@ -271,62 +274,14 @@ class ExternalApiService {
 	 * @returns {Object} Transformed order data
 	 */
 	transformOrderData(externalOrder) {
-		const customerName = _.trim(
-			`${_.get(externalOrder, 'customerFirstName', '')} ${_.get(
-				externalOrder,
-				'customerLastName',
-				'',
-			)}`,
-		);
-
 		return {
-			externalId: _.get(externalOrder, 'orderSerialNumber', '').toString(),
-			orderNumber:
-				_.get(externalOrder, 'orderNumber') ||
-				_.get(externalOrder, 'orderSerialNumber', '').toString(),
-			customerEmail: _.get(externalOrder, 'customerEmail'),
-			customerName: _.isEmpty(customerName) ? 'Unknown Customer' : customerName,
+			externalId: _.get(externalOrder, 'orderId', '').toString(),
+			orderSerialNumber: _.get(externalOrder, 'orderSerialNumber', '').toString(),
 			totalAmount:
 				_.get(externalOrder, 'orderGrossValue') ||
 				_.get(externalOrder, 'orderNetValue', 0),
 			currency: _.get(externalOrder, 'orderCurrency', 'PLN'),
-			status: this.mapOrderStatus(_.get(externalOrder, 'orderStatusId')),
-			orderDate: _.get(externalOrder, 'orderAddDate')
-				? new Date(externalOrder.orderAddDate)
-				: new Date(),
-			items: this.transformOrderItems(
-				_.get(externalOrder, 'orderProducts', []),
-			),
-			shippingAddress: _.mapKeys(
-				_.pick(externalOrder, [
-					'deliveryFirstName',
-					'deliveryLastName',
-					'deliveryCompanyName',
-					'deliveryStreet',
-					'deliveryCity',
-					'deliveryPostCode',
-					'deliveryCountryName',
-					'deliveryPhone',
-				]),
-				(value, key) => _.camelCase(key.replace('delivery', '')),
-			),
-			billingAddress: _.mapKeys(
-				_.pick(externalOrder, [
-					'customerFirstName',
-					'customerLastName',
-					'customerCompanyName',
-					'customerStreet',
-					'customerCity',
-					'customerPostCode',
-					'customerCountryName',
-					'customerPhone',
-				]),
-				(value, key) => _.camelCase(key.replace('customer', '')),
-			),
-			paymentMethod: _.get(externalOrder, 'paymentName'),
-			shippingMethod: _.get(externalOrder, 'deliveryName'),
-			notes: _.get(externalOrder, 'orderComment', ''),
-			externalData: externalOrder,
+			status: _.get(externalOrder, 'orderDetails.orderStatus', 'unknown'),
 		};
 	}
 
@@ -352,25 +307,6 @@ class ExternalApiService {
 				currency: _.get(item, 'orderProductCurrency', 'PLN'),
 			};
 		});
-	}
-
-	/**
-	 * Map external order status to internal status
-	 * @param {number} externalStatusId - External status ID
-	 * @returns {string} Internal status string
-	 */
-	mapOrderStatus(externalStatusId) {
-		const statusMap = {
-			1: 'pending',
-			2: 'confirmed',
-			3: 'processing',
-			4: 'shipped',
-			5: 'delivered',
-			6: 'cancelled',
-			7: 'returned',
-		};
-
-		return _.get(statusMap, externalStatusId, 'pending');
 	}
 
 	/**
@@ -400,14 +336,14 @@ class ExternalApiService {
 			'Saving orders',
 		);
 
-		for (const externalOrder of orders) {
+		for (const order of orders) {
 			try {
-				const transformedOrder = this.transformOrderData(externalOrder);
+				const transformedOrder = this.transformOrderData(order);
 
 				if (!transformedOrder.externalId) {
 					results.skipped++;
 					results.errors.push(
-						`Order missing external ID: ${JSON.stringify(externalOrder)}`,
+						`Order missing external ID: ${JSON.stringify(order)}`,
 					);
 					UtilsService.tickProgress(progressBar, {
 						created: results.created,
