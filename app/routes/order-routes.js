@@ -111,4 +111,57 @@ router.get('/orders/download-csv', async(req, res) => {
 	}
 });
 
+router.get('/orders/download-csv/:externalSerialNumber', async(req, res) => {
+	try {
+		const {externalSerialNumber} = req.params;
+
+		if (_.isEmpty(externalSerialNumber)) {
+			return res.status(400).json({
+				success: false,
+				message: 'External serial number is required',
+			});
+		}
+
+		console.log(`CSV download request received for order: ${externalSerialNumber}`);
+
+		// Get the specific order by external serial number
+		const order = await orderModel.getByExternalSerialNumber(externalSerialNumber);
+
+		if (!order) {
+			return res.status(404).json({
+				success: false,
+				message: `Order with external serial number '${externalSerialNumber}' not found`,
+			});
+		}
+
+		console.log(`Found order for CSV export: ${order.id}`);
+
+		// Convert to CSV format (pass as array since convertToCSV expects an array)
+		const csvContent = convertToCSV([order]);
+
+		// Generate filename with order serial number and timestamp
+		const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
+		const filename = `order-${externalSerialNumber}-${timestamp}.csv`;
+
+		// Set headers for file download
+		res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+		res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+		res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+		res.setHeader('Pragma', 'no-cache');
+		res.setHeader('Expires', '0');
+
+		// Send CSV content
+		res.send(csvContent);
+
+		console.log(`CSV file "${filename}" sent successfully`);
+	} catch (error) {
+		console.error('Error generating single order CSV export:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Failed to generate CSV export for the specified order',
+			error: error.message,
+		});
+	}
+});
+
 module.exports = router;
