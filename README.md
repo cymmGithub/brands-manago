@@ -1,27 +1,43 @@
-# Forma'Sint - Premium Outdoor Gear 
-## [🌐 Live Demo](https://cymmgithub.github.io/brands-manago-fe/)
+# Forma'Sint - Premium Outdoor Gear
 
-A modern, responsive e-commerce website for outdoor gear and climbing equipment.
+- **Full-Stack Application**: [https://fullstack.bieda.it/](https://fullstack.bieda.it/)
 
-![Website Demo](./assets/website-demo.gif)
+A modern, responsive e-commerce platform for outdoor gear and climbing equipment with both frontend and backend components.
+
+![Website Demo](./frontend/public/assets/website-demo.gif)
 
 ## Performance
 
-![Lighthouse Score](./assets/lighthouse-score.png)
+![Lighthouse Score](./frontend/public/assets/lighthouse-score.png)
 
-## Features
+## Architecture
 
+### Frontend (`/frontend`)
+Modern, responsive client-side application featuring:
 - 🎯 Responsive design across all devices
 - 🔍 SEO optimized
+- 🎨 Vanilla HTML/CSS/JavaScript
+- 📱 Mobile-first approach
+
+### Backend (`/app`)
+RESTful API server with order management system featuring:
+- 🗄️ MongoDB database integration
+- 📦 Order processing and management
+- 🔒 Security middleware
+- 📊 External API integrations
+- 🕐 Order scheduling services
 
 ## Quick Start
 
-### Local Development
-Open `index.html` in your browser - no build process required.
-
-### Docker Development
+### Frontend Development
 ```bash
-# Start the application with Docker Compose
+cd frontend
+# Open index.html in your browser - no build process required
+```
+
+### Full-Stack Development
+```bash
+# Start both frontend and backend with Docker Compose
 docker compose up
 
 # Start with watch mode for automatic rebuilds on file changes
@@ -31,17 +47,24 @@ docker compose watch
 docker compose up -d
 ```
 
-## Development
-
+### Backend Development
 ```bash
+cd app
 npm install         # Install dependencies
-npm test            # Run Playwright tests
+npm test            # Run tests
 npm run lint        # Check code quality
 ```
 
 ## Tech Stack
 
+### Frontend
 - Vanilla HTML/CSS/JavaScript
 - Swiper.js for carousels
 - Playwright for testing
 - ESLint for code quality
+
+### Backend
+- Node.js with Express.js
+- MongoDB database
+- Docker containerization
+- RESTful API architecture
