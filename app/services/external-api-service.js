@@ -25,8 +25,6 @@ class ExternalApiService {
 			LAST_PAYMENTS_OPERATION: 'last_payments_operation', // Date of last payment operation
 			DECLARED_PAYMENTS: 'declared_payments', // Date of last payment
 		};
-
-		this.initializeClient();
 	}
 
 	/**
@@ -49,10 +47,13 @@ class ExternalApiService {
 	}
 
 	/**
-	 * Check if the API client is ready
+	 * Check if the API client is ready, initialize if needed (lazy initialization)
 	 * @returns {boolean} True if client is initialized
 	 */
 	isReady() {
+		if (this.idosellClient === null) {
+			this.initializeClient();
+		}
 		return this.idosellClient !== null;
 	}
 
@@ -351,7 +352,6 @@ class ExternalApiService {
 	 * @returns {Object} Transformed order data
 	 */
 	transformOrderData(externalOrder) {
-		console.log('externalOrder', externalOrder);
 		const {orderDetails} = externalOrder;
 		const paymentInfo = _.get(orderDetails, 'payments', {});
 		const currencyInfo = _.get(paymentInfo, 'orderCurrency', {});
