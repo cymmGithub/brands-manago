@@ -70,13 +70,15 @@
 				<div class="nav__actions">
 					<img
 						src="assets/icons/icon-user.svg"
-						alt="User profile icon"
+						alt="Developer profile icon"
 						class="nav__developer-icon"
 						width="24"
 						height="24"
 						loading="lazy"
 					/>
-					<a href="#" class="nav__developer-link">FRONTEND DEVELOPER</a>
+					<button id="developer-tools-btn" class="nav__developer-link" data-testid="developer-tools-btn">
+						FULLSTACK DEVELOPER
+					</button>
 					<button
 						class="nav__toggle"
 						aria-label="Toggle navigation menu"
@@ -346,6 +348,117 @@
 			<img class="product-modal__image" id="modal-image" src="" alt="" />
 		</dialog>
 
+		<!-- Developer Tools Modal -->
+		<div class="developer-modal-backdrop" id="developer-modal-backdrop"></div>
+		<div class="developer-modal" id="developer-modal" data-testid="developer-modal">
+			<div class="developer-modal__container">
+				<div class="developer-modal__header">
+					<h2 class="developer-modal__title">Developer Tools</h2>
+					<button
+						class="developer-modal__close"
+						id="developer-modal-close"
+						aria-label="Close developer tools"
+						data-testid="developer-modal-close"
+					>
+						<img
+							src="assets/icons/icon-close.svg"
+							alt="Close icon"
+							class="developer-modal__close-icon"
+						/>
+					</button>
+				</div>
+				<div class="developer-modal__content">
+										<div class="developer-tools">
+						<div class="developer-tool">
+							<h3 class="developer-tool__title">Bulk Order Management</h3>
+							<div class="developer-tool__form">
+								<div class="developer-filter-section">
+									<h4 class="developer-filter-title">Filter by Order Value (Optional)</h4>
+									<div class="developer-filter-row">
+										<div class="developer-input-group developer-input-group--small">
+											<label for="min-worth-input" class="developer-input-label">
+												Min Worth:
+											</label>
+											<input
+												id="min-worth-input"
+												type="number"
+												step="0.01"
+												min="0"
+												class="developer-input developer-input--small"
+												placeholder="0.00"
+												aria-label="Minimum order value"
+												data-testid="min-worth-input"
+											/>
+										</div>
+										<div class="developer-input-group developer-input-group--small">
+											<label for="max-worth-input" class="developer-input-label">
+												Max Worth:
+											</label>
+											<input
+												id="max-worth-input"
+												type="number"
+												step="0.01"
+												min="0"
+												class="developer-input developer-input--small"
+												placeholder="999999.99"
+												aria-label="Maximum order value"
+												data-testid="max-worth-input"
+											/>
+										</div>
+									</div>
+									<div class="developer-filter-actions">
+										<button
+											id="clear-filters-btn"
+											class="developer-filter-clear-btn"
+											aria-label="Clear filters"
+											data-testid="clear-filters-btn"
+										>
+											Clear Filters
+										</button>
+									</div>
+								</div>
+								<button
+									id="download-orders-btn"
+									class="developer-tool__button"
+									aria-label="Download filtered orders CSV"
+									data-testid="download-orders-btn"
+								>
+									<span class="developer-tool__button-icon">📥</span>
+									<span class="download-btn-text">Download Orders CSV</span>
+								</button>
+							</div>
+						</div>
+
+						<div class="developer-tool">
+							<h3 class="developer-tool__title">Single Order Download</h3>
+							<div class="developer-tool__form">
+								<div class="developer-input-group">
+									<input
+										id="order-serial-input"
+										type="text"
+										class="developer-input"
+										placeholder="Enter order serial number (e.g., 1216)"
+										aria-label="Order external serial number"
+										data-testid="order-serial-input"
+									/>
+								</div>
+								<button
+									id="download-single-order-btn"
+									class="developer-tool__button developer-tool__button--secondary"
+									aria-label="Download single order CSV"
+									data-testid="download-single-order-btn"
+									disabled
+								>
+									<span class="developer-tool__button-icon">🔍</span>
+									<span class="download-single-btn-text">Download Order CSV</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- JavaScript - Load in dependency order -->
 		<!-- Swiper JS -->
 		<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -362,6 +475,8 @@
 		<script src="js/services/NavigationService.js"></script>
 		<script src="js/services/ScrollService.js"></script>
 		<script src="js/services/SEOService.js"></script>
+		<script src="js/services/OrderService.js"></script>
+		<script src="js/services/DeveloperModalService.js"></script>
 
 		<!-- Components -->
 		<script src="js/components/FeaturedProducts.js"></script>

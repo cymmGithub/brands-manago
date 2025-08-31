@@ -16,7 +16,20 @@ A modern, responsive e-commerce website for outdoor gear and climbing equipment.
 
 ## Quick Start
 
+### Local Development
 Open `index.html` in your browser - no build process required.
+
+### Docker Development
+```bash
+# Start the application with Docker Compose
+docker compose up
+
+# Start with watch mode for automatic rebuilds on file changes
+docker compose watch
+
+# Start in background
+docker compose up -d
+```
 
 ## Development
 

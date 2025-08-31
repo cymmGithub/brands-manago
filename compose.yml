@@ -1,0 +1,86 @@
+services:
+  brands-manago:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      target: development
+      args:
+        NODE_ENV: ${NODE_ENV}
+        PORT: ${PORT}
+        APP_HOST: ${APP_HOST}
+        BIND_HOST: ${BIND_HOST}
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - ./frontend:/frontend
+
+      # exclude host node_modules
+      - /frontend/node_modules
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "http://${APP_HOST}:${PORT:-3000}", "-o", "/dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - brands-manago-network
+    depends_on:
+      - mongodb
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./app
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./app/package.json
+
+  mongodb:
+    image: mongo:7-jammy
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-brands-manago}
+    volumes:
+      - mongodb_data:/data/db
+      - ./app/scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - brands-manago-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  mongo-express:
+    image: mongo-express:1.0.2-20
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH: false
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+    networks:
+      - brands-manago-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+volumes:
+  node_modules:
+    driver: local
+  mongodb_data:
+    driver: local
+
+networks:
+  brands-manago-network:
+    driver: bridge

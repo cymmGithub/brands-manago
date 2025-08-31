@@ -9,7 +9,7 @@ const FavoriteStore = (() => {
 	function getFavoritesFromStorage() {
 		try {
 			return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-		} catch (error) {
+		} catch (_error) {
 			return [];
 		}
 	}
@@ -17,7 +17,7 @@ const FavoriteStore = (() => {
 	function saveFavoritesToStorage(favorites) {
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
-		} catch (error) {
+		} catch (_error) {
 			// Silent fail
 		}
 	}
