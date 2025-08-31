@@ -125,7 +125,7 @@ const orderModel = {
 			const now = new Date();
 			const newOrder = {
 				externalId: orderData.externalId,
-				orderSerialNumber: orderData.orderSerialNumber,
+				externalSerialNumber: orderData.externalSerialNumber,
 				currency: orderData.currency,
 				status: orderData.status,
 				orderProducts: orderData.orderProducts || [],
