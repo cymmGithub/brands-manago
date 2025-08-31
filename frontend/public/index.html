@@ -368,21 +368,53 @@
 					</button>
 				</div>
 				<div class="developer-modal__content">
-					<div class="developer-tools">
+										<div class="developer-tools">
 						<div class="developer-tool">
-							<h3 class="developer-tool__title">Order Management</h3>
+							<h3 class="developer-tool__title">Bulk Order Management</h3>
 							<p class="developer-tool__description">
 								Download all orders from the database in CSV format for analysis and reporting.
 							</p>
 							<button
 								id="download-orders-btn"
 								class="developer-tool__button"
-								aria-label="Download orders CSV"
+								aria-label="Download all orders CSV"
 								data-testid="download-orders-btn"
 							>
 								<span class="developer-tool__button-icon">📥</span>
-								<span class="download-btn-text">Download Orders CSV</span>
+								<span class="download-btn-text">Download All Orders CSV</span>
 							</button>
+						</div>
+
+						<div class="developer-tool">
+							<h3 class="developer-tool__title">Single Order Download</h3>
+							<p class="developer-tool__description">
+								Download a specific order by entering its external serial number.
+							</p>
+							<div class="developer-tool__form">
+								<div class="developer-input-group">
+									<label for="order-serial-input" class="developer-input-label">
+										External Serial Number:
+									</label>
+									<input
+										id="order-serial-input"
+										type="text"
+										class="developer-input"
+										placeholder="Enter order serial number (e.g., ABC123456)"
+										aria-label="Order external serial number"
+										data-testid="order-serial-input"
+									/>
+								</div>
+								<button
+									id="download-single-order-btn"
+									class="developer-tool__button developer-tool__button--secondary"
+									aria-label="Download single order CSV"
+									data-testid="download-single-order-btn"
+									disabled
+								>
+									<span class="developer-tool__button-icon">🔍</span>
+									<span class="download-single-btn-text">Download Order CSV</span>
+								</button>
+							</div>
 						</div>
 
 						<div class="developer-tool">

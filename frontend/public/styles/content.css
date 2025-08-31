@@ -310,6 +310,63 @@
 	line-height: 1;
 }
 
+.developer-tool__button--secondary {
+	background: var(--color-white);
+	color: var(--color-black);
+	border: 2px solid var(--color-gray-300);
+}
+
+.developer-tool__button--secondary:hover:not(:disabled) {
+	background: var(--color-gray-50);
+	border-color: var(--color-gray-400);
+}
+
+.developer-tool__form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-lg);
+}
+
+.developer-input-group {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+}
+
+.developer-input-label {
+	font-weight: var(--font-weight-medium);
+	color: var(--color-gray-700);
+	text-transform: uppercase;
+	font-size: var(--font-size-sm);
+	letter-spacing: var(--letter-spacing-wide);
+}
+
+.developer-input {
+	padding: var(--space-md) var(--space-lg);
+	border: 2px solid var(--color-gray-300);
+	border-radius: 6px;
+	font-size: var(--font-size-base);
+	font-family: var(--font-family-primary);
+	color: var(--color-black);
+	background: var(--color-white);
+	transition: var(--transition-normal);
+}
+
+.developer-input:focus {
+	outline: none;
+	border-color: var(--color-black);
+	box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.developer-input:hover {
+	border-color: var(--color-gray-400);
+}
+
+.developer-input::placeholder {
+	color: var(--color-gray-500);
+	font-style: italic;
+}
+
 .developer-info {
 	display: flex;
 	flex-direction: column;
