@@ -371,9 +371,6 @@
 										<div class="developer-tools">
 						<div class="developer-tool">
 							<h3 class="developer-tool__title">Bulk Order Management</h3>
-							<p class="developer-tool__description">
-								Download orders from the database in CSV format with optional filtering by order value.
-							</p>
 							<div class="developer-tool__form">
 								<div class="developer-filter-section">
 									<h4 class="developer-filter-title">Filter by Order Value (Optional)</h4>
@@ -434,19 +431,13 @@
 
 						<div class="developer-tool">
 							<h3 class="developer-tool__title">Single Order Download</h3>
-							<p class="developer-tool__description">
-								Download a specific order by entering its external serial number.
-							</p>
 							<div class="developer-tool__form">
 								<div class="developer-input-group">
-									<label for="order-serial-input" class="developer-input-label">
-										External Serial Number:
-									</label>
 									<input
 										id="order-serial-input"
 										type="text"
 										class="developer-input"
-										placeholder="Enter order serial number (e.g., ABC123456)"
+										placeholder="Enter order serial number (e.g., 1216)"
 										aria-label="Order external serial number"
 										data-testid="order-serial-input"
 									/>
@@ -461,23 +452,6 @@
 									<span class="developer-tool__button-icon">🔍</span>
 									<span class="download-single-btn-text">Download Order CSV</span>
 								</button>
-							</div>
-						</div>
-
-						<div class="developer-tool">
-							<h3 class="developer-tool__title">System Information</h3>
-							<p class="developer-tool__description">
-								View current system status and configuration details.
-							</p>
-							<div class="developer-info">
-								<div class="developer-info__item">
-									<span class="developer-info__label">Frontend Version:</span>
-									<span class="developer-info__value">1.0.0</span>
-								</div>
-								<div class="developer-info__item">
-									<span class="developer-info__label">API Status:</span>
-									<span class="developer-info__value api-status" id="api-status">Checking...</span>
-								</div>
 							</div>
 						</div>
 					</div>
