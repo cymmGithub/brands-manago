@@ -3,6 +3,7 @@
 - **Full-Stack Application**: [https://fullstack.bieda.it/](https://fullstack.bieda.it/)
 
 A modern, responsive e-commerce platform for outdoor gear and climbing equipment with both frontend and backend components.
+Note: please note that the GIF below illustrates only the front-end portion.
 
 ![Website Demo](./frontend/public/assets/readme/website-demo.gif)
 
