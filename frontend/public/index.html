@@ -68,16 +68,16 @@
 				</ul>
 
 				<div class="nav__actions">
-					<img
-						src="assets/icons/icon-user.svg"
-						alt="Developer profile icon"
-						class="nav__developer-icon"
-						width="24"
-						height="24"
-						loading="lazy"
-					/>
 					<button id="developer-tools-btn" class="nav__developer-link" data-testid="developer-tools-btn">
-						FULLSTACK DEVELOPER
+						<img
+							src="assets/icons/icon-cart.svg"
+							alt="Cart icon"
+							class="nav__developer-icon"
+							width="24"
+							height="24"
+							loading="lazy"
+						/>
+						ORDERS CSV
 					</button>
 					<button
 						class="nav__toggle"
@@ -353,7 +353,7 @@
 		<div class="developer-modal" id="developer-modal" data-testid="developer-modal">
 			<div class="developer-modal__container">
 				<div class="developer-modal__header">
-					<h2 class="developer-modal__title">Developer Tools</h2>
+					<h2 class="developer-modal__title">ORDERS CSV</h2>
 					<button
 						class="developer-modal__close"
 						id="developer-modal-close"
@@ -373,7 +373,6 @@
 							<h3 class="developer-tool__title">Bulk Order Management</h3>
 							<div class="developer-tool__form">
 								<div class="developer-filter-section">
-									<h4 class="developer-filter-title">Filter by Order Value (Optional)</h4>
 									<div class="developer-filter-row">
 										<div class="developer-input-group developer-input-group--small">
 											<label for="min-worth-input" class="developer-input-label">

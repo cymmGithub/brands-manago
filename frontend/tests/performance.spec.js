@@ -1,7 +1,7 @@
 // @ts-check
 import {test, expect} from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost';
 
 test.describe('Performance Tests', () => {
 	test('should load page within reasonable time', async({page}) => {

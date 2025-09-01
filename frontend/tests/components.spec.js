@@ -1,7 +1,7 @@
 // @ts-check
 import {test, expect} from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost';
 
 test.describe('UI Components Tests', () => {
 	test.beforeEach(async({page}) => {
@@ -81,11 +81,11 @@ test.describe('UI Components Tests', () => {
 		test('should display developer information', async({page}) => {
 			// Check developer link is visible
 			await expect(page.locator('.nav__developer-link')).toBeVisible();
-			await expect(page.locator('.nav__developer-link')).toContainText('FRONTEND DEVELOPER');
+			await expect(page.locator('.nav__developer-link')).toContainText('ORDERS CSV');
 
 			// Check developer icon
 			await expect(page.locator('.nav__developer-icon')).toBeVisible();
-			await expect(page.locator('.nav__developer-icon')).toHaveAttribute('alt', 'User profile icon');
+			await expect(page.locator('.nav__developer-icon')).toHaveAttribute('alt', 'Cart icon');
 		});
 
 		test('should display IDOMODS credit', async({page}) => {

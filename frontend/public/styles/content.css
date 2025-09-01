@@ -137,23 +137,36 @@
 }
 
 .nav__developer-link {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-sm);
+	padding: var(--space-sm) var(--space-md);
 	font-size: var(--font-size-base);
 	font-weight: var(--font-weight-medium);
 	letter-spacing: var(--letter-spacing-wide);
 	text-transform: uppercase;
-	color: var(--color-black);
+	background: var(--color-black);
+	color: var(--color-white);
+	border-radius: var(--radius-md);
 	transition: var(--transition-normal);
+	border: 2px solid var(--color-black);
 }
 
 .nav__developer-icon {
 	width: 24px;
 	height: 24px;
-	margin-left: 8px;
 	vertical-align: middle;
+	filter: brightness(0) invert(1); /* Makes the icon white */
 }
 
 .nav__developer-link:hover {
-	color: var(--color-gray-600);
+	background: #fcc858;
+	border-color: #fcc858;
+	color: var(--color-black);
+}
+
+.nav__developer-link:hover .nav__developer-icon {
+	filter: brightness(0) invert(0); /* Makes the icon black on hover */
 }
 
 @keyframes spin {

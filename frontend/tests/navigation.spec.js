@@ -1,7 +1,7 @@
 // @ts-check
 import {test, expect} from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://localhost';
 
 test.describe("Forma'Sint Homepage", () => {
 	test('should display hero section correctly', async({page}) => {

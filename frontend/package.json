@@ -4,7 +4,7 @@
 	"description": "Frontend for Forma'Sint - Premium Outdoor Gear",
 	"main": "src/js/app.js",
 	"scripts": {
-		"test": "playwright test",
+		"test": "playwright test -j5",
 		"test:headed": "playwright test --headed",
 		"test:ui": "playwright test --ui",
 		"test:debug": "playwright test --debug",
