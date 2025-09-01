@@ -4,11 +4,11 @@
 
 A modern, responsive e-commerce platform for outdoor gear and climbing equipment with both frontend and backend components.
 
-![Website Demo](./frontend/public/assets/website-demo.gif)
+![Website Demo](./frontend/public/assets/readme/website-demo.gif)
 
 ## Performance
 
-![Lighthouse Score](./frontend/public/assets/lighthouse-score.png)
+![Lighthouse Score](./frontend/public/assets/readme/lighthouse-score.png)
 
 ## Architecture
 
@@ -26,6 +26,8 @@ RESTful API server with order management system featuring:
 - 🔒 Security middleware
 - 📊 External API integrations
 - 🕐 Order scheduling services
+
+![Order Management Interface](./frontend/public/assets/readme/orders.png)
 
 ## Quick Start
 
